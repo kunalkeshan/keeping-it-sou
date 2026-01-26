@@ -5,7 +5,7 @@
  * used with Next.js on-demand revalidation.
  */
 
-import type { AllSanitySchemaTypes } from "@/sanity.types";
+import type { AllSanitySchemaTypes } from "@/types/cms";
 
 // Extract all _type values from Sanity schema types
 export type SanityDocumentType = Extract<

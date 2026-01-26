@@ -3,7 +3,7 @@ import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import { urlFor } from "@/sanity/lib/image";
 import { createCollectionTag } from "@/sanity/lib/cache-tags";
-import type { SiteConfig } from "@/sanity.types";
+import type { SiteConfig } from "@/types/cms";
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteConfig = await sanityFetch<SiteConfig>({

@@ -3,7 +3,7 @@ import { SITE_CONFIG } from "@/config/site";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import { LEGAL_DOCUMENTS_QUERY } from "@/sanity/queries/legal";
 import { createCollectionTag } from "@/sanity/lib/cache-tags";
-import type { Legal } from "@/sanity.types";
+import type { Legal } from "@/types/cms";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all dynamic content
