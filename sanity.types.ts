@@ -360,3 +360,161 @@ type ArrayOf<T> = Array<
     _key: string;
   }
 >;
+
+// Source: sanity/queries/faqs.ts
+// Variable: FAQS_QUERY
+// Query: *[_type == "faqs"][0] {    ...,    faqItems[]{ ... }  }
+export type FAQS_QUERY_RESULT = {
+  _id: string;
+  _type: "faqs";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  faqItems: Array<{
+    question?: string;
+    answer?: string;
+    _key: string;
+  }> | null;
+} | null;
+
+// Source: sanity/queries/legal.ts
+// Variable: LEGAL_DOCUMENTS_QUERY
+// Query: *[_type == "legal"] | order(_updatedAt desc) {    _id,    title,    slug,    description,    _createdAt,    _updatedAt  }
+export type LEGAL_DOCUMENTS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: string | null;
+  _createdAt: string;
+  _updatedAt: string;
+}>;
+
+// Source: sanity/queries/legal.ts
+// Variable: LEGAL_DOCUMENT_BY_SLUG_QUERY
+// Query: *[_type == "legal" && slug.current == $slug][0] {    _id,    title,    slug,    description,    content,    _createdAt,    _updatedAt  }
+export type LEGAL_DOCUMENT_BY_SLUG_QUERY_RESULT = {
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: string | null;
+  content: BlockContent | null;
+  _createdAt: string;
+  _updatedAt: string;
+} | null;
+
+// Source: sanity/queries/site-config.ts
+// Variable: SITE_CONFIG_QUERY
+// Query: *[_type == "siteConfig"][0] {    _id,    title,    description,    ogImage {      asset->,      alt    },    twitterImage {      asset->,      alt    },    phoneNumbers[] {      number,      label    },    emails[] {      email,      label    },    address {      street,      city,      state,      postalCode,      country    },    sitetiming,    socialMedia[] {      platform,      url,      label    },    footerLegalLinks[]-> {      _id,      title,      slug,      description    }  }
+export type SITE_CONFIG_QUERY_RESULT = {
+  _id: string;
+  title: string | null;
+  description: string | null;
+  ogImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  twitterImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  phoneNumbers: Array<{
+    number: string | null;
+    label: string | null;
+  }> | null;
+  emails: Array<{
+    email: string | null;
+    label: string | null;
+  }> | null;
+  address: {
+    street: string | null;
+    city: string | null;
+    state: string | null;
+    postalCode: string | null;
+    country: string | null;
+  } | null;
+  sitetiming: string | null;
+  socialMedia: Array<{
+    platform:
+      | "facebook"
+      | "instagram"
+      | "linkedin"
+      | "twitter"
+      | "whatsapp"
+      | "youtube"
+      | null;
+    url: string | null;
+    label: string | null;
+  }> | null;
+  footerLegalLinks: Array<{
+    _id: string;
+    title: string | null;
+    slug: Slug | null;
+    description: string | null;
+  }> | null;
+} | null;
+
+// Source: sanity/queries/site-config.ts
+// Variable: FOOTER_LEGAL_LINKS_QUERY
+// Query: *[_type == "siteConfig"][0].footerLegalLinks[]-> {    _id,    title,    slug,    description,    _updatedAt  }
+export type FOOTER_LEGAL_LINKS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: string | null;
+  _updatedAt: string;
+}> | null;
+
+// Query TypeMap
+import "@sanity/client";
+declare module "@sanity/client" {
+  interface SanityQueries {
+    '\n  *[_type == "faqs"][0] {\n    ...,\n    faqItems[]{ ... }\n  }\n': FAQS_QUERY_RESULT;
+    '\n  *[_type == "legal"] | order(_updatedAt desc) {\n    _id,\n    title,\n    slug,\n    description,\n    _createdAt,\n    _updatedAt\n  }\n': LEGAL_DOCUMENTS_QUERY_RESULT;
+    '\n  *[_type == "legal" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    content,\n    _createdAt,\n    _updatedAt\n  }\n': LEGAL_DOCUMENT_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "siteConfig"][0] {\n    _id,\n    title,\n    description,\n    ogImage {\n      asset->,\n      alt\n    },\n    twitterImage {\n      asset->,\n      alt\n    },\n    phoneNumbers[] {\n      number,\n      label\n    },\n    emails[] {\n      email,\n      label\n    },\n    address {\n      street,\n      city,\n      state,\n      postalCode,\n      country\n    },\n    sitetiming,\n    socialMedia[] {\n      platform,\n      url,\n      label\n    },\n    footerLegalLinks[]-> {\n      _id,\n      title,\n      slug,\n      description\n    }\n  }\n': SITE_CONFIG_QUERY_RESULT;
+    '\n  *[_type == "siteConfig"][0].footerLegalLinks[]-> {\n    _id,\n    title,\n    slug,\n    description,\n    _updatedAt\n  }\n': FOOTER_LEGAL_LINKS_QUERY_RESULT;
+  }
+}

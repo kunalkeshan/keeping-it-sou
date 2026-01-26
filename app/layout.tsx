@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Young_Serif, Alegreya, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { SITE_CONFIG } from "@/config/site";
 
 const fontSans = Young_Serif({
   variable: "--font-sans",
@@ -18,6 +19,13 @@ const fontMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
 });
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_CONFIG.URL),
+  formatDetection: {
+    address: false,
+  },
+};
 
 export default function RootLayout({
   children,
