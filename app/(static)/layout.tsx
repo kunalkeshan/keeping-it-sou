@@ -74,7 +74,6 @@ export default function StaticLayout({
       {children}
       <GoogleAnalytics gaId="G-CBPBRCTFZV" />
       <MicrosoftClarity />
-      {children}
     </>
   );
 }
