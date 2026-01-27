@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Google Analytics
+
+This project includes Google Analytics tracking using the `@next/third-parties` library. The Google Analytics Measurement ID (`G-CBPBRCTFZV`) is configured directly in the code within `app/layout.tsx` and is not stored in environment variables.
+
+To modify or disable analytics tracking, edit the `<GoogleAnalytics>` component in the root layout file.
+
 ## Getting Started
 
 First, run the development server:
