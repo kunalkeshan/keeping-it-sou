@@ -4,6 +4,7 @@ import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import { urlFor } from "@/sanity/lib/image";
 import { createCollectionTag } from "@/sanity/lib/cache-tags";
 import type { SiteConfig } from "@/types/cms";
+import MicrosoftClarity from "@/components/analytics/clarity";
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteConfig = await sanityFetch<SiteConfig>({
@@ -67,6 +68,11 @@ export default function StaticLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <>
+      <MicrosoftClarity />
+      {children}
+    </>
+  );
 }
 
