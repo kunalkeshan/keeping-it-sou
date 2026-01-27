@@ -822,6 +822,18 @@
                     {
                       "type": "string",
                       "value": "linkedin"
+                    },
+                    {
+                      "type": "string",
+                      "value": "spotify"
+                    },
+                    {
+                      "type": "string",
+                      "value": "applemusic"
+                    },
+                    {
+                      "type": "string",
+                      "value": "youtubemusic"
                     }
                   ]
                 },

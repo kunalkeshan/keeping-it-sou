@@ -146,7 +146,10 @@ export type SiteConfig = {
       | "instagram"
       | "facebook"
       | "whatsapp"
-      | "linkedin";
+      | "linkedin"
+      | "spotify"
+      | "applemusic"
+      | "youtubemusic";
     url?: string;
     label?: string;
     _key: string;
@@ -478,12 +481,15 @@ export type SITE_CONFIG_QUERY_RESULT = {
   sitetiming: string | null;
   socialMedia: Array<{
     platform:
+      | "applemusic"
       | "facebook"
       | "instagram"
       | "linkedin"
+      | "spotify"
       | "twitter"
       | "whatsapp"
       | "youtube"
+      | "youtubemusic"
       | null;
     url: string | null;
     label: string | null;
