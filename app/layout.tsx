@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Young_Serif, Alegreya, JetBrains_Mono } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { SITE_CONFIG } from "@/config/site";
 
@@ -39,7 +38,6 @@ export default function RootLayout({
         className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}
       >
         {children}
-        <GoogleAnalytics gaId="G-CBPBRCTFZV" />
       </body>
     </html>
   );

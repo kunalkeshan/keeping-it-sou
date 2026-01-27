@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import { urlFor } from "@/sanity/lib/image";
@@ -67,6 +68,11 @@ export default function StaticLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <>
+      {children}
+      <GoogleAnalytics gaId="G-CBPBRCTFZV" />
+    </>
+  );
 }
 
