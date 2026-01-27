@@ -43,7 +43,7 @@ export default function Hero({
           <div className="relative max-w-md lg:max-w-lg mx-auto lg:mx-0">
             <div className="relative overflow-hidden rounded-sm shadow-xl">
               <Image
-                src="/icon.png"
+                src="/releases/from-hodges.jpeg"
                 alt={`${ALBUM_NAME} Album Cover`}
                 width={600}
                 height={600}
@@ -67,7 +67,7 @@ export default function Hero({
             {/* Album Section */}
             <div>
               <p className="text-muted-foreground text-sm uppercase tracking-widest mb-1">
-                The Album
+                EP
               </p>
               <p className="text-foreground text-lg font-medium">
                 {ALBUM_NAME}
