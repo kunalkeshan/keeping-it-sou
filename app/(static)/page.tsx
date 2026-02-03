@@ -21,8 +21,12 @@ export default async function Home() {
   // Streaming platforms (Spotify, Apple Music, YouTube Music)
   const streamingLinks = socialMedia
     .filter(
-      (item): item is typeof item & { platform: SupportedSocialPlatform; url: string } =>
-        isStreamingPlatform(item.platform ?? null) && !!item.url
+      (
+        item
+      ): item is typeof item & {
+        platform: SupportedSocialPlatform;
+        url: string;
+      } => isStreamingPlatform(item.platform ?? null) && !!item.url
     )
     .map((item) => ({
       platform: item.platform,
@@ -33,7 +37,12 @@ export default async function Home() {
   // Other social media platforms (preserving original order)
   const socialLinks = socialMedia
     .filter(
-      (item): item is typeof item & { platform: SupportedSocialPlatform; url: string } =>
+      (
+        item
+      ): item is typeof item & {
+        platform: SupportedSocialPlatform;
+        url: string;
+      } =>
         isSupportedPlatform(item.platform ?? null) &&
         !isStreamingPlatform(item.platform ?? null) &&
         !!item.url
@@ -45,10 +54,12 @@ export default async function Home() {
     }));
 
   return (
-    <Hero
-      title={siteConfig?.title ?? "Keeping it Sou"}
-      streamingLinks={streamingLinks}
-      socialLinks={socialLinks}
-    />
+    <main>
+      <Hero
+        title={siteConfig?.title ?? "Keeping it Sou"}
+        streamingLinks={streamingLinks}
+        socialLinks={socialLinks}
+      />
+    </main>
   );
 }
