@@ -3,11 +3,13 @@ import {
   BrainCircuit,
   Cloud,
   Code2,
+  FileText,
   GraduationCap,
   HeartPulse,
   LifeBuoy,
   ListChecks,
   PenTool,
+  Scale,
   Shield,
   ShoppingCart,
   Smartphone,
@@ -15,6 +17,7 @@ import {
   Wallet,
   Zap,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { LinkItemType } from "@/components/layout/sheard";
 
 export const navLinks = [
@@ -132,3 +135,13 @@ export const resourcesLinks: LinkItemType[] = [
     description: "Get help and support",
   },
 ];
+
+/**
+ * Returns a Lucide icon for a legal document by title (e.g. for index cards).
+ */
+export function getLegalIcon(title: string): LucideIcon {
+  const t = title.toLowerCase();
+  if (t.includes("terms")) return Scale;
+  if (t.includes("privacy")) return Shield;
+  return FileText;
+}
