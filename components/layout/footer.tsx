@@ -80,7 +80,7 @@ export default function Footer({ siteConfig }: FooterProps) {
             </p>
 
             {allSocialLinks.length > 0 && (
-              <div className="flex gap-3 flex-wrap justify-center">
+              <div className="flex gap-2 flex-wrap justify-center">
                 {allSocialLinks.map((link) => (
                   <SocialIcon
                     key={link.platform}
