@@ -7,6 +7,13 @@ import { createCollectionTag } from "@/sanity/lib/cache-tags";
 import type { SiteConfig } from "@/types/cms";
 import MicrosoftClarity from "@/components/analytics/clarity";
 import { Header } from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
+import type { SITE_CONFIG_QUERY_RESULT } from "@/types/cms";
+import {
+  isStreamingPlatform,
+  type SupportedSocialPlatform,
+} from "@/lib/social-media";
+import type { SocialMediaLink } from "@/components/shared/social-links";
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteConfig = await sanityFetch<SiteConfig>({
@@ -65,15 +72,37 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function StaticLayout({
+export default async function StaticLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteConfig = await sanityFetch<SITE_CONFIG_QUERY_RESULT>({
+    query: SITE_CONFIG_QUERY,
+    tags: [createCollectionTag("siteConfig")],
+  });
+
+  const socialMedia = siteConfig?.socialMedia ?? [];
+  const streamingLinks: SocialMediaLink[] = socialMedia
+    .filter(
+      (
+        item
+      ): item is typeof item & {
+        platform: SupportedSocialPlatform;
+        url: string;
+      } => isStreamingPlatform(item.platform ?? null) && !!item.url
+    )
+    .map((item) => ({
+      platform: item.platform,
+      url: item.url,
+      label: item.label,
+    }));
+
   return (
     <>
-      <Header />
+      <Header streamingLinks={streamingLinks} />
       {children}
+      <Footer siteConfig={siteConfig} />
       <GoogleAnalytics gaId="G-CBPBRCTFZV" />
       <MicrosoftClarity />
     </>

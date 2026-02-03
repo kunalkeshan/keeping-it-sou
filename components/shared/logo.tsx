@@ -33,6 +33,11 @@ interface LogoProps {
    * Override image src. When provided, used instead of variant path or /icon.png.
    */
   logoSrc?: string;
+  /**
+   * Position of "sou" text relative to the image. "right" = inline; "below" = under the image.
+   * @default "right"
+   */
+  textPosition?: "right" | "below";
 }
 
 /**
@@ -51,14 +56,20 @@ export function Logo({
   variant,
   format = "png",
   logoSrc,
+  textPosition = "right",
 }: LogoProps) {
   const src =
     logoSrc ??
     (variant ? `/logos/logo-${variant}.${format}` : DEFAULT_LOGO_SRC);
+  const isBelow = textPosition === "below";
   return (
     <Link
       href={href}
-      className={cn("flex items-center gap-1", className)}
+      className={cn(
+        "flex items-center gap-1",
+        isBelow && "flex-col items-center",
+        className
+      )}
       prefetch={false}
     >
       <Image

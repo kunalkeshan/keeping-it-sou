@@ -18,6 +18,8 @@ import {
   useCasesLinks,
 } from "@/constants/nav-links";
 import { LinkItem } from "@/components/layout/sheard";
+import { SocialIcon } from "@/components/shared/social-links";
+import type { SocialMediaLink } from "@/components/shared/social-links";
 
 const sections = [
   {
@@ -45,7 +47,11 @@ const sections = [
   },
 ];
 
-export function MobileNav() {
+type MobileNavProps = {
+  streamingLinks?: SocialMediaLink[];
+};
+
+export function MobileNav({ streamingLinks = [] }: MobileNavProps) {
   const [open, setOpen] = React.useState(false);
   const { isMobile } = useMediaQuery();
 
@@ -131,12 +137,23 @@ export function MobileNav() {
                 {...link}
               />
             ))}
-            <div className="mt-5 grid gap-2 px-6">
-              <Button className="w-full" variant="outline">
-                Login
-              </Button>
-              <Button className="w-full">Book a Demo</Button>
-            </div>
+            {streamingLinks.length > 0 && (
+              <div className="mt-5 px-6">
+                <p className="text-muted-foreground text-sm uppercase tracking-widest mb-3">
+                  Listen Now
+                </p>
+                <div className="flex gap-3 flex-wrap">
+                  {streamingLinks.map((link) => (
+                    <SocialIcon
+                      key={link.platform}
+                      href={link.url}
+                      platform={link.platform}
+                      label={link.label}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </Portal>
       )}
