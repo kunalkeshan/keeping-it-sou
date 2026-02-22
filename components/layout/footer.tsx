@@ -1,20 +1,64 @@
 import { Logo } from "@/components/shared/logo";
 import { SocialIcon } from "@/components/shared/social-links";
-import type { SITE_CONFIG_QUERY_RESULT } from "@/types/cms";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import type {
+  RELEASES_LIST_QUERY_RESULT,
+  SITE_CONFIG_QUERY_RESULT,
+} from "@/types/cms";
+import { ArrowRightIcon, Mail, Phone, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
-import { navLinks, resourcesLinks } from "@/constants/nav-links";
+import { resourcesLinks } from "@/constants/nav-links";
 import {
   isStreamingPlatform,
   isSupportedPlatform,
   type SupportedSocialPlatform,
 } from "@/lib/social-media";
+import {
+  mapReleasesToNavItems,
+  type ReleaseNavItem,
+} from "@/lib/releases-nav";
+
+const FOOTER_RELEASES_LIMIT = 4;
+
+function FooterReleaseLink({ item }: { item: ReleaseNavItem }) {
+  return (
+    <Link
+      href={item.href}
+      className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+    >
+      {item.imageUrl ? (
+        <img
+          src={item.imageUrl}
+          alt=""
+          className="size-8 shrink-0 rounded object-cover"
+          width={32}
+          height={32}
+        />
+      ) : (
+        <span className="flex size-8 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-xs">
+          —
+        </span>
+      )}
+      <span className="font-medium">{item.title}</span>
+      {item.subText ? (
+        <span className="text-muted-foreground">· {item.subText}</span>
+      ) : null}
+    </Link>
+  );
+}
 
 type FooterProps = {
   siteConfig: SITE_CONFIG_QUERY_RESULT;
+  releases?: RELEASES_LIST_QUERY_RESULT;
 };
 
-export default function Footer({ siteConfig }: FooterProps) {
+export default function Footer({
+  siteConfig,
+  releases = [],
+}: FooterProps) {
+  const releaseItems = mapReleasesToNavItems(releases).slice(
+    0,
+    FOOTER_RELEASES_LIMIT
+  );
   const currentYear = new Date().getFullYear();
   const startYear = 2026;
   const copyrightYear =
@@ -93,20 +137,24 @@ export default function Footer({ siteConfig }: FooterProps) {
             )}
           </div>
 
-          {/* Links Section */}
+          {/* Releases Section */}
           <div className="col-span-6 md:col-span-4 lg:col-span-3">
-            <h3 className="font-semibold text-lg mb-4">Links</h3>
+            <h3 className="font-semibold text-lg mb-4">Releases</h3>
             <ul className="space-y-3">
-              {navLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </Link>
+              {releaseItems.map((item) => (
+                <li key={item.href}>
+                  <FooterReleaseLink item={item} />
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/releases"
+                  className="text-sm hover:text-primary transition-colors inline-flex items-center gap-1"
+                >
+                  View more
+                  <ArrowRightIcon className="size-3" />
+                </Link>
+              </li>
             </ul>
           </div>
 

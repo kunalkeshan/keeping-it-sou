@@ -12,21 +12,30 @@ import { getSocialIcon } from "@/lib/social-media";
 import { NavigationMenu as NavigationMenuPrimitive } from "radix-ui";
 import { ArrowRightIcon, type LucideIcon } from "lucide-react";
 import { useState } from "react";
-import {
-  featuresLinks,
-  navLinks,
-  resourcesLinks,
-  useCasesLinks,
-} from "@/constants/nav-links";
+import Link from "next/link";
+import { navLinks, resourcesLinks } from "@/constants/nav-links";
 import { SocialIcon, type SocialMediaLink } from "@/components/shared/social-links";
 import { GithubIcon, LinkItem } from "@/components/layout/sheard";
+import {
+  mapReleasesToNavItems,
+  type ReleaseNavItem,
+} from "@/lib/releases-nav";
+import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";
+
+const NAV_RELEASES_LIMIT = 9;
 
 type DesktopNavProps = {
   streamingLinks?: SocialMediaLink[];
+  releases?: RELEASES_LIST_QUERY_RESULT;
 };
 
-export function DesktopNav({ streamingLinks = [] }: DesktopNavProps) {
+export function DesktopNav({
+  streamingLinks = [],
+  releases = [],
+}: DesktopNavProps) {
   const [open, setOpen] = useState(false);
+  const releaseItems = mapReleasesToNavItems(releases).slice(0, NAV_RELEASES_LIMIT);
+
   return (
     <NavigationMenu
       className="static hidden md:flex"
@@ -41,26 +50,24 @@ export function DesktopNav({ streamingLinks = [] }: DesktopNavProps) {
           <NavigationMenuTrigger className="bg-transparent px-2 text-muted-foreground hover:bg-transparent hover:text-foreground">
             Releases
           </NavigationMenuTrigger>
-          <CustomNavigationMenuContent className="grid w-full grid-cols-3">
-            <Section className="border-r" title="Features">
-              {featuresLinks.map((link, linkIndex) => (
-                <NavigationMenuPrimitive.Link
-                  asChild
-                  key={`${link.label}-${linkIndex}`}
-                >
-                  <LinkItem {...link} />
+          <CustomNavigationMenuContent className="grid w-full grid-cols-2">
+            <Section className="border-r" title="Releases">
+              {releaseItems.map((item) => (
+                <NavigationMenuPrimitive.Link asChild key={item.href}>
+                  <ReleaseLinkRow item={item} />
                 </NavigationMenuPrimitive.Link>
               ))}
-            </Section>
-            <Section className="border-r" title="Use Cases">
-              {useCasesLinks.map((link, linkIndex) => (
-                <NavigationMenuPrimitive.Link
-                  asChild
-                  key={`${link.label}-${linkIndex}`}
+              <NavigationMenuPrimitive.Link asChild>
+                <Link
+                  className="group flex h-14 w-full items-center gap-x-3 border-b px-3 hover:bg-accent dark:hover:bg-accent/50"
+                  href="/releases"
                 >
-                  <LinkItem {...link} />
-                </NavigationMenuPrimitive.Link>
-              ))}
+                  <span className="font-medium text-sm text-primary">
+                    View more
+                  </span>
+                  <ArrowRightIcon className="size-4" />
+                </Link>
+              </NavigationMenuPrimitive.Link>
             </Section>
             <Section title="Listen Now">
               <ListenNowSpotifyCard streamingLinks={streamingLinks} />
@@ -126,6 +133,37 @@ export function DesktopNav({ streamingLinks = [] }: DesktopNavProps) {
       <CustomNavigationMenuViewport />
       <NavigationMenuOverlay open={open} />
     </NavigationMenu>
+  );
+}
+
+function ReleaseLinkRow({ item }: { item: ReleaseNavItem }) {
+  return (
+    <Link
+      className="group flex h-14 w-full items-center gap-x-3 border-b px-3 hover:bg-accent dark:hover:bg-accent/50"
+      href={item.href}
+    >
+      {item.imageUrl ? (
+        <img
+          src={item.imageUrl}
+          alt=""
+          className="size-8 shrink-0 rounded object-cover"
+          width={32}
+          height={32}
+        />
+      ) : (
+        <span className="flex size-8 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-xs">
+          —
+        </span>
+      )}
+      <div className="flex min-w-0 flex-col items-start justify-center">
+        <span className="font-medium text-sm truncate w-full">{item.title}</span>
+        {item.subText ? (
+          <span className="line-clamp-1 text-[10px] text-muted-foreground">
+            {item.subText}
+          </span>
+        ) : null}
+      </div>
+    </Link>
   );
 }
 

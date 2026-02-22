@@ -1,5 +1,21 @@
 import { defineQuery } from "next-sanity";
 
+/** Lightweight list for nav/footer; sort: featured first, then releaseDate desc. Reusable elsewhere. */
+export const RELEASES_LIST_QUERY = defineQuery(`
+  *[_type == "releases"] | order(featured desc, releaseDate desc) {
+    _id,
+    title,
+    slug,
+    releaseType-> {
+      name
+    },
+    coverImage {
+      asset->,
+      alt
+    }
+  }
+`);
+
 export const ALL_RELEASES_QUERY = defineQuery(`
   *[_type == "releases"] | order(featured desc, releaseDate desc) {
     _id,

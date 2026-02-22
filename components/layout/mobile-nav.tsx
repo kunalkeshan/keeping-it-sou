@@ -9,49 +9,85 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Portal } from "@radix-ui/react-portal";
-import { UsersRound } from "lucide-react";
+import { ArrowRightIcon, UsersRound } from "lucide-react";
+import Link from "next/link";
 import React from "react";
-import {
-  featuresLinks,
-  navLinks,
-  resourcesLinks,
-  useCasesLinks,
-} from "@/constants/nav-links";
+import { navLinks, resourcesLinks } from "@/constants/nav-links";
 import { LinkItem } from "@/components/layout/sheard";
 import { SocialIcon } from "@/components/shared/social-links";
 import type { SocialMediaLink } from "@/components/shared/social-links";
+import {
+  mapReleasesToNavItems,
+  type ReleaseNavItem,
+} from "@/lib/releases-nav";
+import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";
 
-const sections = [
-  {
-    id: "features",
-    name: "Features",
-    list: featuresLinks,
-  },
-  {
-    id: "use-cases",
-    name: "Use Cases",
-    list: useCasesLinks,
-  },
-  {
-    id: "resources",
-    name: "Resources",
-    list: [
-      ...resourcesLinks,
-      {
-        label: "Customer Stories",
-        href: "#",
-        icon: UsersRound,
-        description: "Browse our success stories",
-      },
-    ],
-  },
-];
+const NAV_RELEASES_LIMIT = 9;
+
+function MobileReleaseLinkRow({
+  item,
+  className,
+}: {
+  item: ReleaseNavItem;
+  className?: string;
+}) {
+  return (
+    <Link
+      className={cn(
+        "group flex h-14 w-full items-center gap-x-3 border-b hover:bg-accent dark:hover:bg-accent/50",
+        className
+      )}
+      href={item.href}
+    >
+      {item.imageUrl ? (
+        <img
+          src={item.imageUrl}
+          alt=""
+          className="size-8 shrink-0 rounded object-cover"
+          width={32}
+          height={32}
+        />
+      ) : (
+        <span className="flex size-8 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-xs">
+          —
+        </span>
+      )}
+      <div className="flex min-w-0 flex-col items-start justify-center">
+        <span className="font-medium text-sm truncate w-full">{item.title}</span>
+        {item.subText ? (
+          <span className="line-clamp-1 text-[10px] text-muted-foreground">
+            {item.subText}
+          </span>
+        ) : null}
+      </div>
+    </Link>
+  );
+}
+
+const resourcesSection = {
+  id: "resources",
+  name: "Resources",
+  list: [
+    ...resourcesLinks,
+    {
+      label: "Customer Stories",
+      href: "#",
+      icon: UsersRound,
+      description: "Browse our success stories",
+    },
+  ],
+} as const;
 
 type MobileNavProps = {
   streamingLinks?: SocialMediaLink[];
+  releases?: RELEASES_LIST_QUERY_RESULT;
 };
 
-export function MobileNav({ streamingLinks = [] }: MobileNavProps) {
+export function MobileNav({
+  streamingLinks = [],
+  releases = [],
+}: MobileNavProps) {
+  const releaseItems = mapReleasesToNavItems(releases).slice(0, NAV_RELEASES_LIMIT);
   const [open, setOpen] = React.useState(false);
   const { isMobile } = useMediaQuery();
 
@@ -109,26 +145,43 @@ export function MobileNav({ streamingLinks = [] }: MobileNavProps) {
             data-slot={open ? "open" : "closed"}
           >
             <Accordion collapsible type="single">
-              {sections.map((section) => (
-                <AccordionItem
-                  className="border-b-0"
-                  key={section.id}
-                  value={section.id}
-                >
-                  <AccordionTrigger className="rounded-none border-b px-6 hover:no-underline">
-                    {section.name}
-                  </AccordionTrigger>
-                  <AccordionContent className="pb-0">
-                    {section.list.map((link) => (
-                      <LinkItem
-                        className="px-8"
-                        key={`mobile-${section.id}-${link.label}`}
-                        {...link}
-                      />
-                    ))}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
+              <AccordionItem className="border-b-0" value="releases">
+                <AccordionTrigger className="rounded-none border-b px-6 hover:no-underline">
+                  Releases
+                </AccordionTrigger>
+                <AccordionContent className="pb-0">
+                  {releaseItems.map((item) => (
+                    <MobileReleaseLinkRow
+                      key={item.href}
+                      item={item}
+                      className="px-8"
+                    />
+                  ))}
+                  <Link
+                    className="group flex h-14 w-full items-center gap-x-3 border-b px-8 hover:bg-accent dark:hover:bg-accent/50"
+                    href="/releases"
+                  >
+                    <span className="font-medium text-sm text-primary">
+                      View more
+                    </span>
+                    <ArrowRightIcon className="size-4" />
+                  </Link>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem className="border-b-0" value={resourcesSection.id}>
+                <AccordionTrigger className="rounded-none border-b px-6 hover:no-underline">
+                  {resourcesSection.name}
+                </AccordionTrigger>
+                <AccordionContent className="pb-0">
+                  {resourcesSection.list.map((link) => (
+                    <LinkItem
+                      className="px-8"
+                      key={`mobile-${resourcesSection.id}-${link.label}`}
+                      {...link}
+                    />
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
             </Accordion>
             {navLinks.map((link, i) => (
               <LinkItem

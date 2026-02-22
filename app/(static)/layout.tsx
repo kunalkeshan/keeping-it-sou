@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
+import { RELEASES_LIST_QUERY } from "@/sanity/queries/releases";
 import { urlFor } from "@/sanity/lib/image";
 import { createCollectionTag } from "@/sanity/lib/cache-tags";
 import type { SiteConfig } from "@/types/cms";
+import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";
 import MicrosoftClarity from "@/components/analytics/clarity";
 import { Header } from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -77,10 +79,16 @@ export default async function StaticLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const siteConfig = await sanityFetch<SITE_CONFIG_QUERY_RESULT>({
-    query: SITE_CONFIG_QUERY,
-    tags: [createCollectionTag("siteConfig")],
-  });
+  const [siteConfig, releasesList] = await Promise.all([
+    sanityFetch<SITE_CONFIG_QUERY_RESULT>({
+      query: SITE_CONFIG_QUERY,
+      tags: [createCollectionTag("siteConfig")],
+    }),
+    sanityFetch<RELEASES_LIST_QUERY_RESULT>({
+      query: RELEASES_LIST_QUERY,
+      tags: [createCollectionTag("releases")],
+    }),
+  ]);
 
   const socialMedia = siteConfig?.socialMedia ?? [];
   const streamingLinks: SocialMediaLink[] = socialMedia
@@ -100,9 +108,9 @@ export default async function StaticLayout({
 
   return (
     <>
-      <Header streamingLinks={streamingLinks} />
+      <Header streamingLinks={streamingLinks} releases={releasesList} />
       {children}
-      <Footer siteConfig={siteConfig} />
+      <Footer siteConfig={siteConfig} releases={releasesList} />
       <GoogleAnalytics gaId="G-CBPBRCTFZV" />
       <MicrosoftClarity />
     </>

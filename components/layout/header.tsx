@@ -3,12 +3,17 @@ import { SocialIcon } from "@/components/shared/social-links";
 import type { SocialMediaLink } from "@/components/shared/social-links";
 import { DesktopNav } from "@/components/layout/desktop-nav";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";
 
 type HeaderProps = {
   streamingLinks?: SocialMediaLink[];
+  releases?: RELEASES_LIST_QUERY_RESULT;
 };
 
-export function Header({ streamingLinks = [] }: HeaderProps) {
+export function Header({
+  streamingLinks = [],
+  releases = [],
+}: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <nav
@@ -20,7 +25,7 @@ export function Header({ streamingLinks = [] }: HeaderProps) {
             <Logo />
           </div>
           <div className="hidden h-5 w-px bg-border md:block" />
-          <DesktopNav streamingLinks={streamingLinks} />
+          <DesktopNav streamingLinks={streamingLinks} releases={releases} />
         </div>
         <div className="flex items-center gap-2">
           {streamingLinks.length > 0 && (
@@ -38,7 +43,7 @@ export function Header({ streamingLinks = [] }: HeaderProps) {
               ))}
             </div>
           )}
-          <MobileNav streamingLinks={streamingLinks} />
+          <MobileNav streamingLinks={streamingLinks} releases={releases} />
         </div>
       </nav>
     </header>
