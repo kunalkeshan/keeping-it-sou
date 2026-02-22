@@ -238,32 +238,41 @@ export const releases = defineType({
       initialValue: false,
       description: "Feature this release prominently on the site",
     }),
-    defineField({
-      name: "order",
-      title: "Display Order",
-      type: "number",
-      group: "metadata",
-      description:
-        "Optional number to control the display order of releases. Lower numbers appear first.",
-    }),
   ],
   preview: {
     select: {
       title: "title",
       media: "coverImage",
       releaseType: "releaseType.name",
-      artists: "artists",
       featured: "featured",
       releaseDate: "releaseDate",
     },
-    prepare({ title, media, releaseType, artists, featured, releaseDate }) {
-      const artistNames = artists
-        ?.map((artist: any) => artist.name || artist._ref)
-        .join(", ");
+    prepare({ title, media, releaseType, featured, releaseDate }) {
       const subtitleParts = [
         releaseType && `Type: ${releaseType}`,
-        artistNames && `Artists: ${artistNames}`,
-        releaseDate && `Released: ${releaseDate}`,
+        releaseDate &&
+          (() => {
+            // Use user's timezone via Intl if in browser, otherwise fallback to ISO
+            if (
+              typeof window !== "undefined" &&
+              typeof navigator !== "undefined"
+            ) {
+              const dateObj = new Date(releaseDate);
+              // fallback to short if medium not supported
+              const locale = navigator.language || "en-US";
+              try {
+                return `Released: ${dateObj.toLocaleDateString(locale, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}`;
+              } catch {
+                return `Released: ${dateObj.toLocaleDateString()}`;
+              }
+            } else {
+              return `Released: ${releaseDate}`;
+            }
+          })(),
       ].filter(Boolean);
 
       return {
@@ -278,11 +287,6 @@ export const releases = defineType({
       title: "Featured First",
       name: "featuredDesc",
       by: [{ field: "featured", direction: "desc" }],
-    },
-    {
-      title: "Display Order",
-      name: "orderAsc",
-      by: [{ field: "order", direction: "asc" }],
     },
     {
       title: "Release Date (Newest)",

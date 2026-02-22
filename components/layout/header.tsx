@@ -20,7 +20,7 @@ export function Header({ streamingLinks = [] }: HeaderProps) {
             <Logo />
           </div>
           <div className="hidden h-5 w-px bg-border md:block" />
-          <DesktopNav />
+          <DesktopNav streamingLinks={streamingLinks} />
         </div>
         <div className="flex items-center gap-2">
           {streamingLinks.length > 0 && (

@@ -8,8 +8,9 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { getSocialIcon } from "@/lib/social-media";
 import { NavigationMenu as NavigationMenuPrimitive } from "radix-ui";
-import { ArrowRight, ArrowRightIcon, type LucideIcon } from "lucide-react";
+import { ArrowRightIcon, type LucideIcon } from "lucide-react";
 import { useState } from "react";
 import {
   featuresLinks,
@@ -17,9 +18,14 @@ import {
   resourcesLinks,
   useCasesLinks,
 } from "@/constants/nav-links";
-import { GithubIcon, LinkItem, VercelIcon } from "@/components/layout/sheard";
+import { SocialIcon, type SocialMediaLink } from "@/components/shared/social-links";
+import { GithubIcon, LinkItem } from "@/components/layout/sheard";
 
-export function DesktopNav() {
+type DesktopNavProps = {
+  streamingLinks?: SocialMediaLink[];
+};
+
+export function DesktopNav({ streamingLinks = [] }: DesktopNavProps) {
   const [open, setOpen] = useState(false);
   return (
     <NavigationMenu
@@ -33,7 +39,7 @@ export function DesktopNav() {
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger className="bg-transparent px-2 text-muted-foreground hover:bg-transparent hover:text-foreground">
-            Products
+            Releases
           </NavigationMenuTrigger>
           <CustomNavigationMenuContent className="grid w-full grid-cols-3">
             <Section className="border-r" title="Features">
@@ -56,16 +62,8 @@ export function DesktopNav() {
                 </NavigationMenuPrimitive.Link>
               ))}
             </Section>
-            <Section title="Customer Stories">
-              <CustomerStory />
-              <NavigationMenuPrimitive.Link asChild>
-                <LinkItem
-                  description="Browse our success stories"
-                  href="#"
-                  icon={ArrowRight}
-                  label="Customer Stories"
-                />
-              </NavigationMenuPrimitive.Link>
+            <Section title="Listen Now">
+              <ListenNowSpotifyCard streamingLinks={streamingLinks} />
             </Section>
           </CustomNavigationMenuContent>
         </NavigationMenuItem>
@@ -131,33 +129,68 @@ export function DesktopNav() {
   );
 }
 
-function CustomerStory() {
+function ListenNowSpotifyCard({
+  streamingLinks,
+}: {
+  streamingLinks: SocialMediaLink[];
+}) {
+  const spotifyLink = streamingLinks.find((l) => l.platform === "spotify");
+  const otherStreamingLinks = streamingLinks.filter(
+    (l) => l.platform !== "spotify" && l.url
+  );
+
   return (
-    <NavigationMenuPrimitive.Link asChild>
-      <a
-        className="group flex h-56 cursor-pointer flex-col border-b px-8 py-4 hover:bg-accent dark:hover:bg-accent/50"
-        href="#"
-      >
-        <div className="flex items-center justify-between">
-          <div className="rounded-md bg-secondary px-2 py-1">
-            <p className="font-medium text-foreground text-xs">
-              Customer Story
-            </p>
-          </div>
-          <div className="rounded-full border p-1.5">
-            <ArrowRightIcon className="-rotate-45 size-3 transition-transform duration-300 group-hover:rotate-0" />
-          </div>
-        </div>
-        <div className="space-y-5 pt-8">
-          <VercelIcon className="size-6" />
-          <p className="font-medium text-2xl text-foreground/60">
-            How Vercel uses <br />{" "}
-            <span className="text-foreground">Efferd</span> to build <br />
-            their Web Design
+    <>
+      {!spotifyLink?.url ? (
+        <div className="border-b px-8 py-4">
+          <p className="text-muted-foreground text-sm">
+            Add Spotify in site settings to show here.
           </p>
         </div>
-      </a>
-    </NavigationMenuPrimitive.Link>
+      ) : (
+        <NavigationMenuPrimitive.Link asChild>
+          <a
+            className="group flex h-56 cursor-pointer flex-col border-b px-8 py-4 hover:bg-accent dark:hover:bg-accent/50"
+            href={spotifyLink.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="flex items-center justify-between">
+              <div className="rounded-md bg-secondary px-2 py-1">
+                <p className="font-medium text-foreground text-xs">
+                  Listen Now
+                </p>
+              </div>
+              <div className="rounded-full border p-1.5">
+                <ArrowRightIcon className="-rotate-45 size-3 transition-transform duration-300 group-hover:rotate-0" />
+              </div>
+            </div>
+            <div className="space-y-5 pt-8">
+              <div className="text-muted-foreground [&>svg]:size-6">
+                {getSocialIcon("spotify", "size-6")}
+              </div>
+              <p className="font-medium text-2xl text-foreground/60">
+                <span className="text-foreground">
+                  {spotifyLink.label ?? "Listen on Spotify"}
+                </span>
+              </p>
+            </div>
+          </a>
+        </NavigationMenuPrimitive.Link>
+      )}
+      {otherStreamingLinks.length > 0 && (
+        <div className="flex flex-wrap gap-3 border-b px-8 py-4">
+          {otherStreamingLinks.map((link) => (
+            <SocialIcon
+              key={link.platform}
+              href={link.url}
+              platform={link.platform}
+              label={link.label}
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
 

@@ -39,7 +39,7 @@ export const ARTIST_BY_SLUG_QUERY = defineQuery(`
     },
     website,
     order,
-    "releases": *[_type == "releases" && $slug in artists[].slug.current] | order(featured desc, order asc, releaseDate desc) {
+    "releases": *[_type == "releases" && $slug in artists[].slug.current] | order(featured desc, releaseDate desc) {
       _id,
       title,
       slug,
@@ -59,8 +59,7 @@ export const ARTIST_BY_SLUG_QUERY = defineQuery(`
         url,
         customLabel
       },
-      featured,
-      order
+      featured
     },
     _createdAt,
     _updatedAt
