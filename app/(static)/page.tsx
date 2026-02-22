@@ -1,4 +1,5 @@
 import Hero from "@/components/home/hero";
+import HeroTrvns from "@/components/home/hero-trvns";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import { createCollectionTag } from "@/sanity/lib/cache-tags";
@@ -55,8 +56,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Hero
-        title={siteConfig?.title ?? "Keeping it Sou"}
+      <HeroTrvns
         streamingLinks={streamingLinks}
         socialLinks={socialLinks}
       />
