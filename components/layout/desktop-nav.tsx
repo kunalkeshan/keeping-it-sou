@@ -50,24 +50,35 @@ export function DesktopNav({
           <NavigationMenuTrigger className="bg-transparent px-2 text-muted-foreground hover:bg-transparent hover:text-foreground">
             Releases
           </NavigationMenuTrigger>
-          <CustomNavigationMenuContent className="grid w-full grid-cols-2">
+          <CustomNavigationMenuContent className="grid w-full grid-cols-1 md:grid-cols-[3fr_1fr]">
             <Section className="border-r" title="Releases">
-              {releaseItems.map((item) => (
-                <NavigationMenuPrimitive.Link asChild key={item.href}>
-                  <ReleaseLinkRow item={item} />
-                </NavigationMenuPrimitive.Link>
-              ))}
-              <NavigationMenuPrimitive.Link asChild>
-                <Link
-                  className="group flex h-14 w-full items-center gap-x-3 border-b px-3 hover:bg-accent dark:hover:bg-accent/50"
-                  href="/releases"
-                >
-                  <span className="font-medium text-sm text-primary">
-                    View more
-                  </span>
-                  <ArrowRightIcon className="size-4" />
-                </Link>
-              </NavigationMenuPrimitive.Link>
+              <div className="grid grid-cols-2">
+                <div className="border-r">
+                  {releaseItems.slice(0, 5).map((item) => (
+                    <NavigationMenuPrimitive.Link asChild key={item.href}>
+                      <ReleaseLinkRow item={item} />
+                    </NavigationMenuPrimitive.Link>
+                  ))}
+                </div>
+                <div>
+                  {releaseItems.slice(5, 9).map((item) => (
+                    <NavigationMenuPrimitive.Link asChild key={item.href}>
+                      <ReleaseLinkRow item={item} />
+                    </NavigationMenuPrimitive.Link>
+                  ))}
+                  <NavigationMenuPrimitive.Link asChild>
+                    <Link
+                      className="group flex h-14 w-full items-center gap-x-3 border-b px-3 hover:bg-accent dark:hover:bg-accent/50"
+                      href="/releases"
+                    >
+                      <span className="font-medium text-sm text-primary">
+                        View more
+                      </span>
+                      <ArrowRightIcon className="size-4" />
+                    </Link>
+                  </NavigationMenuPrimitive.Link>
+                </div>
+              </div>
             </Section>
             <Section title="Listen Now">
               <ListenNowSpotifyCard streamingLinks={streamingLinks} />

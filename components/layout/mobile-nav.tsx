@@ -134,12 +134,13 @@ export function MobileNav({
       {open && (
         <Portal
           className={cn(
-            "fixed inset-0 top-[calc(3.5rem+1px)] z-40 grid h-screen overflow-hidden bg-black/20 pb-14 md:hidden"
+            "fixed inset-0 top-[calc(3.5rem+1px)] z-40 flex flex-col bg-black/20 md:hidden"
           )}
+          style={{ height: "calc(100vh - 3.5rem - 1px)" }}
         >
           <div
             className={cn(
-              "h-max overflow-y-auto border-b bg-background pb-4",
+              "flex-1 min-h-0 overflow-y-auto overflow-x-hidden border-b bg-background pb-4 overscroll-contain",
               "data-[slot=open]:slide-in-from-top-10 ease-out data-[slot=open]:animate-in"
             )}
             data-slot={open ? "open" : "closed"}

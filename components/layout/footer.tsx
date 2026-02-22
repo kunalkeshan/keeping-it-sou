@@ -23,24 +23,11 @@ function FooterReleaseLink({ item }: { item: ReleaseNavItem }) {
   return (
     <Link
       href={item.href}
-      className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+      className="text-sm hover:text-primary transition-colors"
     >
-      {item.imageUrl ? (
-        <img
-          src={item.imageUrl}
-          alt=""
-          className="size-8 shrink-0 rounded object-cover"
-          width={32}
-          height={32}
-        />
-      ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-xs">
-          —
-        </span>
-      )}
       <span className="font-medium">{item.title}</span>
       {item.subText ? (
-        <span className="text-muted-foreground">· {item.subText}</span>
+        <span className="text-muted-foreground"> · {item.subText}</span>
       ) : null}
     </Link>
   );
