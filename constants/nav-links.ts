@@ -22,12 +22,8 @@ import type { LinkItemType } from "@/components/layout/sheard";
 
 export const navLinks = [
   {
-    label: "Docs",
-    href: "#",
-  },
-  {
-    label: "Pricing",
-    href: "#",
+    label: "About",
+    href: "/#about",
   },
 ];
 

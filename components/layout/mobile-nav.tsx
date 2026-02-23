@@ -169,6 +169,7 @@ export function MobileNav({
                   </Link>
                 </AccordionContent>
               </AccordionItem>
+              {/* Resources accordion commented out for now; restore when needed
               <AccordionItem className="border-b-0" value={resourcesSection.id}>
                 <AccordionTrigger className="rounded-none border-b px-6 hover:no-underline">
                   {resourcesSection.name}
@@ -183,6 +184,7 @@ export function MobileNav({
                   ))}
                 </AccordionContent>
               </AccordionItem>
+              */}
             </Accordion>
             {navLinks.map((link, i) => (
               <LinkItem

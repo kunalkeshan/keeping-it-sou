@@ -85,6 +85,7 @@ export function DesktopNav({
             </Section>
           </CustomNavigationMenuContent>
         </NavigationMenuItem>
+        {/* Resources dropdown commented out for now; restore when needed
         <NavigationMenuItem>
           <NavigationMenuTrigger className="bg-transparent px-2 text-muted-foreground hover:bg-transparent hover:text-foreground">
             Resources
@@ -129,6 +130,7 @@ export function DesktopNav({
             </Section>
           </CustomNavigationMenuContent>
         </NavigationMenuItem>
+        */}
         {navLinks.map((link, i) => (
           <NavigationMenuLink asChild key={`${link.label}-${i}`}>
             <a

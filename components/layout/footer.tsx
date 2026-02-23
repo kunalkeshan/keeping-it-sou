@@ -145,7 +145,7 @@ export default function Footer({
             </ul>
           </div>
 
-          {/* Resources Section */}
+          {/* Resources Section commented out for now; restore when needed
           <div className="col-span-6 md:col-span-4 lg:col-span-3">
             <h3 className="font-semibold text-lg mb-4">Resources</h3>
             <ul className="space-y-3">
@@ -160,6 +160,22 @@ export default function Footer({
                   </Link>
                 </li>
               ))}
+            </ul>
+          </div>
+          */}
+
+          {/* More Section */}
+          <div className="col-span-6 md:col-span-4 lg:col-span-3">
+            <h3 className="font-semibold text-lg mb-4">More</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link
+                  href="/#about"
+                  className="text-sm hover:text-primary transition-colors"
+                >
+                  About
+                </Link>
+              </li>
             </ul>
           </div>
 
