@@ -1,8 +1,13 @@
 import Hero from "@/components/home/hero";
+import LatestReleases from "@/components/home/latest-releases";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
+import { RELEASES_LIST_QUERY } from "@/sanity/queries/releases";
 import { createCollectionTag } from "@/sanity/lib/cache-tags";
-import type { SITE_CONFIG_QUERY_RESULT } from "@/types/cms";
+import type {
+  SITE_CONFIG_QUERY_RESULT,
+  RELEASES_LIST_QUERY_RESULT,
+} from "@/types/cms";
 import {
   isStreamingPlatform,
   isSupportedPlatform,
@@ -10,10 +15,18 @@ import {
 } from "@/lib/social-media";
 
 export default async function Home() {
-  const siteConfig = await sanityFetch<SITE_CONFIG_QUERY_RESULT>({
-    query: SITE_CONFIG_QUERY,
-    tags: [createCollectionTag("siteConfig")],
-  });
+  const [siteConfig, releases] = await Promise.all([
+    sanityFetch<SITE_CONFIG_QUERY_RESULT>({
+      query: SITE_CONFIG_QUERY,
+      tags: [createCollectionTag("siteConfig")],
+    }),
+    sanityFetch<RELEASES_LIST_QUERY_RESULT>({
+      query: RELEASES_LIST_QUERY,
+      tags: [createCollectionTag("releases")],
+    }),
+  ]);
+
+  const latestReleases = (releases ?? []).slice(0, 4);
 
   // Filter and transform social media links
   const socialMedia = siteConfig?.socialMedia ?? [];
@@ -59,6 +72,7 @@ export default async function Home() {
         streamingLinks={streamingLinks}
         socialLinks={socialLinks}
       />
+      <LatestReleases releases={latestReleases} />
     </main>
   );
 }
