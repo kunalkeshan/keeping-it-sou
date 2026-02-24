@@ -25,6 +25,7 @@
       "headers": {
         "Authorization": "Bearer ${EFFERD_REGISTRY_TOKEN}"
       }
-    }
+    },
+    "@aceternity": "https://ui.aceternity.com/registry/{name}.json"
   }
 }

@@ -1,22 +1,60 @@
+"use client";
 // import Link from "next/link";
-import Image from "next/image";
+import { useRef, useState, useEffect } from "react";
+import { PixelatedCanvas } from "@/components/ui/pixelated-canvas";
 
 const QUOTE =
   "I'm Sou - Hip-Hop Artist and Producer. Dark Beats, Real Stories, and Raw Energy. No Gimmicks — Just Truth in Every Bar.";
 
+const ASPECT_RATIO = 800 / 1200;
+
 export default function About() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => {
+      const w = el.offsetWidth;
+      setDimensions({
+        width: w,
+        height: Math.round(w * ASPECT_RATIO),
+      });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <section className="relative w-full bg-black" id="about">
       {/* Image wrapper: full width on small screens, max-width + centered on wider; rounded to match platform */}
-      <div className="relative w-full max-w-6xl mx-auto overflow-hidden rounded-lg">
-        {/* Full image at natural height – no crop; width constrained on large screens only */}
-        <Image
+      <div
+        ref={containerRef}
+        className="relative w-full max-w-6xl mx-auto overflow-hidden rounded-lg"
+      >
+        <PixelatedCanvas
           src="/assets/about.jpg"
-          alt=""
-          width={1200}
-          height={800}
-          className="block w-full h-auto"
-          sizes="(min-width: 1152px) 1152px, 100vw"
+          width={dimensions.width}
+          height={dimensions.height}
+          cellSize={4}
+          dotScale={0.9}
+          shape="square"
+          backgroundColor="#000000"
+          dropoutStrength={0.1}
+          interactive
+          distortionStrength={0.1}
+          distortionRadius={200}
+          distortionMode="repel"
+          followSpeed={0.2}
+          jitterStrength={4}
+          jitterSpeed={1}
+          sampleAverage
+          fadeOnLeave
+          fadeSpeed={0.15}
+          className="rounded-lg"
         />
         {/* Dark gradient overlay for text readability (stronger at top) */}
         <div
@@ -28,8 +66,8 @@ export default function About() {
           }}
         />
 
-        {/* Content: top-aligned, centered, over the image */}
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-start pt-12 sm:pt-16 lg:pt-24 pb-24">
+        {/* Content: top-aligned, centered, over the image; pointer-events-none so canvas receives hover */}
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-start pt-12 sm:pt-16 lg:pt-24 pb-24 pointer-events-none">
           <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <blockquote className="text-white text-sm md:text-xl lg:text-2xl font-medium uppercase tracking-wide leading-relaxed">
               &ldquo;{QUOTE}&rdquo;
