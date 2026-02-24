@@ -27,9 +27,11 @@ const NAV_RELEASES_LIMIT = 9;
 function MobileReleaseLinkRow({
   item,
   className,
+  onNavigate,
 }: {
   item: ReleaseNavItem;
   className?: string;
+  onNavigate?: () => void;
 }) {
   return (
     <Link
@@ -38,6 +40,7 @@ function MobileReleaseLinkRow({
         className
       )}
       href={item.href}
+      onClick={onNavigate}
     >
       {item.imageUrl ? (
         <img
@@ -156,11 +159,13 @@ export function MobileNav({
                       key={item.href}
                       item={item}
                       className="px-8"
+                      onNavigate={() => setOpen(false)}
                     />
                   ))}
                   <Link
                     className="group flex h-14 w-full items-center gap-x-3 border-b px-8 hover:bg-accent dark:hover:bg-accent/50"
                     href="/releases"
+                    onClick={() => setOpen(false)}
                   >
                     <span className="font-medium text-sm text-primary">
                       View more
@@ -191,6 +196,7 @@ export function MobileNav({
                 className="px-6"
                 key={`mobile-${link.label}-${i}`}
                 {...link}
+                onClick={() => setOpen(false)}
               />
             ))}
             {streamingLinks.length > 0 && (
