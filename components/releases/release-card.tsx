@@ -16,7 +16,7 @@ export default function ReleaseCard({
   href,
   imageUrl,
   alt = "",
-  showTitle = false,
+  showTitle = true,
 }: ReleaseCardProps) {
   return (
     <Link
