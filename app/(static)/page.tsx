@@ -1,5 +1,6 @@
 import Hero from "@/components/home/hero";
 import LatestReleases from "@/components/home/latest-releases";
+import About from "@/components/home/about";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import { RELEASES_LIST_QUERY } from "@/sanity/queries/releases";
@@ -73,6 +74,7 @@ export default async function Home() {
         socialLinks={socialLinks}
       />
       <LatestReleases releases={latestReleases} />
+      <About />
     </main>
   );
 }
