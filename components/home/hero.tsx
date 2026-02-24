@@ -41,7 +41,7 @@ export default function Hero({
             className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none"
             aria-hidden
           >
-            <div className="relative w-full max-w-[240px] lg:max-w-[300px] h-[220px] lg:h-[300px]">
+            <div className="relative w-full max-w-[240px] lg:max-w-[300px] h-[220px] lg:h-[300px] animate-float">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/assets/sou-float.png"
