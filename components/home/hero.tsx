@@ -1,5 +1,3 @@
-import Image from "next/image";
-import { Icon } from "@iconify/react";
 import {
   getSocialIcon,
   getPlatformLabel,
@@ -14,117 +12,110 @@ interface SocialMediaLink {
 }
 
 interface HeroProps {
-  title?: string;
   streamingLinks: SocialMediaLink[];
   socialLinks: SocialMediaLink[];
+  title?: string;
 }
 
-// Album details - update these as needed
-const ALBUM_NAME = "From Hodges";
+const PLACEHOLDER_TITLE = "Keeping it Sou";
 
 export default function Hero({
-  title = "Keeping it Sou",
   streamingLinks,
   socialLinks,
+  title = PLACEHOLDER_TITLE,
 }: HeroProps) {
   return (
-    <section className="min-h-screen lg:h-screen bg-background flex items-center">
+    <section className="relative bg-background overflow-hidden">
       <LightRays
         count={6}
         color="rgba(255, 59, 59, 0.35)"
         blur={32}
         speed={16}
-        length="72vh"
+        length="60vh"
       />
-      <div className="container py-12 lg:py-8">
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Left - Album Cover */}
-          <div className="relative max-w-md lg:max-w-lg mx-auto lg:mx-0">
-            <div className="relative overflow-hidden rounded-sm shadow-xl">
-              <Image
-                src="/releases/from-hodges.jpeg"
-                alt={`${ALBUM_NAME} Album Cover`}
-                width={600}
-                height={600}
-                className="w-full aspect-square object-cover"
-                priority
+      <div className="container relative z-10 py-6 lg:py-8">
+        {/* Hero block: image behind text. Use native img for background layer to avoid Next/Image wrapper stacking issues. */}
+        <div className="relative min-h-[240px] lg:min-h-[360px] flex flex-col items-center justify-center">
+          {/* Layer 1: floating figure – native img so no extra stacking context; stays behind text */}
+          <div
+            className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none"
+            aria-hidden
+          >
+            <div className="relative w-full max-w-[240px] lg:max-w-[300px] h-[220px] lg:h-[300px] animate-float">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/assets/sou-float.png"
+                alt=""
+                width={137}
+                height={283}
+                className="absolute inset-0 w-full h-full object-contain object-center opacity-90"
+                loading="eager"
+                fetchPriority="high"
               />
             </div>
-            {/* Album Name */}
-            <h2 className="text-xl md:text-2xl font-sans font-bold text-foreground mt-4">
-              {ALBUM_NAME}
-            </h2>
           </div>
 
-          {/* Right - Title, Streaming Links & Social Media */}
-          <div className="flex flex-col gap-6">
-            {/* Site Title */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-sans font-bold text-foreground tracking-tight">
-              {title}
+          {/* Layer 2: text on top – higher z-index and isolation so it always paints above */}
+          <div
+            className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto px-4"
+            style={{ isolation: "isolate" }}
+          >
+            <p className="text-foreground text-sm uppercase tracking-widest mb-4 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+              Hip-Hop Artist
+            </p>
+            {/* Solid headline so it's always readable; image stays behind */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-sans font-bold tracking-tight uppercase text-foreground drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+              &ldquo;{title}&rdquo;
             </h1>
-
-            {/* Album Section */}
-            <div>
-              <p className="text-muted-foreground text-sm uppercase tracking-widest mb-1">
-                EP
-              </p>
-              <p className="text-foreground text-lg font-medium">
-                {ALBUM_NAME}
-              </p>
-            </div>
-
-            {/* Streaming Links */}
-            {streamingLinks.length > 0 && (
-              <div>
-                <p className="text-muted-foreground text-sm uppercase tracking-widest mb-4">
-                  Listen Now
-                </p>
-                <div className="flex flex-col gap-3">
-                  {streamingLinks.map((link) => (
-                    <StreamingLink
-                      key={link.platform}
-                      platform={link.platform}
-                      href={link.url}
-                      label={link.label}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Social Media */}
-            {socialLinks.length > 0 && (
-              <div className="pt-6 border-t border-border">
-                <p className="text-muted-foreground text-sm uppercase tracking-widest mb-4">
-                  Follow Me
-                </p>
-                <div className="flex gap-3 flex-wrap">
-                  {socialLinks.map((link) => (
-                    <SocialIcon
-                      key={link.platform}
-                      href={link.url}
-                      platform={link.platform}
-                      label={link.label}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Subline – add content later */}
+            {/* <p className="text-xl md:text-2xl text-foreground/90 font-medium uppercase mt-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+              is out now
+            </p> */}
           </div>
+        </div>
+
+        {/* Streaming + social below the hero block */}
+        <div className="flex flex-col items-center text-center max-w-4xl mx-auto mt-6">
+          {/* Streaming - TRVNS-style buttons in a row */}
+          {streamingLinks.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-3 flex-wrap justify-center">
+              {streamingLinks.map((link) => (
+                <StreamingButton
+                  key={link.platform}
+                  platform={link.platform}
+                  href={link.url}
+                  label={link.label}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Social row */}
+          {socialLinks.length > 0 && (
+            <div className="flex gap-3 flex-wrap justify-center pt-6 mt-6 border-t border-border">
+              {socialLinks.map((link) => (
+                <SocialIcon
+                  key={link.platform}
+                  href={link.url}
+                  platform={link.platform}
+                  label={link.label}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
   );
 }
 
-interface StreamingLinkProps {
+interface StreamingButtonProps {
   platform: SupportedSocialPlatform;
   href: string;
   label?: string | null;
 }
 
-function StreamingLink({ platform, href, label }: StreamingLinkProps) {
+function StreamingButton({ platform, href, label }: StreamingButtonProps) {
   const displayLabel = label || getPlatformLabel(platform);
 
   return (
@@ -132,18 +123,10 @@ function StreamingLink({ platform, href, label }: StreamingLinkProps) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-3 p-3 bg-card hover:bg-accent rounded-sm border border-border transition-all duration-300 hover:border-primary/50"
+      className="inline-flex items-center gap-2 px-5 py-3 bg-primary text-primary-foreground font-medium rounded-sm hover:opacity-90 transition-opacity uppercase text-sm tracking-wide"
     >
-      <div className="w-8 h-8 flex items-center justify-center text-foreground group-hover:text-primary transition-colors">
-        {getSocialIcon(platform, "size-5")}
-      </div>
-      <span className="text-foreground font-medium group-hover:text-primary transition-colors">
-        {displayLabel}
-      </span>
-      <Icon
-        icon="lucide:arrow-right"
-        className="size-5 ml-auto text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all"
-      />
+      {getSocialIcon(platform, "size-5")}
+      <span>Listen on {displayLabel}</span>
     </a>
   );
 }

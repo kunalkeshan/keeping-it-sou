@@ -13,30 +13,18 @@
  */
 
 // Source: schema.json
-export type Faqs = {
-  _id: string;
-  _type: "faqs";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  faqItems?: Array<{
-    question?: string;
-    answer?: string;
-    _key: string;
-  }>;
+export type ReleaseTypeReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "releaseType";
 };
 
-export type Legal = {
-  _id: string;
-  _type: "legal";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  slug?: Slug;
-  description?: string;
-  content?: BlockContent;
+export type ArtistReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "artist";
 };
 
 export type SanityImageAssetReference = {
@@ -44,6 +32,62 @@ export type SanityImageAssetReference = {
   _type: "reference";
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
+export type ReleasesReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "releases";
+};
+
+export type Releases = {
+  _id: string;
+  _type: "releases";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  description?: BlockContent;
+  releaseType?: ReleaseTypeReference;
+  artists?: Array<
+    {
+      _key: string;
+    } & ArtistReference
+  >;
+  coverImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  releaseDate?: string;
+  streamingLinks?: Array<{
+    platform?:
+      | "spotify"
+      | "apple-music"
+      | "youtube-music"
+      | "soundcloud"
+      | "bandcamp"
+      | "tidal"
+      | "amazon-music"
+      | "deezer"
+      | "custom";
+    url?: string;
+    customLabel?: string;
+    _key: string;
+  }>;
+  credits?: BlockContent;
+  referencesOtherReleases?: boolean;
+  referencedReleases?: Array<
+    {
+      _key: string;
+    } & ReleasesReference
+  >;
+  featured?: boolean;
 };
 
 export type BlockContent = Array<
@@ -84,10 +128,102 @@ export type BlockContent = Array<
     } & IconManager)
 >;
 
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
 export type Slug = {
   _type: "slug";
   current?: string;
   source?: string;
+};
+
+export type Artist = {
+  _id: string;
+  _type: "artist";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  bio?: BlockContent;
+  profileImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  socialLinks?: Array<{
+    platform?:
+      | "twitter"
+      | "youtube"
+      | "instagram"
+      | "facebook"
+      | "tiktok"
+      | "linkedin"
+      | "spotify"
+      | "applemusic"
+      | "youtubemusic"
+      | "soundcloud"
+      | "bandcamp";
+    url?: string;
+    label?: string;
+    _key: string;
+  }>;
+  website?: string;
+  order?: number;
+};
+
+export type ReleaseType = {
+  _id: string;
+  _type: "releaseType";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  description?: string;
+  order?: number;
+};
+
+export type Faqs = {
+  _id: string;
+  _type: "faqs";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  faqItems?: Array<{
+    question?: string;
+    answer?: string;
+    _key: string;
+  }>;
+};
+
+export type Legal = {
+  _id: string;
+  _type: "legal";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  description?: string;
+  content?: BlockContent;
 };
 
 export type LegalReference = {
@@ -159,22 +295,6 @@ export type SiteConfig = {
       _key: string;
     } & LegalReference
   >;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
 };
 
 export type IconManager = {
@@ -331,15 +451,21 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
-  | Faqs
-  | Legal
+  | ReleaseTypeReference
+  | ArtistReference
   | SanityImageAssetReference
+  | ReleasesReference
+  | Releases
   | BlockContent
-  | Slug
-  | LegalReference
-  | SiteConfig
   | SanityImageCrop
   | SanityImageHotspot
+  | Slug
+  | Artist
+  | ReleaseType
+  | Faqs
+  | Legal
+  | LegalReference
+  | SiteConfig
   | IconManager
   | IconManagerMetadata
   | IconManagerColor
@@ -363,6 +489,171 @@ type ArrayOf<T> = Array<
     _key: string;
   }
 >;
+
+// Source: sanity/queries/artists.ts
+// Variable: ALL_ARTISTS_QUERY
+// Query: *[_type == "artist"] | order(order asc, name asc) {    _id,    name,    slug,    bio,    profileImage {      asset->,      alt    },    socialLinks[] {      platform,      url,      label    },    website,    order,    _createdAt,    _updatedAt  }
+export type ALL_ARTISTS_QUERY_RESULT = Array<{
+  _id: string;
+  name: string | null;
+  slug: Slug | null;
+  bio: BlockContent | null;
+  profileImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  socialLinks: Array<{
+    platform:
+      | "applemusic"
+      | "bandcamp"
+      | "facebook"
+      | "instagram"
+      | "linkedin"
+      | "soundcloud"
+      | "spotify"
+      | "tiktok"
+      | "twitter"
+      | "youtube"
+      | "youtubemusic"
+      | null;
+    url: string | null;
+    label: string | null;
+  }> | null;
+  website: string | null;
+  order: number | null;
+  _createdAt: string;
+  _updatedAt: string;
+}>;
+
+// Source: sanity/queries/artists.ts
+// Variable: ARTIST_BY_SLUG_QUERY
+// Query: *[_type == "artist" && slug.current == $slug][0] {    _id,    name,    slug,    bio,    profileImage {      asset->,      alt    },    socialLinks[] {      platform,      url,      label    },    website,    order,    "releases": *[_type == "releases" && $slug in artists[].slug.current] | order(featured desc, releaseDate desc) {      _id,      title,      slug,      description,      releaseType-> {        _id,        name,        slug      },      coverImage {        asset->,        alt      },      releaseDate,      streamingLinks[] {        platform,        url,        customLabel      },      featured    },    _createdAt,    _updatedAt  }
+export type ARTIST_BY_SLUG_QUERY_RESULT = {
+  _id: string;
+  name: string | null;
+  slug: Slug | null;
+  bio: BlockContent | null;
+  profileImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  socialLinks: Array<{
+    platform:
+      | "applemusic"
+      | "bandcamp"
+      | "facebook"
+      | "instagram"
+      | "linkedin"
+      | "soundcloud"
+      | "spotify"
+      | "tiktok"
+      | "twitter"
+      | "youtube"
+      | "youtubemusic"
+      | null;
+    url: string | null;
+    label: string | null;
+  }> | null;
+  website: string | null;
+  order: number | null;
+  releases: Array<{
+    _id: string;
+    title: string | null;
+    slug: Slug | null;
+    description: BlockContent | null;
+    releaseType: {
+      _id: string;
+      name: string | null;
+      slug: Slug | null;
+    } | null;
+    coverImage: {
+      asset: {
+        _id: string;
+        _type: "sanity.imageAsset";
+        _createdAt: string;
+        _updatedAt: string;
+        _rev: string;
+        originalFilename?: string;
+        label?: string;
+        title?: string;
+        description?: string;
+        altText?: string;
+        sha1hash?: string;
+        extension?: string;
+        mimeType?: string;
+        size?: number;
+        assetId?: string;
+        uploadId?: string;
+        path?: string;
+        url?: string;
+        metadata?: SanityImageMetadata;
+        source?: SanityAssetSourceData;
+      } | null;
+      alt: string | null;
+    } | null;
+    releaseDate: string | null;
+    streamingLinks: Array<{
+      platform:
+        | "amazon-music"
+        | "apple-music"
+        | "bandcamp"
+        | "custom"
+        | "deezer"
+        | "soundcloud"
+        | "spotify"
+        | "tidal"
+        | "youtube-music"
+        | null;
+      url: string | null;
+      customLabel: string | null;
+    }> | null;
+    featured: boolean | null;
+  }>;
+  _createdAt: string;
+  _updatedAt: string;
+} | null;
 
 // Source: sanity/queries/faqs.ts
 // Variable: FAQS_QUERY
@@ -405,6 +696,626 @@ export type LEGAL_DOCUMENT_BY_SLUG_QUERY_RESULT = {
   _createdAt: string;
   _updatedAt: string;
 } | null;
+
+// Source: sanity/queries/releaseTypes.ts
+// Variable: ALL_RELEASE_TYPES_QUERY
+// Query: *[_type == "releaseType"] | order(order asc, name asc) {    _id,    name,    slug,    description,    order,    _createdAt,    _updatedAt  }
+export type ALL_RELEASE_TYPES_QUERY_RESULT = Array<{
+  _id: string;
+  name: string | null;
+  slug: Slug | null;
+  description: string | null;
+  order: number | null;
+  _createdAt: string;
+  _updatedAt: string;
+}>;
+
+// Source: sanity/queries/releaseTypes.ts
+// Variable: RELEASE_TYPE_BY_SLUG_QUERY
+// Query: *[_type == "releaseType" && slug.current == $slug][0] {    _id,    name,    slug,    description,    order,    _createdAt,    _updatedAt  }
+export type RELEASE_TYPE_BY_SLUG_QUERY_RESULT = {
+  _id: string;
+  name: string | null;
+  slug: Slug | null;
+  description: string | null;
+  order: number | null;
+  _createdAt: string;
+  _updatedAt: string;
+} | null;
+
+// Source: sanity/queries/releases.ts
+// Variable: RELEASES_LIST_QUERY
+// Query: *[_type == "releases"] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    releaseType-> {      name    },    coverImage {      asset->,      alt    }  }
+export type RELEASES_LIST_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  releaseType: {
+    name: string | null;
+  } | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+}>;
+
+// Source: sanity/queries/releases.ts
+// Variable: ALL_RELEASES_QUERY
+// Query: *[_type == "releases"] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    credits,    featured,    referencesOtherReleases,    referencedReleases[]-> {      _id,      title,      slug,      coverImage {        asset->,        alt      },      releaseDate,      releaseType-> {        name,        slug      }    },    _createdAt,    _updatedAt  }
+export type ALL_RELEASES_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: BlockContent | null;
+  releaseType: {
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+  } | null;
+  artists: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+    profileImage: {
+      asset: {
+        _id: string;
+        _type: "sanity.imageAsset";
+        _createdAt: string;
+        _updatedAt: string;
+        _rev: string;
+        originalFilename?: string;
+        label?: string;
+        title?: string;
+        description?: string;
+        altText?: string;
+        sha1hash?: string;
+        extension?: string;
+        mimeType?: string;
+        size?: number;
+        assetId?: string;
+        uploadId?: string;
+        path?: string;
+        url?: string;
+        metadata?: SanityImageMetadata;
+        source?: SanityAssetSourceData;
+      } | null;
+      alt: string | null;
+    } | null;
+  }> | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  releaseDate: string | null;
+  streamingLinks: Array<{
+    platform:
+      | "amazon-music"
+      | "apple-music"
+      | "bandcamp"
+      | "custom"
+      | "deezer"
+      | "soundcloud"
+      | "spotify"
+      | "tidal"
+      | "youtube-music"
+      | null;
+    url: string | null;
+    customLabel: string | null;
+  }> | null;
+  credits: BlockContent | null;
+  featured: boolean | null;
+  referencesOtherReleases: boolean | null;
+  referencedReleases: Array<{
+    _id: string;
+    title: string | null;
+    slug: Slug | null;
+    coverImage: {
+      asset: {
+        _id: string;
+        _type: "sanity.imageAsset";
+        _createdAt: string;
+        _updatedAt: string;
+        _rev: string;
+        originalFilename?: string;
+        label?: string;
+        title?: string;
+        description?: string;
+        altText?: string;
+        sha1hash?: string;
+        extension?: string;
+        mimeType?: string;
+        size?: number;
+        assetId?: string;
+        uploadId?: string;
+        path?: string;
+        url?: string;
+        metadata?: SanityImageMetadata;
+        source?: SanityAssetSourceData;
+      } | null;
+      alt: string | null;
+    } | null;
+    releaseDate: string | null;
+    releaseType: {
+      name: string | null;
+      slug: Slug | null;
+    } | null;
+  }> | null;
+  _createdAt: string;
+  _updatedAt: string;
+}>;
+
+// Source: sanity/queries/releases.ts
+// Variable: RELEASE_BY_SLUG_QUERY
+// Query: *[_type == "releases" && slug.current == $slug][0] {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug,      description    },    artists[]-> {      _id,      name,      slug,      bio,      profileImage {        asset->,        alt      },      socialLinks[] {        platform,        url,        label      },      website    },    coverImage {      asset->,      alt    },    releaseDate,    tracklist[] {      trackTitle,      duration,      featuredArtists[]-> {        _id,        name,        slug,        profileImage {          asset->,          alt        }      },      description,      lyricsLink,      order    },    streamingLinks[] {      platform,      url,      customLabel    },    credits,    label,    catalogNumber,    featured,    referencesOtherReleases,    referencedReleases[]-> {      _id,      title,      slug,      description,      coverImage {        asset->,        alt      },      releaseDate,      releaseType-> {        name,        slug      },      artists[]-> {        _id,        name,        slug      },      streamingLinks[] {        platform,        url,        customLabel      }    },    _createdAt,    _updatedAt  }
+export type RELEASE_BY_SLUG_QUERY_RESULT = {
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: BlockContent | null;
+  releaseType: {
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+    description: string | null;
+  } | null;
+  artists: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+    bio: BlockContent | null;
+    profileImage: {
+      asset: {
+        _id: string;
+        _type: "sanity.imageAsset";
+        _createdAt: string;
+        _updatedAt: string;
+        _rev: string;
+        originalFilename?: string;
+        label?: string;
+        title?: string;
+        description?: string;
+        altText?: string;
+        sha1hash?: string;
+        extension?: string;
+        mimeType?: string;
+        size?: number;
+        assetId?: string;
+        uploadId?: string;
+        path?: string;
+        url?: string;
+        metadata?: SanityImageMetadata;
+        source?: SanityAssetSourceData;
+      } | null;
+      alt: string | null;
+    } | null;
+    socialLinks: Array<{
+      platform:
+        | "applemusic"
+        | "bandcamp"
+        | "facebook"
+        | "instagram"
+        | "linkedin"
+        | "soundcloud"
+        | "spotify"
+        | "tiktok"
+        | "twitter"
+        | "youtube"
+        | "youtubemusic"
+        | null;
+      url: string | null;
+      label: string | null;
+    }> | null;
+    website: string | null;
+  }> | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  releaseDate: string | null;
+  tracklist: null;
+  streamingLinks: Array<{
+    platform:
+      | "amazon-music"
+      | "apple-music"
+      | "bandcamp"
+      | "custom"
+      | "deezer"
+      | "soundcloud"
+      | "spotify"
+      | "tidal"
+      | "youtube-music"
+      | null;
+    url: string | null;
+    customLabel: string | null;
+  }> | null;
+  credits: BlockContent | null;
+  label: null;
+  catalogNumber: null;
+  featured: boolean | null;
+  referencesOtherReleases: boolean | null;
+  referencedReleases: Array<{
+    _id: string;
+    title: string | null;
+    slug: Slug | null;
+    description: BlockContent | null;
+    coverImage: {
+      asset: {
+        _id: string;
+        _type: "sanity.imageAsset";
+        _createdAt: string;
+        _updatedAt: string;
+        _rev: string;
+        originalFilename?: string;
+        label?: string;
+        title?: string;
+        description?: string;
+        altText?: string;
+        sha1hash?: string;
+        extension?: string;
+        mimeType?: string;
+        size?: number;
+        assetId?: string;
+        uploadId?: string;
+        path?: string;
+        url?: string;
+        metadata?: SanityImageMetadata;
+        source?: SanityAssetSourceData;
+      } | null;
+      alt: string | null;
+    } | null;
+    releaseDate: string | null;
+    releaseType: {
+      name: string | null;
+      slug: Slug | null;
+    } | null;
+    artists: Array<{
+      _id: string;
+      name: string | null;
+      slug: Slug | null;
+    }> | null;
+    streamingLinks: Array<{
+      platform:
+        | "amazon-music"
+        | "apple-music"
+        | "bandcamp"
+        | "custom"
+        | "deezer"
+        | "soundcloud"
+        | "spotify"
+        | "tidal"
+        | "youtube-music"
+        | null;
+      url: string | null;
+      customLabel: string | null;
+    }> | null;
+  }> | null;
+  _createdAt: string;
+  _updatedAt: string;
+} | null;
+
+// Source: sanity/queries/releases.ts
+// Variable: FEATURED_RELEASES_QUERY
+// Query: *[_type == "releases" && featured == true] | order(releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    featured  }
+export type FEATURED_RELEASES_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: BlockContent | null;
+  releaseType: {
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+  } | null;
+  artists: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+    profileImage: {
+      asset: {
+        _id: string;
+        _type: "sanity.imageAsset";
+        _createdAt: string;
+        _updatedAt: string;
+        _rev: string;
+        originalFilename?: string;
+        label?: string;
+        title?: string;
+        description?: string;
+        altText?: string;
+        sha1hash?: string;
+        extension?: string;
+        mimeType?: string;
+        size?: number;
+        assetId?: string;
+        uploadId?: string;
+        path?: string;
+        url?: string;
+        metadata?: SanityImageMetadata;
+        source?: SanityAssetSourceData;
+      } | null;
+      alt: string | null;
+    } | null;
+  }> | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  releaseDate: string | null;
+  streamingLinks: Array<{
+    platform:
+      | "amazon-music"
+      | "apple-music"
+      | "bandcamp"
+      | "custom"
+      | "deezer"
+      | "soundcloud"
+      | "spotify"
+      | "tidal"
+      | "youtube-music"
+      | null;
+    url: string | null;
+    customLabel: string | null;
+  }> | null;
+  featured: true;
+}>;
+
+// Source: sanity/queries/releases.ts
+// Variable: RELEASES_BY_TYPE_QUERY
+// Query: *[_type == "releases" && releaseType._ref == $releaseTypeId] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    featured  }
+export type RELEASES_BY_TYPE_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: BlockContent | null;
+  releaseType: {
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+  } | null;
+  artists: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+    profileImage: {
+      asset: {
+        _id: string;
+        _type: "sanity.imageAsset";
+        _createdAt: string;
+        _updatedAt: string;
+        _rev: string;
+        originalFilename?: string;
+        label?: string;
+        title?: string;
+        description?: string;
+        altText?: string;
+        sha1hash?: string;
+        extension?: string;
+        mimeType?: string;
+        size?: number;
+        assetId?: string;
+        uploadId?: string;
+        path?: string;
+        url?: string;
+        metadata?: SanityImageMetadata;
+        source?: SanityAssetSourceData;
+      } | null;
+      alt: string | null;
+    } | null;
+  }> | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  releaseDate: string | null;
+  streamingLinks: Array<{
+    platform:
+      | "amazon-music"
+      | "apple-music"
+      | "bandcamp"
+      | "custom"
+      | "deezer"
+      | "soundcloud"
+      | "spotify"
+      | "tidal"
+      | "youtube-music"
+      | null;
+    url: string | null;
+    customLabel: string | null;
+  }> | null;
+  featured: boolean | null;
+}>;
+
+// Source: sanity/queries/releases.ts
+// Variable: RELEASES_BY_ARTIST_QUERY
+// Query: *[_type == "releases" && $artistId in artists[]._ref] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    featured  }
+export type RELEASES_BY_ARTIST_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: BlockContent | null;
+  releaseType: {
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+  } | null;
+  artists: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+    profileImage: {
+      asset: {
+        _id: string;
+        _type: "sanity.imageAsset";
+        _createdAt: string;
+        _updatedAt: string;
+        _rev: string;
+        originalFilename?: string;
+        label?: string;
+        title?: string;
+        description?: string;
+        altText?: string;
+        sha1hash?: string;
+        extension?: string;
+        mimeType?: string;
+        size?: number;
+        assetId?: string;
+        uploadId?: string;
+        path?: string;
+        url?: string;
+        metadata?: SanityImageMetadata;
+        source?: SanityAssetSourceData;
+      } | null;
+      alt: string | null;
+    } | null;
+  }> | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  releaseDate: string | null;
+  streamingLinks: Array<{
+    platform:
+      | "amazon-music"
+      | "apple-music"
+      | "bandcamp"
+      | "custom"
+      | "deezer"
+      | "soundcloud"
+      | "spotify"
+      | "tidal"
+      | "youtube-music"
+      | null;
+    url: string | null;
+    customLabel: string | null;
+  }> | null;
+  featured: boolean | null;
+}>;
 
 // Source: sanity/queries/site-config.ts
 // Variable: SITE_CONFIG_QUERY
@@ -517,9 +1428,19 @@ export type FOOTER_LEGAL_LINKS_QUERY_RESULT = Array<{
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
+    '\n  *[_type == "artist"] | order(order asc, name asc) {\n    _id,\n    name,\n    slug,\n    bio,\n    profileImage {\n      asset->,\n      alt\n    },\n    socialLinks[] {\n      platform,\n      url,\n      label\n    },\n    website,\n    order,\n    _createdAt,\n    _updatedAt\n  }\n': ALL_ARTISTS_QUERY_RESULT;
+    '\n  *[_type == "artist" && slug.current == $slug][0] {\n    _id,\n    name,\n    slug,\n    bio,\n    profileImage {\n      asset->,\n      alt\n    },\n    socialLinks[] {\n      platform,\n      url,\n      label\n    },\n    website,\n    order,\n    "releases": *[_type == "releases" && $slug in artists[].slug.current] | order(featured desc, releaseDate desc) {\n      _id,\n      title,\n      slug,\n      description,\n      releaseType-> {\n        _id,\n        name,\n        slug\n      },\n      coverImage {\n        asset->,\n        alt\n      },\n      releaseDate,\n      streamingLinks[] {\n        platform,\n        url,\n        customLabel\n      },\n      featured\n    },\n    _createdAt,\n    _updatedAt\n  }\n': ARTIST_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "faqs"][0] {\n    ...,\n    faqItems[]{ ... }\n  }\n': FAQS_QUERY_RESULT;
     '\n  *[_type == "legal"] | order(_updatedAt desc) {\n    _id,\n    title,\n    slug,\n    description,\n    _createdAt,\n    _updatedAt\n  }\n': LEGAL_DOCUMENTS_QUERY_RESULT;
     '\n  *[_type == "legal" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    content,\n    _createdAt,\n    _updatedAt\n  }\n': LEGAL_DOCUMENT_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "releaseType"] | order(order asc, name asc) {\n    _id,\n    name,\n    slug,\n    description,\n    order,\n    _createdAt,\n    _updatedAt\n  }\n': ALL_RELEASE_TYPES_QUERY_RESULT;
+    '\n  *[_type == "releaseType" && slug.current == $slug][0] {\n    _id,\n    name,\n    slug,\n    description,\n    order,\n    _createdAt,\n    _updatedAt\n  }\n': RELEASE_TYPE_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "releases"] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    releaseType-> {\n      name\n    },\n    coverImage {\n      asset->,\n      alt\n    }\n  }\n': RELEASES_LIST_QUERY_RESULT;
+    '\n  *[_type == "releases"] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    credits,\n    featured,\n    referencesOtherReleases,\n    referencedReleases[]-> {\n      _id,\n      title,\n      slug,\n      coverImage {\n        asset->,\n        alt\n      },\n      releaseDate,\n      releaseType-> {\n        name,\n        slug\n      }\n    },\n    _createdAt,\n    _updatedAt\n  }\n': ALL_RELEASES_QUERY_RESULT;
+    '\n  *[_type == "releases" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug,\n      description\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      bio,\n      profileImage {\n        asset->,\n        alt\n      },\n      socialLinks[] {\n        platform,\n        url,\n        label\n      },\n      website\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    tracklist[] {\n      trackTitle,\n      duration,\n      featuredArtists[]-> {\n        _id,\n        name,\n        slug,\n        profileImage {\n          asset->,\n          alt\n        }\n      },\n      description,\n      lyricsLink,\n      order\n    },\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    credits,\n    label,\n    catalogNumber,\n    featured,\n    referencesOtherReleases,\n    referencedReleases[]-> {\n      _id,\n      title,\n      slug,\n      description,\n      coverImage {\n        asset->,\n        alt\n      },\n      releaseDate,\n      releaseType-> {\n        name,\n        slug\n      },\n      artists[]-> {\n        _id,\n        name,\n        slug\n      },\n      streamingLinks[] {\n        platform,\n        url,\n        customLabel\n      }\n    },\n    _createdAt,\n    _updatedAt\n  }\n': RELEASE_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "releases" && featured == true] | order(releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    featured\n  }\n': FEATURED_RELEASES_QUERY_RESULT;
+    '\n  *[_type == "releases" && releaseType._ref == $releaseTypeId] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    featured\n  }\n': RELEASES_BY_TYPE_QUERY_RESULT;
+    '\n  *[_type == "releases" && $artistId in artists[]._ref] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    featured\n  }\n': RELEASES_BY_ARTIST_QUERY_RESULT;
     '\n  *[_type == "siteConfig"][0] {\n    _id,\n    title,\n    description,\n    ogImage {\n      asset->,\n      alt\n    },\n    twitterImage {\n      asset->,\n      alt\n    },\n    phoneNumbers[] {\n      number,\n      label\n    },\n    emails[] {\n      email,\n      label\n    },\n    address {\n      street,\n      city,\n      state,\n      postalCode,\n      country\n    },\n    sitetiming,\n    socialMedia[] {\n      platform,\n      url,\n      label\n    },\n    footerLegalLinks[]-> {\n      _id,\n      title,\n      slug,\n      description\n    }\n  }\n': SITE_CONFIG_QUERY_RESULT;
     '\n  *[_type == "siteConfig"][0].footerLegalLinks[]-> {\n    _id,\n    title,\n    slug,\n    description,\n    _updatedAt\n  }\n': FOOTER_LEGAL_LINKS_QUERY_RESULT;
   }

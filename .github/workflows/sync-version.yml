@@ -1,0 +1,79 @@
+name: Sync package.json version with release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to set (e.g. v1.2.3 or 1.2.3). Leave empty to use latest release"
+        required: false
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Resolve version
+        run: |
+          echo "Event: ${{ github.event_name }}"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
+            TAG_NAME="${{ github.event.inputs.version }}"
+            echo "Using manual version: $TAG_NAME"
+
+          elif [ "${{ github.event_name }}" = "release" ]; then
+            TAG_NAME="${{ github.event.release.tag_name }}"
+            echo "Using release tag: $TAG_NAME"
+
+          else
+            echo "Fetching latest release from GitHub API..."
+            TAG_NAME=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)
+
+            if [ "$TAG_NAME" = "null" ] || [ -z "$TAG_NAME" ]; then
+              echo "No releases found, exiting"
+              exit 1
+            fi
+
+            echo "Using latest release tag: $TAG_NAME"
+          fi
+
+          echo "APP_VERSION=$TAG_NAME" >> $GITHUB_ENV
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Update package.json version
+        run: |
+          VERSION=${APP_VERSION#v}
+          npm version $VERSION --no-git-tag-version
+          echo "Updated version to $VERSION"
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: sync package.json version to ${{ env.APP_VERSION }}"
+          branch: chore/version-${{ env.APP_VERSION }}
+          title: "chore: sync version to ${{ env.APP_VERSION }}"
+          body: "Auto-generated version sync from release."
+          base: main
+
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number != ''
+        run: |
+          gh pr merge ${{ steps.cpr.outputs.pull-request-number }} --auto --squash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

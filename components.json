@@ -19,6 +19,13 @@
     "hooks": "@/hooks"
   },
   "registries": {
-    "@magicui": "https://magicui.design/r/{name}"
+    "@magicui": "https://magicui.design/r/{name}",
+    "@efferd": {
+      "url": "https://efferd.com/r/{name}.json",
+      "headers": {
+        "Authorization": "Bearer ${EFFERD_REGISTRY_TOKEN}"
+      }
+    },
+    "@aceternity": "https://ui.aceternity.com/registry/{name}.json"
   }
 }
