@@ -7,6 +7,7 @@ import type {
 import { ArrowRightIcon, Mail, Phone, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
 import { resourcesLinks } from "@/constants/nav-links";
+import { APP_VERSION } from "@/config/version";
 import {
   isStreamingPlatform,
   isSupportedPlatform,
@@ -271,7 +272,17 @@ export default function Footer({
 
             <p className="text-sm text-center md:text-right">
               &copy; {copyrightYear} {siteConfig?.title ?? "Keeping it Sou"}.
-              All rights reserved.
+              All rights reserved.{" "}
+              <span aria-hidden="true">•</span>{" "}
+              <Link
+                className="text-muted-foreground hover:text-primary transition-colors"
+                href="https://github.com/kunalkeshan/keeping-it-sou/releases/latest"
+                prefetch={false}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                v{APP_VERSION}
+              </Link>
             </p>
           </div>
         </div>
