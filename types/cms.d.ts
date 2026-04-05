@@ -762,6 +762,15 @@ export type RELEASES_LIST_QUERY_RESULT = Array<{
 }>;
 
 // Source: sanity/queries/releases.ts
+// Variable: SITEMAP_RELEASES_QUERY
+// Query: *[_type == "releases"] | order(featured desc, releaseDate desc) {    _id,    slug,    _updatedAt  }
+export type SITEMAP_RELEASES_QUERY_RESULT = Array<{
+  _id: string;
+  slug: Slug | null;
+  _updatedAt: string;
+}>;
+
+// Source: sanity/queries/releases.ts
 // Variable: ALL_RELEASES_QUERY
 // Query: *[_type == "releases"] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    credits,    featured,    referencesOtherReleases,    referencedReleases[]-> {      _id,      title,      slug,      coverImage {        asset->,        alt      },      releaseDate,      releaseType-> {        name,        slug      }    },    _createdAt,    _updatedAt  }
 export type ALL_RELEASES_QUERY_RESULT = Array<{
@@ -1436,6 +1445,7 @@ declare module "@sanity/client" {
     '\n  *[_type == "releaseType"] | order(order asc, name asc) {\n    _id,\n    name,\n    slug,\n    description,\n    order,\n    _createdAt,\n    _updatedAt\n  }\n': ALL_RELEASE_TYPES_QUERY_RESULT;
     '\n  *[_type == "releaseType" && slug.current == $slug][0] {\n    _id,\n    name,\n    slug,\n    description,\n    order,\n    _createdAt,\n    _updatedAt\n  }\n': RELEASE_TYPE_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "releases"] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    releaseType-> {\n      name\n    },\n    coverImage {\n      asset->,\n      alt\n    }\n  }\n': RELEASES_LIST_QUERY_RESULT;
+    '\n  *[_type == "releases"] | order(featured desc, releaseDate desc) {\n    _id,\n    slug,\n    _updatedAt\n  }\n': SITEMAP_RELEASES_QUERY_RESULT;
     '\n  *[_type == "releases"] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    credits,\n    featured,\n    referencesOtherReleases,\n    referencedReleases[]-> {\n      _id,\n      title,\n      slug,\n      coverImage {\n        asset->,\n        alt\n      },\n      releaseDate,\n      releaseType-> {\n        name,\n        slug\n      }\n    },\n    _createdAt,\n    _updatedAt\n  }\n': ALL_RELEASES_QUERY_RESULT;
     '\n  *[_type == "releases" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug,\n      description\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      bio,\n      profileImage {\n        asset->,\n        alt\n      },\n      socialLinks[] {\n        platform,\n        url,\n        label\n      },\n      website\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      _key,\n      platform,\n      url,\n      customLabel\n    },\n    videoUrl,\n    credits,\n    featured,\n    referencesOtherReleases,\n    referencedReleases[]-> {\n      _id,\n      title,\n      slug,\n      description,\n      coverImage {\n        asset->,\n        alt\n      },\n      releaseDate,\n      releaseType-> {\n        name,\n        slug\n      },\n      artists[]-> {\n        _id,\n        name,\n        slug\n      },\n      streamingLinks[] {\n        platform,\n        url,\n        customLabel\n      }\n    },\n    _createdAt,\n    _updatedAt\n  }\n': RELEASE_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "releases" && featured == true] | order(releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    featured\n  }\n': FEATURED_RELEASES_QUERY_RESULT;

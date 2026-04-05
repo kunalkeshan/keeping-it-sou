@@ -16,6 +16,15 @@ export const RELEASES_LIST_QUERY = defineQuery(`
   }
 `);
 
+/** Minimal fields for sitemap URLs and lastModified; order matches the releases index. */
+export const SITEMAP_RELEASES_QUERY = defineQuery(`
+  *[_type == "releases"] | order(featured desc, releaseDate desc) {
+    _id,
+    slug,
+    _updatedAt
+  }
+`);
+
 export const ALL_RELEASES_QUERY = defineQuery(`
   *[_type == "releases"] | order(featured desc, releaseDate desc) {
     _id,
