@@ -101,30 +101,14 @@ export const RELEASE_BY_SLUG_QUERY = defineQuery(`
       alt
     },
     releaseDate,
-    tracklist[] {
-      trackTitle,
-      duration,
-      featuredArtists[]-> {
-        _id,
-        name,
-        slug,
-        profileImage {
-          asset->,
-          alt
-        }
-      },
-      description,
-      lyricsLink,
-      order
-    },
     streamingLinks[] {
+      _key,
       platform,
       url,
       customLabel
     },
+    videoUrl,
     credits,
-    label,
-    catalogNumber,
     featured,
     referencesOtherReleases,
     referencedReleases[]-> {

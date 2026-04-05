@@ -27,6 +27,14 @@ const PLATFORM_ICONS: Record<string, string> = {
   spotify: "simple-icons:spotify",
   applemusic: "simple-icons:applemusic",
   youtubemusic: "simple-icons:youtubemusic",
+  // Streaming platform keys from the Sanity releases schema (hyphenated variants)
+  "apple-music": "simple-icons:applemusic",
+  "youtube-music": "simple-icons:youtubemusic",
+  soundcloud: "simple-icons:soundcloud",
+  bandcamp: "simple-icons:bandcamp",
+  tidal: "simple-icons:tidal",
+  "amazon-music": "simple-icons:amazonmusic",
+  deezer: "simple-icons:deezer",
 };
 
 export function getSocialIcon(platform: string, className = "size-4") {
@@ -64,6 +72,31 @@ export function getPlatformLabel(platform: string): string {
       return "Apple Music";
     case "youtubemusic":
       return "YouTube Music";
+    default:
+      return platform;
+  }
+}
+
+export function getStreamingPlatformLabel(platform: string): string {
+  switch (platform) {
+    case "spotify":
+      return "Spotify";
+    case "apple-music":
+    case "applemusic":
+      return "Apple Music";
+    case "youtube-music":
+    case "youtubemusic":
+      return "YouTube Music";
+    case "soundcloud":
+      return "SoundCloud";
+    case "bandcamp":
+      return "Bandcamp";
+    case "tidal":
+      return "Tidal";
+    case "amazon-music":
+      return "Amazon Music";
+    case "deezer":
+      return "Deezer";
     default:
       return platform;
   }
