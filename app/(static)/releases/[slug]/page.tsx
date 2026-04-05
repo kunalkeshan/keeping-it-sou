@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Play } from "lucide-react";
+import { PortableText } from "@portabletext/react";
+import { YouTubeEmbed } from "@next/third-parties/google";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import {
   RELEASE_BY_SLUG_QUERY,
@@ -15,6 +18,10 @@ import type {
   RELEASES_LIST_QUERY_RESULT,
 } from "@/types/cms";
 import { urlForSquare } from "@/sanity/lib/image";
+import { portableTextComponents } from "@/lib/portabletext-components";
+import { extractYouTubeId } from "@/lib/youtube";
+import StreamingLinks from "@/components/releases/streaming-links";
+import ReleaseCard from "@/components/releases/release-card";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -70,57 +77,160 @@ export default async function ReleasePage({ params }: Props) {
   }
 
   const coverUrl = release.coverImage
-    ? urlForSquare(release.coverImage, 512)
+    ? urlForSquare(release.coverImage, 800)
     : null;
   const title = release.title ?? "Untitled";
   const releaseTypeName = release.releaseType?.name ?? "";
+  const releaseYear = release.releaseDate
+    ? new Date(release.releaseDate).getFullYear()
+    : null;
+  const artists = release.artists ?? [];
+  const artistNames = artists
+    .map((a) => a.name)
+    .filter(Boolean)
+    .join(", ");
+  const streamingLinks = release.streamingLinks ?? [];
+  const primaryLink = streamingLinks[0] ?? null;
+  const videoId = release.videoUrl ? extractYouTubeId(release.videoUrl) : null;
+  const referencedReleases = release.referencedReleases ?? [];
 
   return (
-    <main className="container py-20">
-      <div className="max-w-3xl mx-auto">
-        <Link
-          href="/releases"
-          className="text-sm text-muted-foreground hover:text-primary mb-8 inline-block"
-        >
-          ← Back to Releases
-        </Link>
+    <main className="container py-16 md:py-20">
+      {/* Back link */}
+      <Link
+        href="/releases"
+        className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors mb-12 inline-block"
+      >
+        ← Back to Releases
+      </Link>
 
-        <header className="mb-8">
-          <div className="aspect-square max-w-xs mx-auto rounded-lg overflow-hidden bg-muted mb-6">
-            {coverUrl ? (
-              <img
-                src={coverUrl}
-                alt={release.coverImage?.alt ?? title}
-                className="size-full object-cover"
-                width={512}
-                height={512}
+      {/* ── HERO ── */}
+      <section className="grid md:grid-cols-2 gap-12 md:gap-16 mb-20 md:mb-28">
+        {/* Cover Art */}
+        <div className="aspect-square w-full overflow-hidden rounded-sm border border-border bg-muted">
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={release.coverImage?.alt ?? title}
+              className="size-full object-cover"
+              width={800}
+              height={800}
+            />
+          ) : (
+            <div className="size-full flex items-center justify-center text-muted-foreground text-sm">
+              —
+            </div>
+          )}
+        </div>
+
+        {/* Info Panel */}
+        <div className="flex flex-col justify-center gap-6">
+          {/* Type • Year */}
+          {(releaseTypeName || releaseYear) && (
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              {releaseTypeName}
+              {releaseTypeName && releaseYear ? " • " : ""}
+              {releaseYear}
+            </p>
+          )}
+
+          {/* Title */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+            {title}
+          </h1>
+
+          {/* Artists */}
+          {artistNames && (
+            <p className="text-muted-foreground text-base">{artistNames}</p>
+          )}
+
+          {/* Description */}
+          {release.description && release.description.length > 0 && (
+            <div>
+              <PortableText
+                value={release.description}
+                components={portableTextComponents}
               />
-            ) : (
-              <div className="size-full flex items-center justify-center text-muted-foreground">
-                —
-              </div>
-            )}
-          </div>
-          <h1 className="text-3xl font-bold">{title}</h1>
-          {releaseTypeName ? (
-            <p className="text-muted-foreground mt-1">{releaseTypeName}</p>
-          ) : null}
-          {release.releaseDate ? (
-            <p className="text-sm text-muted-foreground mt-1">
-              Released {new Date(release.releaseDate).toLocaleDateString()}
-            </p>
-          ) : null}
-        </header>
+            </div>
+          )}
 
-        {release.description && release.description.length > 0 ? (
-          <div className="prose prose-neutral dark:prose-invert max-w-none">
-            {/* TODO: PortableText when blockContent is used */}
-            <p className="text-muted-foreground">
-              Release detail content can be rendered here with PortableText.
-            </p>
+          {/* Listen Now CTA */}
+          {primaryLink?.url && (
+            <a
+              href={primaryLink.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 w-fit px-6 py-3 bg-primary text-white rounded-sm hover:bg-primary/80 transition-colors font-medium text-sm uppercase tracking-[0.1em]"
+            >
+              <Play className="size-4 fill-current" />
+              Listen Now
+            </a>
+          )}
+        </div>
+      </section>
+
+      {/* ── AVAILABLE ON ── */}
+      {streamingLinks.length > 0 && (
+        <section className="mb-16 md:mb-20">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+            Available On
+          </h2>
+          <StreamingLinks links={streamingLinks} />
+        </section>
+      )}
+
+      {/* ── OFFICIAL VIDEO ── */}
+      {release.videoUrl && videoId && (
+        <section className="mb-16 md:mb-20">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+            Official Video
+          </h2>
+          <div className="rounded-sm overflow-hidden border border-border">
+            <YouTubeEmbed videoid={videoId} style="max-width:100%" />
           </div>
-        ) : null}
-      </div>
+        </section>
+      )}
+
+      {/* ── CREDITS ── */}
+      {release.credits && release.credits.length > 0 && (
+        <section className="mb-16 md:mb-20">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+            Credits
+          </h2>
+          <div>
+            <PortableText
+              value={release.credits}
+              components={portableTextComponents}
+            />
+          </div>
+        </section>
+      )}
+
+      {/* ── REFERENCED RELEASES ── */}
+      {release.referencesOtherReleases && referencedReleases.length > 0 && (
+        <section>
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+            Also In This Release
+          </h2>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {referencedReleases.map((r) => {
+              const imgUrl = r.coverImage
+                ? urlForSquare(r.coverImage, 400)
+                : null;
+              return (
+                <li key={r._id}>
+                  <ReleaseCard
+                    title={r.title ?? "Untitled"}
+                    href={`/releases/${r.slug?.current ?? ""}`}
+                    imageUrl={imgUrl}
+                    alt={r.coverImage?.alt ?? r.title ?? ""}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
     </main>
   );
 }

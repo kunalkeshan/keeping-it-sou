@@ -175,7 +175,16 @@ export const releases = defineType({
           },
         },
       ],
-      description: "Add streaming platform links for this release",
+      description:
+        "Add streaming platform links for this release. The FIRST link in this list becomes the primary 'Listen Now' button on the release page.",
+    }),
+    defineField({
+      name: "videoUrl",
+      title: "Official Video URL",
+      type: "url",
+      group: "streaming",
+      description:
+        "Full YouTube URL for the official music video (e.g. https://youtube.com/watch?v=abc123). Displays a video player section on the release page.",
     }),
     defineField({
       name: "credits",

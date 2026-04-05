@@ -350,6 +350,13 @@
         },
         "optional": true
       },
+      "videoUrl": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "credits": {
         "type": "objectAttribute",
         "value": {
