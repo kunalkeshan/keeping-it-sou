@@ -82,7 +82,7 @@ export default async function ReleasePage({ params }: Props) {
   const title = release.title ?? "Untitled";
   const releaseTypeName = release.releaseType?.name ?? "";
   const releaseYear = release.releaseDate
-    ? new Date(release.releaseDate).getFullYear()
+    ? release.releaseDate.slice(0, 4)
     : null;
   const artists = release.artists ?? [];
   const artistNames = artists
@@ -92,7 +92,9 @@ export default async function ReleasePage({ params }: Props) {
   const streamingLinks = release.streamingLinks ?? [];
   const primaryLink = streamingLinks[0] ?? null;
   const videoId = release.videoUrl ? extractYouTubeId(release.videoUrl) : null;
-  const referencedReleases = release.referencedReleases ?? [];
+  const referencedReleases = (release.referencedReleases ?? []).filter(
+    (r) => r.slug?.current,
+  );
 
   return (
     <main className="container py-16 md:py-20">

@@ -102,6 +102,7 @@ export const RELEASE_BY_SLUG_QUERY = defineQuery(`
     },
     releaseDate,
     streamingLinks[] {
+      _key,
       platform,
       url,
       customLabel

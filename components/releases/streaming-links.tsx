@@ -1,6 +1,7 @@
 import { getSocialIcon, getStreamingPlatformLabel } from "@/lib/social-media";
 
 interface StreamingLink {
+  _key: string;
   platform: string | null;
   url: string | null;
   customLabel: string | null;
@@ -17,7 +18,7 @@ export default function StreamingLinks({ links }: StreamingLinksProps) {
 
   return (
     <div className="flex flex-wrap gap-3">
-      {validLinks.map((link, i) => {
+      {validLinks.map((link) => {
         const platform = link.platform ?? "custom";
         const label =
           platform === "custom" && link.customLabel
@@ -27,7 +28,7 @@ export default function StreamingLinks({ links }: StreamingLinksProps) {
 
         return (
           <a
-            key={i}
+            key={link._key}
             href={link.url!}
             target="_blank"
             rel="noopener noreferrer"
