@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
-import { RELEASES_LIST_QUERY } from "@/sanity/queries/releases";
 import { urlFor } from "@/sanity/lib/image";
-import { createCollectionTag } from "@/sanity/lib/cache-tags";
-import type { SiteConfig } from "@/types/cms";
-import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";
+import { getSiteConfig } from "@/sanity/queries/site-config";
+import { getReleasesList } from "@/sanity/queries/releases";
 import MicrosoftClarity from "@/components/analytics/clarity";
 import { Header } from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import type { SITE_CONFIG_QUERY_RESULT } from "@/types/cms";
 import {
   isStreamingPlatform,
   type SupportedSocialPlatform,
@@ -18,10 +13,7 @@ import {
 import type { SocialMediaLink } from "@/components/shared/social-links";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteConfig = await sanityFetch<SiteConfig>({
-    query: SITE_CONFIG_QUERY,
-    tags: [createCollectionTag("siteConfig")],
-  });
+  const siteConfig = await getSiteConfig();
 
   const title = siteConfig?.title || "Keeping It Sou";
   const description = siteConfig?.description || "Hip-Hop artist";
@@ -80,14 +72,8 @@ export default async function StaticLayout({
   children: React.ReactNode;
 }>) {
   const [siteConfig, releasesList] = await Promise.all([
-    sanityFetch<SITE_CONFIG_QUERY_RESULT>({
-      query: SITE_CONFIG_QUERY,
-      tags: [createCollectionTag("siteConfig")],
-    }),
-    sanityFetch<RELEASES_LIST_QUERY_RESULT>({
-      query: RELEASES_LIST_QUERY,
-      tags: [createCollectionTag("releases")],
-    }),
+    getSiteConfig(),
+    getReleasesList(),
   ]);
 
   const socialMedia = siteConfig?.socialMedia ?? [];

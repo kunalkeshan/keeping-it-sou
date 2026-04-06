@@ -177,6 +177,13 @@
         },
         "optional": true
       },
+      "shortDescription": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "releaseType": {
         "type": "objectAttribute",
         "value": {

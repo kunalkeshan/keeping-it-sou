@@ -4,20 +4,8 @@ import type { Metadata } from "next";
 import { Play } from "lucide-react";
 import { PortableText } from "@portabletext/react";
 import { YouTubeEmbed } from "@next/third-parties/google";
-import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import {
-  RELEASE_BY_SLUG_QUERY,
-  RELEASES_LIST_QUERY,
-} from "@/sanity/queries/releases";
-import {
-  createCollectionTag,
-  createDocumentTag,
-} from "@/sanity/lib/cache-tags";
-import type {
-  RELEASE_BY_SLUG_QUERY_RESULT,
-  RELEASES_LIST_QUERY_RESULT,
-} from "@/types/cms";
-import { urlForSquare } from "@/sanity/lib/image";
+import { getReleaseBySlug } from "@/sanity/queries/releases";
+import { urlFor, urlForSquare } from "@/sanity/lib/image";
 import { portableTextComponents } from "@/lib/portabletext-components";
 import { extractYouTubeId } from "@/lib/youtube";
 import StreamingLinks from "@/components/releases/streaming-links";
@@ -27,50 +15,52 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
-  const releases =
-    (await sanityFetch<RELEASES_LIST_QUERY_RESULT>({
-      query: RELEASES_LIST_QUERY,
-      tags: [createCollectionTag("releases")],
-    })) ?? [];
-
-  return releases
-    .filter((r) => r.slug?.current)
-    .map((r) => ({ slug: r.slug!.current }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-
-  const release = await sanityFetch<RELEASE_BY_SLUG_QUERY_RESULT>({
-    query: RELEASE_BY_SLUG_QUERY,
-    params: { slug },
-    tags: [
-      createCollectionTag("releases"),
-      createDocumentTag("releases", slug),
-    ],
-  });
+  const release = await getReleaseBySlug(slug);
 
   if (!release) {
     return { title: "Release Not Found" };
   }
 
+  const ogImageUrl = release.coverImage?.asset
+    ? urlFor(release.coverImage)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : undefined;
+
   return {
     title: release.title ?? undefined,
+    description: release.shortDescription ?? undefined,
+    alternates: { canonical: `/releases/${slug}` },
+    openGraph: {
+      url: `/releases/${slug}`,
+      ...(release.title && { title: release.title }),
+      ...(release.shortDescription && { description: release.shortDescription }),
+      ...(ogImageUrl && {
+        images: [
+          {
+            url: ogImageUrl,
+            alt: release.coverImage?.alt ?? release.title ?? "",
+          },
+        ],
+      }),
+    },
+    twitter: {
+      ...(release.title && { title: release.title }),
+      ...(release.shortDescription && { description: release.shortDescription }),
+      ...(ogImageUrl && { images: [ogImageUrl] }),
+    },
   };
 }
 
 export default async function ReleasePage({ params }: Props) {
   const { slug } = await params;
-
-  const release = await sanityFetch<RELEASE_BY_SLUG_QUERY_RESULT>({
-    query: RELEASE_BY_SLUG_QUERY,
-    params: { slug },
-    tags: [
-      createCollectionTag("releases"),
-      createDocumentTag("releases", slug),
-    ],
-  });
+  const release = await getReleaseBySlug(slug);
 
   if (!release) {
     notFound();

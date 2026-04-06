@@ -60,6 +60,15 @@ export const releases = defineType({
       description: "Release description and information",
     }),
     defineField({
+      name: "shortDescription",
+      title: "Short Description (SEO)",
+      type: "string",
+      group: "metadata",
+      description:
+        "One-line summary for search engines and social shares (max 160 chars).",
+      validation: (Rule) => Rule.max(160),
+    }),
+    defineField({
       name: "releaseType",
       title: "Release Type",
       type: "reference",

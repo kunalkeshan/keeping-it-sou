@@ -1,18 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import {
-  LEGAL_DOCUMENT_BY_SLUG_QUERY,
-  LEGAL_DOCUMENTS_QUERY,
+  getLegalDocuments,
+  getLegalDocumentBySlug,
 } from "@/sanity/queries/legal";
-import {
-  createCollectionTag,
-  createDocumentTag,
-} from "@/sanity/lib/cache-tags";
-import type {
-  LEGAL_DOCUMENT_BY_SLUG_QUERY_RESULT,
-  LEGAL_DOCUMENTS_QUERY_RESULT,
-} from "@/types/cms";
 import { PortableText } from "@portabletext/react";
 import { portableTextComponents } from "@/lib/portabletext-components";
 import { CalendarDays } from "lucide-react";
@@ -22,17 +13,11 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const legalDocuments = await sanityFetch<LEGAL_DOCUMENTS_QUERY_RESULT>({
-    query: LEGAL_DOCUMENTS_QUERY,
-    tags: [createCollectionTag("legal")],
-  });
-
+  const legalDocuments = await getLegalDocuments();
   return (
     legalDocuments
       ?.filter((doc) => doc.slug?.current)
-      .map((doc) => ({
-        slug: doc.slug!.current,
-      })) ?? []
+      .map((doc) => ({ slug: doc.slug!.current })) ?? []
   );
 }
 
@@ -40,16 +25,7 @@ export async function generateMetadata({
   params,
 }: Props): Promise<Metadata> {
   const { slug } = await params;
-
-  const legalDocument =
-    await sanityFetch<LEGAL_DOCUMENT_BY_SLUG_QUERY_RESULT>({
-      query: LEGAL_DOCUMENT_BY_SLUG_QUERY,
-      params: { slug },
-      tags: [
-        createCollectionTag("legal"),
-        createDocumentTag("legal", slug),
-      ],
-    });
+  const legalDocument = await getLegalDocumentBySlug(slug);
 
   if (!legalDocument) {
     return {
@@ -60,21 +36,13 @@ export async function generateMetadata({
   return {
     title: legalDocument.title ?? undefined,
     description: legalDocument.description ?? undefined,
+    alternates: { canonical: `/legal/${slug}` },
   };
 }
 
 export default async function LegalDocumentPage({ params }: Props) {
   const { slug } = await params;
-
-  const legalDocument =
-    await sanityFetch<LEGAL_DOCUMENT_BY_SLUG_QUERY_RESULT>({
-      query: LEGAL_DOCUMENT_BY_SLUG_QUERY,
-      params: { slug },
-      tags: [
-        createCollectionTag("legal"),
-        createDocumentTag("legal", slug),
-      ],
-    });
+  const legalDocument = await getLegalDocumentBySlug(slug);
 
   if (!legalDocument) {
     notFound();

@@ -1,22 +1,33 @@
 import type { MetadataRoute } from "next";
 import { SITE_CONFIG } from "@/config/site";
-import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import { LEGAL_DOCUMENTS_QUERY } from "@/sanity/queries/legal";
-import { SITEMAP_RELEASES_QUERY } from "@/sanity/queries/releases";
-import { createCollectionTag } from "@/sanity/lib/cache-tags";
-import type { Legal, SITEMAP_RELEASES_QUERY_RESULT } from "@/types/cms";
+import { getLegalDocuments } from "@/sanity/queries/legal";
+import { getReleasesForSitemap } from "@/sanity/queries/releases";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [legalDocs, releaseDocs] = await Promise.all([
-    sanityFetch<Array<Legal>>({
-      query: LEGAL_DOCUMENTS_QUERY,
-      tags: [createCollectionTag("legal")],
-    }),
-    sanityFetch<SITEMAP_RELEASES_QUERY_RESULT>({
-      query: SITEMAP_RELEASES_QUERY,
-      tags: [createCollectionTag("releases")],
-    }),
+    getLegalDocuments(),
+    getReleasesForSitemap(),
   ]);
+
+  const maxReleaseDate =
+    releaseDocs.length > 0
+      ? new Date(
+          releaseDocs.reduce(
+            (max, d) => Math.max(max, new Date(d._updatedAt).getTime()),
+            Number.NEGATIVE_INFINITY,
+          ),
+        )
+      : new Date();
+
+  const maxLegalDate =
+    legalDocs.length > 0
+      ? new Date(
+          legalDocs.reduce(
+            (max, d) => Math.max(max, new Date(d._updatedAt).getTime()),
+            Number.NEGATIVE_INFINITY,
+          ),
+        )
+      : new Date();
 
   const legalEntries: MetadataRoute.Sitemap = legalDocs
     .filter((doc) => doc.slug?.current)
@@ -39,19 +50,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: SITE_CONFIG.URL,
-      lastModified: new Date(),
+      lastModified: maxReleaseDate,
       changeFrequency: "daily" as const,
       priority: 1,
     },
     {
       url: `${SITE_CONFIG.URL}/legal`,
-      lastModified: new Date(),
+      lastModified: maxLegalDate,
       changeFrequency: "monthly" as const,
       priority: 0.5,
     },
     {
       url: `${SITE_CONFIG.URL}/releases`,
-      lastModified: new Date(),
+      lastModified: maxReleaseDate,
       changeFrequency: "weekly" as const,
       priority: 0.75,
     },
