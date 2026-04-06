@@ -31,7 +31,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  const body = JSON.parse(rawBody) as WebhookBody;
+  let body: WebhookBody;
+  try {
+    body = JSON.parse(rawBody) as WebhookBody;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
   if (body._type === "releases") {
     revalidateTag(createCollectionTag("releases"), "max");

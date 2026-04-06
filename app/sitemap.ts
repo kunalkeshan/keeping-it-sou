@@ -12,14 +12,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const maxReleaseDate =
     releaseDocs.length > 0
       ? new Date(
-          Math.max(...releaseDocs.map((d) => new Date(d._updatedAt).getTime())),
+          releaseDocs.reduce(
+            (max, d) => Math.max(max, new Date(d._updatedAt).getTime()),
+            Number.NEGATIVE_INFINITY,
+          ),
         )
       : new Date();
 
   const maxLegalDate =
     legalDocs.length > 0
       ? new Date(
-          Math.max(...legalDocs.map((d) => new Date(d._updatedAt).getTime())),
+          legalDocs.reduce(
+            (max, d) => Math.max(max, new Date(d._updatedAt).getTime()),
+            Number.NEGATIVE_INFINITY,
+          ),
         )
       : new Date();
 
