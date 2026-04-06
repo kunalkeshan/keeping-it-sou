@@ -1,34 +1,25 @@
 import type { MetadataRoute } from "next";
 import { SITE_CONFIG } from "@/config/site";
-import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import { LEGAL_DOCUMENTS_QUERY } from "@/sanity/queries/legal";
-import { SITEMAP_RELEASES_QUERY } from "@/sanity/queries/releases";
-import { createCollectionTag } from "@/sanity/lib/cache-tags";
-import type { Legal, SITEMAP_RELEASES_QUERY_RESULT } from "@/types/cms";
+import { getLegalDocuments } from "@/sanity/queries/legal";
+import { getReleasesForSitemap } from "@/sanity/queries/releases";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [legalDocs, releaseDocs] = await Promise.all([
-    sanityFetch<Array<Legal>>({
-      query: LEGAL_DOCUMENTS_QUERY,
-      tags: [createCollectionTag("legal")],
-    }),
-    sanityFetch<SITEMAP_RELEASES_QUERY_RESULT>({
-      query: SITEMAP_RELEASES_QUERY,
-      tags: [createCollectionTag("releases")],
-    }),
+    getLegalDocuments(),
+    getReleasesForSitemap(),
   ]);
 
   const maxReleaseDate =
     releaseDocs.length > 0
       ? new Date(
-          Math.max(...releaseDocs.map((d) => new Date(d._updatedAt).getTime()))
+          Math.max(...releaseDocs.map((d) => new Date(d._updatedAt).getTime())),
         )
       : new Date();
 
   const maxLegalDate =
     legalDocs.length > 0
       ? new Date(
-          Math.max(...legalDocs.map((d) => new Date(d._updatedAt).getTime()))
+          Math.max(...legalDocs.map((d) => new Date(d._updatedAt).getTime())),
         )
       : new Date();
 

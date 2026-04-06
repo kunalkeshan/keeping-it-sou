@@ -1,9 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import { RELEASES_LIST_QUERY } from "@/sanity/queries/releases";
-import { createCollectionTag } from "@/sanity/lib/cache-tags";
-import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";
+import { getReleasesList } from "@/sanity/queries/releases";
 import { mapReleasesToNavItems } from "@/lib/releases-nav";
 
 export const metadata: Metadata = {
@@ -13,11 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ReleasesPage() {
-  const releases =
-    await sanityFetch<RELEASES_LIST_QUERY_RESULT>({
-      query: RELEASES_LIST_QUERY,
-      tags: [createCollectionTag("releases")],
-    }) ?? [];
+  const releases = (await getReleasesList()) ?? [];
 
   const items = mapReleasesToNavItems(releases);
 

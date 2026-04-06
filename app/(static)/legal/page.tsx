@@ -1,9 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import { LEGAL_DOCUMENTS_QUERY } from "@/sanity/queries/legal";
-import { createCollectionTag } from "@/sanity/lib/cache-tags";
-import type { LEGAL_DOCUMENTS_QUERY_RESULT } from "@/types/cms";
+import { getLegalDocuments } from "@/sanity/queries/legal";
 import { getLegalIcon } from "@/constants/nav-links";
 import { ArrowRight } from "lucide-react";
 
@@ -15,10 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LegalPage() {
-  const legalDocuments = await sanityFetch<LEGAL_DOCUMENTS_QUERY_RESULT>({
-    query: LEGAL_DOCUMENTS_QUERY,
-    tags: [createCollectionTag("legal")],
-  });
+  const legalDocuments = await getLegalDocuments();
 
   if (!legalDocuments || legalDocuments.length === 0) {
     return (

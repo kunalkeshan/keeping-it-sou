@@ -4,19 +4,7 @@ import type { Metadata } from "next";
 import { Play } from "lucide-react";
 import { PortableText } from "@portabletext/react";
 import { YouTubeEmbed } from "@next/third-parties/google";
-import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import {
-  RELEASE_BY_SLUG_QUERY,
-  RELEASES_LIST_QUERY,
-} from "@/sanity/queries/releases";
-import {
-  createCollectionTag,
-  createDocumentTag,
-} from "@/sanity/lib/cache-tags";
-import type {
-  RELEASE_BY_SLUG_QUERY_RESULT,
-  RELEASES_LIST_QUERY_RESULT,
-} from "@/types/cms";
+import { getReleaseBySlug } from "@/sanity/queries/releases";
 import { urlFor, urlForSquare } from "@/sanity/lib/image";
 import { portableTextComponents } from "@/lib/portabletext-components";
 import { extractYouTubeId } from "@/lib/youtube";
@@ -27,29 +15,9 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
-  const releases =
-    (await sanityFetch<RELEASES_LIST_QUERY_RESULT>({
-      query: RELEASES_LIST_QUERY,
-      tags: [createCollectionTag("releases")],
-    })) ?? [];
-
-  return releases
-    .filter((r) => r.slug?.current)
-    .map((r) => ({ slug: r.slug!.current }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-
-  const release = await sanityFetch<RELEASE_BY_SLUG_QUERY_RESULT>({
-    query: RELEASE_BY_SLUG_QUERY,
-    params: { slug },
-    tags: [
-      createCollectionTag("releases"),
-      createDocumentTag("releases", slug),
-    ],
-  });
+  const release = await getReleaseBySlug(slug);
 
   if (!release) {
     return { title: "Release Not Found" };
@@ -92,15 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ReleasePage({ params }: Props) {
   const { slug } = await params;
-
-  const release = await sanityFetch<RELEASE_BY_SLUG_QUERY_RESULT>({
-    query: RELEASE_BY_SLUG_QUERY,
-    params: { slug },
-    tags: [
-      createCollectionTag("releases"),
-      createDocumentTag("releases", slug),
-    ],
-  });
+  const release = await getReleaseBySlug(slug);
 
   if (!release) {
     notFound();

@@ -27,15 +27,11 @@ export async function sanityFetch<QueryResponse>({
   tags?: CacheTag[];
   options?: FilteredResponseQueryOptions & NextFetchRequestConfig;
 }): Promise<QueryResponse> {
-  return client
-    .withConfig({ useCdn: true })
-    .fetch<QueryResponse>(query, params, {
-      ...(options.cache && {
-        cache: options.cache,
-      }),
-      next: {
-        revalidate: options.revalidate,
-        tags,
-      },
-    });
+  return client.fetch<QueryResponse>(query, params, {
+    ...(options.cache && { cache: options.cache }),
+    next: {
+      revalidate: options.revalidate,
+      tags,
+    },
+  });
 }

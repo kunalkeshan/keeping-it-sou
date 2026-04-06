@@ -2,14 +2,8 @@ import type { Metadata } from "next";
 import Hero from "@/components/home/hero";
 import LatestReleases from "@/components/home/latest-releases";
 import About from "@/components/home/about";
-import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
-import { RELEASES_LIST_QUERY } from "@/sanity/queries/releases";
-import { createCollectionTag } from "@/sanity/lib/cache-tags";
-import type {
-  SITE_CONFIG_QUERY_RESULT,
-  RELEASES_LIST_QUERY_RESULT,
-} from "@/types/cms";
+import { getSiteConfig } from "@/sanity/queries/site-config";
+import { getReleasesList } from "@/sanity/queries/releases";
 import {
   isStreamingPlatform,
   isSupportedPlatform,
@@ -22,14 +16,8 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const [siteConfig, releases] = await Promise.all([
-    sanityFetch<SITE_CONFIG_QUERY_RESULT>({
-      query: SITE_CONFIG_QUERY,
-      tags: [createCollectionTag("siteConfig")],
-    }),
-    sanityFetch<RELEASES_LIST_QUERY_RESULT>({
-      query: RELEASES_LIST_QUERY,
-      tags: [createCollectionTag("releases")],
-    }),
+    getSiteConfig(),
+    getReleasesList(),
   ]);
 
   const latestReleases = (releases ?? []).slice(0, 4);

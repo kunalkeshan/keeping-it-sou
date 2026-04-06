@@ -674,7 +674,7 @@ export type FAQS_QUERY_RESULT = {
   }> | null;
 } | null;
 
-// Source: sanity/queries/legal.ts
+// Source: sanity/queries/legal/queries.ts
 // Variable: LEGAL_DOCUMENTS_QUERY
 // Query: *[_type == "legal"] | order(_updatedAt desc) {    _id,    title,    slug,    description,    _createdAt,    _updatedAt  }
 export type LEGAL_DOCUMENTS_QUERY_RESULT = Array<{
@@ -686,7 +686,7 @@ export type LEGAL_DOCUMENTS_QUERY_RESULT = Array<{
   _updatedAt: string;
 }>;
 
-// Source: sanity/queries/legal.ts
+// Source: sanity/queries/legal/queries.ts
 // Variable: LEGAL_DOCUMENT_BY_SLUG_QUERY
 // Query: *[_type == "legal" && slug.current == $slug][0] {    _id,    title,    slug,    description,    content,    _createdAt,    _updatedAt  }
 export type LEGAL_DOCUMENT_BY_SLUG_QUERY_RESULT = {
@@ -725,7 +725,7 @@ export type RELEASE_TYPE_BY_SLUG_QUERY_RESULT = {
   _updatedAt: string;
 } | null;
 
-// Source: sanity/queries/releases.ts
+// Source: sanity/queries/releases/queries.ts
 // Variable: RELEASES_LIST_QUERY
 // Query: *[_type == "releases"] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    releaseType-> {      name    },    coverImage {      asset->,      alt    }  }
 export type RELEASES_LIST_QUERY_RESULT = Array<{
@@ -762,7 +762,7 @@ export type RELEASES_LIST_QUERY_RESULT = Array<{
   } | null;
 }>;
 
-// Source: sanity/queries/releases.ts
+// Source: sanity/queries/releases/queries.ts
 // Variable: SITEMAP_RELEASES_QUERY
 // Query: *[_type == "releases"] | order(featured desc, releaseDate desc) {    _id,    slug,    _updatedAt  }
 export type SITEMAP_RELEASES_QUERY_RESULT = Array<{
@@ -771,7 +771,7 @@ export type SITEMAP_RELEASES_QUERY_RESULT = Array<{
   _updatedAt: string;
 }>;
 
-// Source: sanity/queries/releases.ts
+// Source: sanity/queries/releases/queries.ts
 // Variable: ALL_RELEASES_QUERY
 // Query: *[_type == "releases"] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    credits,    featured,    referencesOtherReleases,    referencedReleases[]-> {      _id,      title,      slug,      coverImage {        asset->,        alt      },      releaseDate,      releaseType-> {        name,        slug      }    },    _createdAt,    _updatedAt  }
 export type ALL_RELEASES_QUERY_RESULT = Array<{
@@ -897,7 +897,7 @@ export type ALL_RELEASES_QUERY_RESULT = Array<{
   _updatedAt: string;
 }>;
 
-// Source: sanity/queries/releases.ts
+// Source: sanity/queries/releases/queries.ts
 // Variable: RELEASE_BY_SLUG_QUERY
 // Query: *[_type == "releases" && slug.current == $slug][0] {    _id,    title,    slug,    description,    shortDescription,    releaseType-> {      _id,      name,      slug,      description    },    artists[]-> {      _id,      name,      slug,      bio,      profileImage {        asset->,        alt      },      socialLinks[] {        platform,        url,        label      },      website    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      _key,      platform,      url,      customLabel    },    videoUrl,    credits,    featured,    referencesOtherReleases,    referencedReleases[]-> {      _id,      title,      slug,      description,      coverImage {        asset->,        alt      },      releaseDate,      releaseType-> {        name,        slug      },      artists[]-> {        _id,        name,        slug      },      streamingLinks[] {        platform,        url,        customLabel      }    },    _createdAt,    _updatedAt  }
 export type RELEASE_BY_SLUG_QUERY_RESULT = {
@@ -1067,7 +1067,7 @@ export type RELEASE_BY_SLUG_QUERY_RESULT = {
   _updatedAt: string;
 } | null;
 
-// Source: sanity/queries/releases.ts
+// Source: sanity/queries/releases/queries.ts
 // Variable: FEATURED_RELEASES_QUERY
 // Query: *[_type == "releases" && featured == true] | order(releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    featured  }
 export type FEATURED_RELEASES_QUERY_RESULT = Array<{
@@ -1154,7 +1154,7 @@ export type FEATURED_RELEASES_QUERY_RESULT = Array<{
   featured: true;
 }>;
 
-// Source: sanity/queries/releases.ts
+// Source: sanity/queries/releases/queries.ts
 // Variable: RELEASES_BY_TYPE_QUERY
 // Query: *[_type == "releases" && releaseType._ref == $releaseTypeId] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    featured  }
 export type RELEASES_BY_TYPE_QUERY_RESULT = Array<{
@@ -1241,7 +1241,7 @@ export type RELEASES_BY_TYPE_QUERY_RESULT = Array<{
   featured: boolean | null;
 }>;
 
-// Source: sanity/queries/releases.ts
+// Source: sanity/queries/releases/queries.ts
 // Variable: RELEASES_BY_ARTIST_QUERY
 // Query: *[_type == "releases" && $artistId in artists[]._ref] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    featured  }
 export type RELEASES_BY_ARTIST_QUERY_RESULT = Array<{
@@ -1328,7 +1328,7 @@ export type RELEASES_BY_ARTIST_QUERY_RESULT = Array<{
   featured: boolean | null;
 }>;
 
-// Source: sanity/queries/site-config.ts
+// Source: sanity/queries/site-config/queries.ts
 // Variable: SITE_CONFIG_QUERY
 // Query: *[_type == "siteConfig"][0] {    _id,    title,    description,    ogImage {      asset->,      alt    },    twitterImage {      asset->,      alt    },    phoneNumbers[] {      number,      label    },    emails[] {      email,      label    },    address {      street,      city,      state,      postalCode,      country    },    sitetiming,    socialMedia[] {      platform,      url,      label    },    footerLegalLinks[]-> {      _id,      title,      slug,      description    }  }
 export type SITE_CONFIG_QUERY_RESULT = {
@@ -1424,7 +1424,7 @@ export type SITE_CONFIG_QUERY_RESULT = {
   }> | null;
 } | null;
 
-// Source: sanity/queries/site-config.ts
+// Source: sanity/queries/site-config/queries.ts
 // Variable: FOOTER_LEGAL_LINKS_QUERY
 // Query: *[_type == "siteConfig"][0].footerLegalLinks[]-> {    _id,    title,    slug,    description,    _updatedAt  }
 export type FOOTER_LEGAL_LINKS_QUERY_RESULT = Array<{
