@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Hero from "@/components/home/hero";
 import LatestReleases from "@/components/home/latest-releases";
 import About from "@/components/home/about";
@@ -14,6 +15,10 @@ import {
   isSupportedPlatform,
   type SupportedSocialPlatform,
 } from "@/lib/social-media";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   const [siteConfig, releases] = await Promise.all([

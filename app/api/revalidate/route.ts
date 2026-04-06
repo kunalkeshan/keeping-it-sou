@@ -1,0 +1,51 @@
+import { revalidateTag } from "next/cache";
+import { type NextRequest, NextResponse } from "next/server";
+import {
+  isValidSignature,
+  SIGNATURE_HEADER_NAME,
+} from "@sanity/webhook";
+import {
+  createCollectionTag,
+  createDocumentTag,
+} from "@/sanity/lib/cache-tags";
+
+type WebhookBody = {
+  _type: string;
+  slug?: { current?: string };
+};
+
+export async function POST(req: NextRequest) {
+  const webhookSecret = process.env.SANITY_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    return NextResponse.json(
+      { error: "Missing SANITY_WEBHOOK_SECRET" },
+      { status: 500 }
+    );
+  }
+
+  const rawBody = await req.text();
+  const signature = req.headers.get(SIGNATURE_HEADER_NAME) ?? "";
+
+  const valid = await isValidSignature(rawBody, signature, webhookSecret);
+  if (!valid) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+
+  const body = JSON.parse(rawBody) as WebhookBody;
+
+  if (body._type === "releases") {
+    revalidateTag(createCollectionTag("releases"), "max");
+    if (body.slug?.current) {
+      revalidateTag(createDocumentTag("releases", body.slug.current), "max");
+    }
+  } else if (body._type === "legal") {
+    revalidateTag(createCollectionTag("legal"), "max");
+    if (body.slug?.current) {
+      revalidateTag(createDocumentTag("legal", body.slug.current), "max");
+    }
+  } else if (body._type === "siteConfig") {
+    revalidateTag(createCollectionTag("siteConfig"), "max");
+  }
+
+  return NextResponse.json({ revalidated: true, type: body._type });
+}

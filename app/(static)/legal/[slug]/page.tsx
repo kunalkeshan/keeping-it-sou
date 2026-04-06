@@ -60,6 +60,7 @@ export async function generateMetadata({
   return {
     title: legalDocument.title ?? undefined,
     description: legalDocument.description ?? undefined,
+    alternates: { canonical: `/legal/${slug}` },
   };
 }
 

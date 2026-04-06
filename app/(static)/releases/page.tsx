@@ -9,6 +9,7 @@ import { mapReleasesToNavItems } from "@/lib/releases-nav";
 export const metadata: Metadata = {
   title: "Releases",
   description: "Browse all releases.",
+  alternates: { canonical: "/releases" },
 };
 
 export default async function ReleasesPage() {

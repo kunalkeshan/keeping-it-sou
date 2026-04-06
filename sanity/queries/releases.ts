@@ -83,6 +83,7 @@ export const RELEASE_BY_SLUG_QUERY = defineQuery(`
     title,
     slug,
     description,
+    shortDescription,
     releaseType-> {
       _id,
       name,

@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Legal Documents",
   description:
     "View our legal documents including privacy policy, terms of service, and related policies.",
+  alternates: { canonical: "/legal" },
 };
 
 export default async function LegalPage() {

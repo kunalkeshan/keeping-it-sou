@@ -17,7 +17,7 @@ import type {
   RELEASE_BY_SLUG_QUERY_RESULT,
   RELEASES_LIST_QUERY_RESULT,
 } from "@/types/cms";
-import { urlForSquare } from "@/sanity/lib/image";
+import { urlFor, urlForSquare } from "@/sanity/lib/image";
 import { portableTextComponents } from "@/lib/portabletext-components";
 import { extractYouTubeId } from "@/lib/youtube";
 import StreamingLinks from "@/components/releases/streaming-links";
@@ -55,8 +55,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Release Not Found" };
   }
 
+  const ogImageUrl = release.coverImage?.asset
+    ? urlFor(release.coverImage)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : undefined;
+
   return {
     title: release.title ?? undefined,
+    description: release.shortDescription ?? undefined,
+    alternates: { canonical: `/releases/${slug}` },
+    openGraph: {
+      url: `/releases/${slug}`,
+      ...(release.title && { title: release.title }),
+      ...(release.shortDescription && { description: release.shortDescription }),
+      ...(ogImageUrl && {
+        images: [
+          {
+            url: ogImageUrl,
+            alt: release.coverImage?.alt ?? release.title ?? "",
+          },
+        ],
+      }),
+    },
+    twitter: {
+      ...(release.title && { title: release.title }),
+      ...(release.shortDescription && { description: release.shortDescription }),
+      ...(ogImageUrl && { images: [ogImageUrl] }),
+    },
   };
 }
 

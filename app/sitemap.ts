@@ -18,6 +18,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   ]);
 
+  const maxReleaseDate =
+    releaseDocs.length > 0
+      ? new Date(
+          Math.max(...releaseDocs.map((d) => new Date(d._updatedAt).getTime()))
+        )
+      : new Date();
+
+  const maxLegalDate =
+    legalDocs.length > 0
+      ? new Date(
+          Math.max(...legalDocs.map((d) => new Date(d._updatedAt).getTime()))
+        )
+      : new Date();
+
   const legalEntries: MetadataRoute.Sitemap = legalDocs
     .filter((doc) => doc.slug?.current)
     .map((doc) => ({
@@ -39,19 +53,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: SITE_CONFIG.URL,
-      lastModified: new Date(),
+      lastModified: maxReleaseDate,
       changeFrequency: "daily" as const,
       priority: 1,
     },
     {
       url: `${SITE_CONFIG.URL}/legal`,
-      lastModified: new Date(),
+      lastModified: maxLegalDate,
       changeFrequency: "monthly" as const,
       priority: 0.5,
     },
     {
       url: `${SITE_CONFIG.URL}/releases`,
-      lastModified: new Date(),
+      lastModified: maxReleaseDate,
       changeFrequency: "weekly" as const,
       priority: 0.75,
     },
