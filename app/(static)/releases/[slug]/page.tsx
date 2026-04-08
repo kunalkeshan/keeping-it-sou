@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { Play } from "lucide-react";
 import { PortableText } from "@portabletext/react";
@@ -101,7 +102,7 @@ export default async function ReleasePage({ params }: Props) {
         {/* Cover Art */}
         <div className="aspect-square w-full overflow-hidden rounded-sm border border-border bg-muted">
           {coverUrl ? (
-            <img
+            <Image
               src={coverUrl}
               alt={release.coverImage?.alt ?? title}
               className="size-full object-cover"

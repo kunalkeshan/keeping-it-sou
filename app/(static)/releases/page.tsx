@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { getReleasesList } from "@/sanity/queries/releases";
 import { mapReleasesToNavItems } from "@/lib/releases-nav";
@@ -38,7 +39,7 @@ export default async function ReleasesPage() {
                 >
                   <div className="aspect-square bg-muted">
                     {item.imageUrl ? (
-                      <img
+                      <Image
                         src={item.imageUrl}
                         alt=""
                         className="size-full object-cover"

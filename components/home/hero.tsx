@@ -4,6 +4,7 @@ import {
   type SupportedSocialPlatform,
 } from "@/lib/social-media";
 import { LightRays } from "@/components/ui/light-rays";
+import Image from "next/image";
 
 interface SocialMediaLink {
   platform: SupportedSocialPlatform;
@@ -34,16 +35,15 @@ export default function Hero({
         length="60vh"
       />
       <div className="container relative z-10 py-6 lg:py-8">
-        {/* Hero block: image behind text. Use native img for background layer to avoid Next/Image wrapper stacking issues. */}
+        {/* Hero block: image behind text. */}
         <div className="relative min-h-[240px] lg:min-h-[360px] flex flex-col items-center justify-center">
-          {/* Layer 1: floating figure – native img so no extra stacking context; stays behind text */}
+          {/* Layer 1: floating figure */}
           <div
             className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none"
             aria-hidden
           >
             <div className="relative w-full max-w-[240px] lg:max-w-[300px] h-[220px] lg:h-[300px] animate-float">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src="/assets/sou-float.png"
                 alt=""
                 width={137}

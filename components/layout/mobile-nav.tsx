@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { Portal } from "@radix-ui/react-portal";
 import { ArrowRightIcon, UsersRound } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import React from "react";
 import { navLinks, resourcesLinks } from "@/constants/nav-links";
 import { LinkItem } from "@/components/layout/sheard";
@@ -43,7 +44,7 @@ function MobileReleaseLinkRow({
       onClick={onNavigate}
     >
       {item.imageUrl ? (
-        <img
+        <Image
           src={item.imageUrl}
           alt=""
           className="size-8 shrink-0 rounded object-cover"

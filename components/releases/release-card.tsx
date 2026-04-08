@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ export default function ReleaseCard({
     >
       {/* Image layer */}
       {imageUrl ? (
-        <img
+        <Image
           src={imageUrl}
           alt={alt || title}
           className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105"
