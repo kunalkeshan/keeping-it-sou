@@ -13,7 +13,6 @@ import type {
 } from "@/types/cms";
 import { ArrowRightIcon, Mail, Phone, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
-import { resourcesLinks } from "@/constants/nav-links";
 import { APP_VERSION } from "@/config/version";
 import {
   isStreamingPlatform,

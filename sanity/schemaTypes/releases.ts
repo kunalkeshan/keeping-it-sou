@@ -167,6 +167,7 @@ export const releases = defineType({
               description: "Required if platform is 'Custom'",
               validation: (Rule) =>
                 Rule.custom((value, context) => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   const platform = (context.parent as any)?.platform;
                   if (platform === "custom" && !value) {
                     return "Custom label is required when platform is 'Custom'";
@@ -245,6 +246,7 @@ export const releases = defineType({
       hidden: ({ document }) => !document?.referencesOtherReleases,
       validation: (Rule) =>
         Rule.custom((referencedReleases, context) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const referencesOtherReleases = (context.document as any)
             ?.referencesOtherReleases;
           if (

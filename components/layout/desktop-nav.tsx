@@ -6,7 +6,6 @@
  * commented out and can be restored when needed.
  */
 "use client";
-import { Logo } from "@/components/shared/logo";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -17,16 +16,15 @@ import {
 import { cn } from "@/lib/utils";
 import { getSocialIcon } from "@/lib/social-media";
 import { NavigationMenu as NavigationMenuPrimitive } from "radix-ui";
-import { ArrowRightIcon, type LucideIcon } from "lucide-react";
+import { ArrowRightIcon } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { navLinks, resourcesLinks } from "@/constants/nav-links";
+import { navLinks } from "@/constants/nav-links";
 import {
   SocialIcon,
   type SocialMediaLink,
 } from "@/components/shared/social-links";
-import { GithubIcon, LinkItem } from "@/components/layout/sheard";
 import { mapReleasesToNavItems, type ReleaseNavItem } from "@/lib/releases-nav";
 import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";
 
@@ -258,18 +256,6 @@ function ListenNowSpotifyCard({
   );
 }
 
-function OpenSource() {
-  return (
-    <div className="flex h-28 flex-col space-y-3 border-b px-4 pt-4 pb-2">
-      <Logo showText={false} imageClassName="size-6" />
-      <p className="text-foreground/60 font-medium">
-        <span className="text-foreground">Efferd</span> is open source. <br />
-        Star us to show your support!
-      </p>
-    </div>
-  );
-}
-
 function Section({
   title,
   children,
@@ -316,7 +302,7 @@ function CustomNavigationMenuContent({
 }
 
 function CustomNavigationMenuViewport({
-  className,
+  className: _className,
   ...props
 }: React.ComponentProps<typeof NavigationMenuPrimitive.Viewport>) {
   return (
@@ -332,7 +318,7 @@ function CustomNavigationMenuViewport({
 }
 
 function NavigationMenuOverlay({
-  className,
+  className: _className,
   open,
   ...props
 }: React.ComponentProps<"div"> & { open: boolean }) {

@@ -15,11 +15,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Portal } from "@radix-ui/react-portal";
-import { ArrowRightIcon, UsersRound } from "lucide-react";
+import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
-import { navLinks, resourcesLinks } from "@/constants/nav-links";
+import { navLinks } from "@/constants/nav-links";
 import { LinkItem } from "@/components/layout/sheard";
 import { SocialIcon } from "@/components/shared/social-links";
 import type { SocialMediaLink } from "@/components/shared/social-links";
@@ -72,20 +72,6 @@ function MobileReleaseLinkRow({
     </Link>
   );
 }
-
-const resourcesSection = {
-  id: "resources",
-  name: "Resources",
-  list: [
-    ...resourcesLinks,
-    {
-      label: "Customer Stories",
-      href: "#",
-      icon: UsersRound,
-      description: "Browse our success stories",
-    },
-  ],
-} as const;
 
 type MobileNavProps = {
   streamingLinks?: SocialMediaLink[];

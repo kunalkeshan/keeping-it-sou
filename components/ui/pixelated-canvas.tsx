@@ -249,6 +249,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
             return [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10)];
           return null;
         };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         tintRGB = parse(tintColor) as any;
       }
 
@@ -505,6 +506,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
         canvasEl.removeEventListener("pointerleave", onPointerLeave);
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
       };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (img as any)._cleanup = cleanup;
     };
 
@@ -522,12 +524,14 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
       return () => {
         isCancelled = true;
         window.removeEventListener("resize", onResize);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if ((img as any)._cleanup) (img as any)._cleanup();
       };
     }
 
     return () => {
       isCancelled = true;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((img as any)._cleanup) (img as any)._cleanup();
     };
   }, [
