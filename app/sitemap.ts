@@ -14,8 +14,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ? new Date(
           releaseDocs.reduce(
             (max, d) => Math.max(max, new Date(d._updatedAt).getTime()),
-            Number.NEGATIVE_INFINITY,
-          ),
+            Number.NEGATIVE_INFINITY
+          )
         )
       : new Date();
 
@@ -24,8 +24,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ? new Date(
           legalDocs.reduce(
             (max, d) => Math.max(max, new Date(d._updatedAt).getTime()),
-            Number.NEGATIVE_INFINITY,
-          ),
+            Number.NEGATIVE_INFINITY
+          )
         )
       : new Date();
 

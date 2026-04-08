@@ -41,7 +41,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       url: `/releases/${slug}`,
       ...(release.title && { title: release.title }),
-      ...(release.shortDescription && { description: release.shortDescription }),
+      ...(release.shortDescription && {
+        description: release.shortDescription,
+      }),
       ...(ogImageUrl && {
         images: [
           {
@@ -53,7 +55,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       ...(release.title && { title: release.title }),
-      ...(release.shortDescription && { description: release.shortDescription }),
+      ...(release.shortDescription && {
+        description: release.shortDescription,
+      }),
       ...(ogImageUrl && { images: [ogImageUrl] }),
     },
   };
@@ -84,7 +88,7 @@ export default async function ReleasePage({ params }: Props) {
   const primaryLink = streamingLinks[0] ?? null;
   const videoId = release.videoUrl ? extractYouTubeId(release.videoUrl) : null;
   const referencedReleases = (release.referencedReleases ?? []).filter(
-    (r) => r.slug?.current,
+    (r) => r.slug?.current
   );
 
   return (
@@ -92,15 +96,15 @@ export default async function ReleasePage({ params }: Props) {
       {/* Back link */}
       <Link
         href="/releases"
-        className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors mb-12 inline-block"
+        className="text-muted-foreground hover:text-primary mb-12 inline-block text-xs tracking-[0.2em] uppercase transition-colors"
       >
         ← Back to Releases
       </Link>
 
       {/* ── HERO ── */}
-      <section className="grid md:grid-cols-2 gap-12 md:gap-16 mb-20 md:mb-28">
+      <section className="mb-20 grid gap-12 md:mb-28 md:grid-cols-2 md:gap-16">
         {/* Cover Art */}
-        <div className="aspect-square w-full overflow-hidden rounded-sm border border-border bg-muted">
+        <div className="border-border bg-muted aspect-square w-full overflow-hidden rounded-sm border">
           {coverUrl ? (
             <Image
               src={coverUrl}
@@ -110,7 +114,7 @@ export default async function ReleasePage({ params }: Props) {
               height={800}
             />
           ) : (
-            <div className="size-full flex items-center justify-center text-muted-foreground text-sm">
+            <div className="text-muted-foreground flex size-full items-center justify-center text-sm">
               —
             </div>
           )}
@@ -120,7 +124,7 @@ export default async function ReleasePage({ params }: Props) {
         <div className="flex flex-col justify-center gap-6">
           {/* Type • Year */}
           {(releaseTypeName || releaseYear) && (
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            <p className="text-muted-foreground text-xs tracking-[0.2em] uppercase">
               {releaseTypeName}
               {releaseTypeName && releaseYear ? " • " : ""}
               {releaseYear}
@@ -128,7 +132,7 @@ export default async function ReleasePage({ params }: Props) {
           )}
 
           {/* Title */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+          <h1 className="text-4xl leading-tight font-bold md:text-5xl lg:text-6xl">
             {title}
           </h1>
 
@@ -153,7 +157,7 @@ export default async function ReleasePage({ params }: Props) {
               href={primaryLink.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 w-fit px-6 py-3 bg-primary text-white rounded-sm hover:bg-primary/80 transition-colors font-medium text-sm uppercase tracking-[0.1em]"
+              className="bg-primary hover:bg-primary/80 inline-flex w-fit items-center gap-2 rounded-sm px-6 py-3 text-sm font-medium tracking-[0.1em] text-white uppercase transition-colors"
             >
               <Play className="size-4 fill-current" />
               Listen Now
@@ -165,7 +169,7 @@ export default async function ReleasePage({ params }: Props) {
       {/* ── AVAILABLE ON ── */}
       {streamingLinks.length > 0 && (
         <section className="mb-16 md:mb-20">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+          <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
             Available On
           </h2>
           <StreamingLinks links={streamingLinks} />
@@ -175,10 +179,10 @@ export default async function ReleasePage({ params }: Props) {
       {/* ── OFFICIAL VIDEO ── */}
       {release.videoUrl && videoId && (
         <section className="mb-16 md:mb-20">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+          <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
             Official Video
           </h2>
-          <div className="rounded-sm overflow-hidden border border-border">
+          <div className="border-border overflow-hidden rounded-sm border">
             <YouTubeEmbed videoid={videoId} style="max-width:100%" />
           </div>
         </section>
@@ -187,7 +191,7 @@ export default async function ReleasePage({ params }: Props) {
       {/* ── CREDITS ── */}
       {release.credits && release.credits.length > 0 && (
         <section className="mb-16 md:mb-20">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+          <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
             Credits
           </h2>
           <div>
@@ -202,7 +206,7 @@ export default async function ReleasePage({ params }: Props) {
       {/* ── REFERENCED RELEASES ── */}
       {release.referencesOtherReleases && referencedReleases.length > 0 && (
         <section>
-          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+          <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
             Also In This Release
           </h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -17,27 +17,25 @@ export default async function ReleasesPage() {
 
   return (
     <main className="container py-20">
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
         <header className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-4">Releases</h1>
+          <h1 className="mb-4 text-4xl font-bold">Releases</h1>
           <p className="text-muted-foreground text-lg">
             Featured and latest releases
           </p>
         </header>
 
         {items.length === 0 ? (
-          <p className="text-center text-muted-foreground">
-            No releases yet.
-          </p>
+          <p className="text-muted-foreground text-center">No releases yet.</p>
         ) : (
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="group flex flex-col rounded-lg border bg-card overflow-hidden hover:shadow-lg transition-all"
+                  className="group bg-card flex flex-col overflow-hidden rounded-lg border transition-all hover:shadow-lg"
                 >
-                  <div className="aspect-square bg-muted">
+                  <div className="bg-muted aspect-square">
                     {item.imageUrl ? (
                       <Image
                         src={item.imageUrl}
@@ -47,17 +45,17 @@ export default async function ReleasesPage() {
                         height={400}
                       />
                     ) : (
-                      <div className="size-full flex items-center justify-center text-muted-foreground text-sm">
+                      <div className="text-muted-foreground flex size-full items-center justify-center text-sm">
                         —
                       </div>
                     )}
                   </div>
                   <div className="p-3">
-                    <span className="font-semibold group-hover:text-primary transition-colors block truncate">
+                    <span className="group-hover:text-primary block truncate font-semibold transition-colors">
                       {item.title}
                     </span>
                     {item.subText ? (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-muted-foreground text-xs">
                         {item.subText}
                       </span>
                     ) : null}

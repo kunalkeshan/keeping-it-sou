@@ -26,11 +26,11 @@ export const portableTextComponents: PortableTextComponents = {
             alt={(value as { alt?: string }).alt || "Content image"}
             width={800}
             height={600}
-            className="rounded-lg w-full h-auto max-w-3xl mx-auto"
+            className="mx-auto h-auto w-full max-w-3xl rounded-lg"
             loading="lazy"
           />
           {(value as { alt?: string }).alt && (
-            <figcaption className="mt-2 text-sm text-center text-muted-foreground">
+            <figcaption className="text-muted-foreground mt-2 text-center text-sm">
               {(value as { alt?: string }).alt}
             </figcaption>
           )}
@@ -40,54 +40,54 @@ export const portableTextComponents: PortableTextComponents = {
   },
   block: {
     h1: (props) => (
-      <h2 className="text-3xl font-semibold tracking-tight text-foreground mt-8 mb-4 first:mt-0">
+      <h2 className="text-foreground mt-8 mb-4 text-3xl font-semibold tracking-tight first:mt-0">
         {props.children}
       </h2>
     ),
     h2: (props) => (
-      <h3 className="text-2xl font-semibold tracking-tight text-foreground mt-6 mb-3">
+      <h3 className="text-foreground mt-6 mb-3 text-2xl font-semibold tracking-tight">
         {props.children}
       </h3>
     ),
     h3: (props) => (
-      <h4 className="text-xl font-semibold tracking-tight text-foreground mt-5 mb-2">
+      <h4 className="text-foreground mt-5 mb-2 text-xl font-semibold tracking-tight">
         {props.children}
       </h4>
     ),
     h4: (props) => (
-      <h5 className="text-lg font-semibold tracking-tight text-foreground mt-4 mb-2">
+      <h5 className="text-foreground mt-4 mb-2 text-lg font-semibold tracking-tight">
         {props.children}
       </h5>
     ),
     h5: (props) => (
-      <h6 className="text-base font-semibold tracking-tight text-foreground mt-4 mb-2">
+      <h6 className="text-foreground mt-4 mb-2 text-base font-semibold tracking-tight">
         {props.children}
       </h6>
     ),
     h6: (props) => (
-      <p className="font-bold text-foreground mt-4 mb-2">{props.children}</p>
+      <p className="text-foreground mt-4 mb-2 font-bold">{props.children}</p>
     ),
     normal: (props) => (
-      <p className="text-muted-foreground leading-relaxed mb-4 text-justify">
+      <p className="text-muted-foreground mb-4 text-justify leading-relaxed">
         {props.children}
       </p>
     ),
     blockquote: (props) => (
-      <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground my-4 text-justify">
+      <blockquote className="border-primary text-muted-foreground my-4 border-l-4 pl-4 text-justify italic">
         {props.children}
       </blockquote>
     ),
   },
   list: {
     bullet: (props) => (
-      <ul className="list-disc pl-6 mb-4 space-y-2 text-muted-foreground">
+      <ul className="text-muted-foreground mb-4 list-disc space-y-2 pl-6">
         {props.children}
       </ul>
     ),
   },
   listItem: {
     bullet: (props) => (
-      <li className="leading-relaxed text-justify">{props.children}</li>
+      <li className="text-justify leading-relaxed">{props.children}</li>
     ),
   },
   marks: {
@@ -106,10 +106,12 @@ export const portableTextComponents: PortableTextComponents = {
       );
     },
     strong: (props) => (
-      <strong className="font-semibold text-foreground">{props.children}</strong>
+      <strong className="text-foreground font-semibold">
+        {props.children}
+      </strong>
     ),
     em: (props) => (
-      <em className="italic text-muted-foreground">{props.children}</em>
+      <em className="text-muted-foreground italic">{props.children}</em>
     ),
   },
 };

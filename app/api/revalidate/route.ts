@@ -1,9 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
-import {
-  isValidSignature,
-  SIGNATURE_HEADER_NAME,
-} from "@sanity/webhook";
+import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import {
   createCollectionTag,
   createDocumentTag,

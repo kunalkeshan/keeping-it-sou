@@ -9,10 +9,7 @@ export function extractYouTubeId(url: string): string | null {
   try {
     const parsed = new URL(url);
 
-    if (
-      parsed.hostname === "youtu.be" ||
-      parsed.hostname === "www.youtu.be"
-    ) {
+    if (parsed.hostname === "youtu.be" || parsed.hostname === "www.youtu.be") {
       // https://youtu.be/VIDEO_ID
       const id = parsed.pathname.slice(1).split("/")[0];
       return id || null;

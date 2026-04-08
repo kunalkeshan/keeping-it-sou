@@ -62,10 +62,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Hero
-        streamingLinks={streamingLinks}
-        socialLinks={socialLinks}
-      />
+      <Hero streamingLinks={streamingLinks} socialLinks={socialLinks} />
       <LatestReleases releases={latestReleases} />
       <About />
     </main>

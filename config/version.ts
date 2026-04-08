@@ -1,4 +1,4 @@
-import packageJson from "@/package.json"
+import packageJson from "@/package.json";
 
 /** Semver from `package.json` (e.g. for display in the footer). */
-export const APP_VERSION = packageJson.version
+export const APP_VERSION = packageJson.version;

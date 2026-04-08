@@ -33,9 +33,9 @@ export default function StreamingLinks({ links }: StreamingLinksProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Listen on ${label}`}
-            className="inline-flex items-center gap-2 px-4 py-2 border border-border bg-card rounded-sm text-sm text-foreground hover:border-primary/50 hover:text-primary transition-colors duration-200"
+            className="border-border bg-card text-foreground hover:border-primary/50 hover:text-primary inline-flex items-center gap-2 rounded-sm border px-4 py-2 text-sm transition-colors duration-200"
           >
-            {icon && <span className="size-4 flex items-center">{icon}</span>}
+            {icon && <span className="flex size-4 items-center">{icon}</span>}
             {label}
           </a>
         );

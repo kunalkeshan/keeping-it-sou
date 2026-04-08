@@ -250,7 +250,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
         for (let x = 0; x < offscreen.width; x += cellSize) {
           const cx = Math.min(
             offscreen.width - 1,
-            x + Math.floor(cellSize / 2),
+            x + Math.floor(cellSize / 2)
           );
           let r = 0;
           let g = 0;
@@ -306,7 +306,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
           const gradientNorm = Math.max(0, Math.min(1, grad / 255));
           const dropoutProb = Math.max(
             0,
-            Math.min(1, (1 - gradientNorm) * dropoutStrength),
+            Math.min(1, (1 - gradientNorm) * dropoutStrength)
           );
           const drop = hash2D(cx, cy) < dropoutProb;
           const seed = hash2D(cx, cy);
@@ -347,7 +347,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
               s.y + cellSize / 2,
               radius,
               0,
-              Math.PI * 2,
+              Math.PI * 2
             );
             ctx.fill();
           } else {
@@ -355,7 +355,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
               s.x + cellSize / 2 - dims.dot / 2,
               s.y + cellSize / 2 - dims.dot / 2,
               dims.dot,
-              dims.dot,
+              dims.dot
             );
           }
         }
@@ -480,7 +480,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
               drawX - dims.dot / 2,
               drawY - dims.dot / 2,
               dims.dot,
-              dims.dot,
+              dims.dot
             );
           }
         }
