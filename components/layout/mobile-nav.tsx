@@ -20,7 +20,7 @@ import Link from "next/link";
 import Image from "next/image";
 import React from "react";
 import { navLinks } from "@/constants/nav-links";
-import { LinkItem } from "@/components/layout/sheard";
+import { LinkItem } from "@/components/layout/shared";
 import { SocialIcon } from "@/components/shared/social-links";
 import type { SocialMediaLink } from "@/components/shared/social-links";
 import { mapReleasesToNavItems, type ReleaseNavItem } from "@/lib/releases-nav";

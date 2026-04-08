@@ -117,11 +117,13 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
   const activityTargetRef = React.useRef<number>(0);
 
   React.useEffect(() => {
+    type ImageWithCleanup = HTMLImageElement & { _cleanup?: () => void };
+
     let isCancelled = false;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const img = new Image();
+    const img: ImageWithCleanup = new Image();
     img.crossOrigin = "anonymous";
     img.src = src;
 
@@ -249,8 +251,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
             return [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10)];
           return null;
         };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        tintRGB = parse(tintColor) as any;
+        tintRGB = parse(tintColor);
       }
 
       for (let y = 0; y < offscreen.height; y += cellSize) {
@@ -506,8 +507,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
         canvasEl.removeEventListener("pointerleave", onPointerLeave);
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
       };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (img as any)._cleanup = cleanup;
+      img._cleanup = cleanup;
     };
 
     img.onerror = () => {
@@ -524,15 +524,13 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
       return () => {
         isCancelled = true;
         window.removeEventListener("resize", onResize);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if ((img as any)._cleanup) (img as any)._cleanup();
+        if (img._cleanup) img._cleanup();
       };
     }
 
     return () => {
       isCancelled = true;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((img as any)._cleanup) (img as any)._cleanup();
+      if (img._cleanup) img._cleanup();
     };
   }, [
     src,

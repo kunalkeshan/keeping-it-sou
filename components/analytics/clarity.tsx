@@ -1,8 +1,8 @@
 /**
  * Initialises Microsoft Clarity on the client, production only.
  * Renders nothing — used purely for its side effect inside useEffect.
- * The project ID is hardcoded here; to disable, remove this component
- * from app/(static)/layout.tsx.
+ * The project ID is hardcoded here intentionally; to disable, remove this
+ * component from app/(static)/layout.tsx.
  */
 "use client";
 

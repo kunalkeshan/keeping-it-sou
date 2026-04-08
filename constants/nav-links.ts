@@ -28,7 +28,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import type { LinkItemType } from "@/components/layout/sheard";
+import type { LinkItemType } from "@/components/layout/shared";
 
 export const navLinks = [
   {
