@@ -1,3 +1,9 @@
+/**
+ * artist Sanity document schema — represents a music artist (Sou or a featured collaborator).
+ * Artists are referenced by releases. The order field controls display ordering.
+ * socialLinks on an artist are separate from the global siteConfig.socialMedia —
+ * these are per-artist links shown on their profile/release pages.
+ */
 import { UserIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 

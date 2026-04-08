@@ -1,3 +1,9 @@
+/**
+ * Shared social link types and the SocialIcon component used across Header,
+ * Footer, and Hero to render icon-only links for social/streaming platforms.
+ * SocialMediaLink is the canonical prop type for passing platform links
+ * through component trees.
+ */
 import {
   getSocialIcon,
   getPlatformLabel,
@@ -25,7 +31,7 @@ export function SocialIcon({ href, platform, label }: SocialIconProps) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={ariaLabel}
-      className="w-10 h-10 flex items-center justify-center bg-card border border-border rounded-sm text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-accent transition-all duration-300"
+      className="bg-card border-border text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-accent flex h-10 w-10 items-center justify-center rounded-sm border transition-all duration-300"
     >
       {getSocialIcon(platform)}
     </a>

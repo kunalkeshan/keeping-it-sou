@@ -81,7 +81,7 @@ export function Logo({
         className={cn("h-auto w-auto shrink-0", imageClassName)}
       />
       {showText && (
-        <span className="font-semibold tracking-tight text-foreground text-xl">
+        <span className="text-foreground text-xl font-semibold tracking-tight">
           sou
         </span>
       )}

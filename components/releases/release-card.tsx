@@ -1,3 +1,10 @@
+/**
+ * Reusable square release card used in the home page grid, releases index,
+ * and the "Also In This Release" section on release detail pages.
+ * The overlay + title visibility behaviour is controlled by the showTitle prop:
+ *  - showTitle=true (default): overlay + title always visible
+ *  - showTitle=false: overlay + title only on hover, no animation
+ */
 import Link from "next/link";
 import Image from "next/image";
 import { Play } from "lucide-react";
@@ -22,7 +29,7 @@ export default function ReleaseCard({
   return (
     <Link
       href={href}
-      className="group relative block aspect-square overflow-hidden rounded-lg border border-border bg-muted"
+      className="group border-border bg-muted relative block aspect-square overflow-hidden rounded-lg border"
       aria-label={`View release: ${title}`}
     >
       {/* Image layer */}
@@ -35,7 +42,7 @@ export default function ReleaseCard({
           height={400}
         />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
+        <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-sm">
           —
         </div>
       )}
@@ -46,19 +53,19 @@ export default function ReleaseCard({
           "absolute inset-0 bg-black/60",
           showTitle
             ? "opacity-100"
-            : "opacity-0 transition-opacity duration-300 group-hover:opacity-100",
+            : "opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         )}
         aria-hidden
       />
 
       {/* Title – when showTitle: always visible. Otherwise: visible on hover only, no animation */}
-      <div className="absolute bottom-0 left-0 right-0 p-3">
+      <div className="absolute right-0 bottom-0 left-0 p-3">
         <span
           className={cn(
-            "block text-sm font-medium uppercase tracking-wide text-white",
+            "block text-sm font-medium tracking-wide text-white uppercase",
             showTitle
               ? "opacity-100"
-              : "opacity-0 transition-none group-hover:opacity-100",
+              : "opacity-0 transition-none group-hover:opacity-100"
           )}
         >
           {title}
@@ -67,7 +74,7 @@ export default function ReleaseCard({
 
       {/* Play icon – top-right, decorative */}
       <div
-        className="absolute right-0 top-0 p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="absolute top-0 right-0 p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         aria-hidden
       >
         <span className="flex size-8 items-center justify-center rounded-sm bg-white text-black">

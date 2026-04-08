@@ -1,3 +1,8 @@
+/**
+ * Home page — assembles Hero, LatestReleases, and About sections.
+ * Fetches siteConfig (social/streaming links) and releases in parallel,
+ * then splits social media into streaming vs. non-streaming for Hero props.
+ */
 import type { Metadata } from "next";
 import Hero from "@/components/home/hero";
 import LatestReleases from "@/components/home/latest-releases";
@@ -62,10 +67,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Hero
-        streamingLinks={streamingLinks}
-        socialLinks={socialLinks}
-      />
+      <Hero streamingLinks={streamingLinks} socialLinks={socialLinks} />
       <LatestReleases releases={latestReleases} />
       <About />
     </main>

@@ -1,3 +1,10 @@
+/**
+ * Site-wide footer with four sections: brand/social, latest releases,
+ * more links, and contact info. Data comes from Sanity siteConfig and the
+ * releases list. Streaming and social links are both shown in the brand
+ * section (combined into allSocialLinks). Legal links in the bottom bar
+ * are driven by siteConfig.footerLegalLinks, not hardcoded.
+ */
 import { Logo } from "@/components/shared/logo";
 import { SocialIcon } from "@/components/shared/social-links";
 import type {
@@ -6,17 +13,13 @@ import type {
 } from "@/types/cms";
 import { ArrowRightIcon, Mail, Phone, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
-import { resourcesLinks } from "@/constants/nav-links";
 import { APP_VERSION } from "@/config/version";
 import {
   isStreamingPlatform,
   isSupportedPlatform,
   type SupportedSocialPlatform,
 } from "@/lib/social-media";
-import {
-  mapReleasesToNavItems,
-  type ReleaseNavItem,
-} from "@/lib/releases-nav";
+import { mapReleasesToNavItems, type ReleaseNavItem } from "@/lib/releases-nav";
 
 const FOOTER_RELEASES_LIMIT = 4;
 
@@ -24,7 +27,7 @@ function FooterReleaseLink({ item }: { item: ReleaseNavItem }) {
   return (
     <Link
       href={item.href}
-      className="text-sm hover:text-primary transition-colors"
+      className="hover:text-primary text-sm transition-colors"
     >
       <span className="font-medium">{item.title}</span>
       {item.subText ? (
@@ -39,10 +42,7 @@ type FooterProps = {
   releases?: RELEASES_LIST_QUERY_RESULT;
 };
 
-export default function Footer({
-  siteConfig,
-  releases = [],
-}: FooterProps) {
+export default function Footer({ siteConfig, releases = [] }: FooterProps) {
   const releaseItems = mapReleasesToNavItems(releases).slice(
     0,
     FOOTER_RELEASES_LIMIT
@@ -90,14 +90,14 @@ export default function Footer({
 
   return (
     <footer
-      className="w-full border-t bg-background"
+      className="bg-background w-full border-t"
       id="footer"
       style={{ viewTransitionName: "footer" }}
     >
       <div className="container">
-        <div className="py-14 grid grid-cols-12 gap-x-5 gap-y-8">
+        <div className="grid grid-cols-12 gap-x-5 gap-y-8 py-14">
           {/* Brand Section */}
-          <div className="col-span-full lg:col-span-3 relative bg-primary/10 rounded-2xl gap-6 p-6 flex flex-col justify-center items-center">
+          <div className="bg-primary/10 relative col-span-full flex flex-col items-center justify-center gap-6 rounded-2xl p-6 lg:col-span-3">
             <Logo
               textPosition="below"
               className="flex justify-center lg:justify-start"
@@ -112,7 +112,7 @@ export default function Footer({
             </p>
 
             {allSocialLinks.length > 0 && (
-              <div className="flex gap-2 flex-wrap justify-center">
+              <div className="flex flex-wrap justify-center gap-2">
                 {allSocialLinks.map((link) => (
                   <SocialIcon
                     key={link.platform}
@@ -127,7 +127,7 @@ export default function Footer({
 
           {/* Releases Section */}
           <div className="col-span-6 md:col-span-4 lg:col-span-3">
-            <h3 className="font-semibold text-lg mb-4">Releases</h3>
+            <h3 className="mb-4 text-lg font-semibold">Releases</h3>
             <ul className="space-y-3">
               {releaseItems.map((item) => (
                 <li key={item.href}>
@@ -137,7 +137,7 @@ export default function Footer({
               <li>
                 <Link
                   href="/releases"
-                  className="text-sm hover:text-primary transition-colors inline-flex items-center gap-1"
+                  className="hover:text-primary inline-flex items-center gap-1 text-sm transition-colors"
                 >
                   View more
                   <ArrowRightIcon className="size-3" />
@@ -167,12 +167,12 @@ export default function Footer({
 
           {/* More Section */}
           <div className="col-span-6 md:col-span-4 lg:col-span-3">
-            <h3 className="font-semibold text-lg mb-4">More</h3>
+            <h3 className="mb-4 text-lg font-semibold">More</h3>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/#about"
-                  className="text-sm hover:text-primary transition-colors"
+                  className="hover:text-primary text-sm transition-colors"
                 >
                   About
                 </Link>
@@ -182,21 +182,21 @@ export default function Footer({
 
           {/* Contact Section */}
           <div className="col-span-full md:col-span-4 lg:col-span-3">
-            <h3 className="font-semibold text-lg mb-4">Contact Us</h3>
+            <h3 className="mb-4 text-lg font-semibold">Contact Us</h3>
             <ul className="space-y-3">
               {siteConfig?.phoneNumbers &&
                 siteConfig.phoneNumbers.map((phone, index) => (
                   <li key={index} className="flex items-start gap-2">
-                    <Phone className="size-4 text-primary mt-0.5 shrink-0" />
+                    <Phone className="text-primary mt-0.5 size-4 shrink-0" />
                     <div>
                       <a
                         href={`tel:${phone.number}`}
-                        className="text-sm hover:text-primary transition-colors"
+                        className="hover:text-primary text-sm transition-colors"
                       >
                         {phone.number}
                       </a>
                       {phone.label && (
-                        <span className="text-xs ml-1">({phone.label})</span>
+                        <span className="ml-1 text-xs">({phone.label})</span>
                       )}
                     </div>
                   </li>
@@ -205,16 +205,16 @@ export default function Footer({
               {siteConfig?.emails &&
                 siteConfig.emails.map((email, index) => (
                   <li key={index} className="flex items-start gap-2">
-                    <Mail className="size-4 text-primary mt-0.5 shrink-0" />
+                    <Mail className="text-primary mt-0.5 size-4 shrink-0" />
                     <div>
                       <a
                         href={`mailto:${email.email}`}
-                        className="text-sm hover:text-primary transition-colors"
+                        className="hover:text-primary text-sm transition-colors"
                       >
                         {email.email}
                       </a>
                       {email.label && (
-                        <span className="text-xs ml-1">({email.label})</span>
+                        <span className="ml-1 text-xs">({email.label})</span>
                       )}
                     </div>
                   </li>
@@ -222,7 +222,7 @@ export default function Footer({
 
               {siteConfig?.address && (
                 <li className="flex items-start gap-2">
-                  <MapPin className="size-4 text-primary mt-0.5 shrink-0" />
+                  <MapPin className="text-primary mt-0.5 size-4 shrink-0" />
                   <address className="text-sm not-italic">
                     {siteConfig.address.street}
                     {siteConfig.address.street && <br />}
@@ -241,7 +241,7 @@ export default function Footer({
 
               {siteConfig?.sitetiming && (
                 <li className="flex items-start gap-2">
-                  <Clock className="size-4 text-primary mt-0.5 shrink-0" />
+                  <Clock className="text-primary mt-0.5 size-4 shrink-0" />
                   <span className="text-sm">{siteConfig.sitetiming}</span>
                 </li>
               )}
@@ -251,8 +251,8 @@ export default function Footer({
 
         {/* Footer Bottom */}
         <div className="border-t py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex flex-wrap justify-center md:justify-start gap-4">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <div className="flex flex-wrap justify-center gap-4 md:justify-start">
               {legalLinks.length > 0 ? (
                 legalLinks
                   .filter((link) => link.slug?.current)
@@ -260,7 +260,7 @@ export default function Footer({
                     <Link
                       key={link._id}
                       href={`/legal/${link.slug?.current}`}
-                      className="text-sm hover:text-primary transition-colors"
+                      className="hover:text-primary text-sm transition-colors"
                     >
                       {link.title ?? "Legal"}
                     </Link>
@@ -270,10 +270,9 @@ export default function Footer({
               )}
             </div>
 
-            <p className="text-sm text-center md:text-right">
+            <p className="text-center text-sm md:text-right">
               &copy; {copyrightYear} {siteConfig?.title ?? "Keeping it Sou"}.
-              All rights reserved.{" "}
-              <span aria-hidden="true">•</span>{" "}
+              All rights reserved. <span aria-hidden="true">•</span>{" "}
               <Link
                 className="text-muted-foreground hover:text-primary transition-colors"
                 href="https://github.com/kunalkeshan/keeping-it-sou/releases/latest"

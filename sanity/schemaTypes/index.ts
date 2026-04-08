@@ -1,3 +1,9 @@
+/**
+ * Sanity schema registry — exports all document types registered with the Studio.
+ * Import order does not matter for runtime behaviour, but keep it consistent
+ * with sanity/structure.ts for easier maintenance.
+ * After adding a new type here, run `pnpm generate:types` to update types/cms.d.ts.
+ */
 import { type SchemaTypeDefinition } from "sanity";
 
 import { blockContentType } from "./blockContentType";

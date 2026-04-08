@@ -1,3 +1,10 @@
+/**
+ * Interactive pixelated dot-matrix canvas renderer.
+ * Samples an image at regular cell intervals and draws coloured dots.
+ * Supports optional mouse/touch distortion (repel, attract, swirl modes),
+ * per-dot jitter animation, dropout in low-contrast regions, and tinting.
+ * Used by the About section to render Sou's portrait as an animated dot grid.
+ */
 "use client";
 import React from "react";
 
@@ -110,11 +117,13 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
   const activityTargetRef = React.useRef<number>(0);
 
   React.useEffect(() => {
+    type ImageWithCleanup = HTMLImageElement & { _cleanup?: () => void };
+
     let isCancelled = false;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const img = new Image();
+    const img: ImageWithCleanup = new Image();
     img.crossOrigin = "anonymous";
     img.src = src;
 
@@ -242,7 +251,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
             return [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10)];
           return null;
         };
-        tintRGB = parse(tintColor) as any;
+        tintRGB = parse(tintColor);
       }
 
       for (let y = 0; y < offscreen.height; y += cellSize) {
@@ -250,7 +259,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
         for (let x = 0; x < offscreen.width; x += cellSize) {
           const cx = Math.min(
             offscreen.width - 1,
-            x + Math.floor(cellSize / 2),
+            x + Math.floor(cellSize / 2)
           );
           let r = 0;
           let g = 0;
@@ -306,7 +315,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
           const gradientNorm = Math.max(0, Math.min(1, grad / 255));
           const dropoutProb = Math.max(
             0,
-            Math.min(1, (1 - gradientNorm) * dropoutStrength),
+            Math.min(1, (1 - gradientNorm) * dropoutStrength)
           );
           const drop = hash2D(cx, cy) < dropoutProb;
           const seed = hash2D(cx, cy);
@@ -347,7 +356,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
               s.y + cellSize / 2,
               radius,
               0,
-              Math.PI * 2,
+              Math.PI * 2
             );
             ctx.fill();
           } else {
@@ -355,7 +364,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
               s.x + cellSize / 2 - dims.dot / 2,
               s.y + cellSize / 2 - dims.dot / 2,
               dims.dot,
-              dims.dot,
+              dims.dot
             );
           }
         }
@@ -480,7 +489,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
               drawX - dims.dot / 2,
               drawY - dims.dot / 2,
               dims.dot,
-              dims.dot,
+              dims.dot
             );
           }
         }
@@ -498,7 +507,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
         canvasEl.removeEventListener("pointerleave", onPointerLeave);
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
       };
-      (img as any)._cleanup = cleanup;
+      img._cleanup = cleanup;
     };
 
     img.onerror = () => {
@@ -515,13 +524,13 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
       return () => {
         isCancelled = true;
         window.removeEventListener("resize", onResize);
-        if ((img as any)._cleanup) (img as any)._cleanup();
+        if (img._cleanup) img._cleanup();
       };
     }
 
     return () => {
       isCancelled = true;
-      if ((img as any)._cleanup) (img as any)._cleanup();
+      if (img._cleanup) img._cleanup();
     };
   }, [
     src,

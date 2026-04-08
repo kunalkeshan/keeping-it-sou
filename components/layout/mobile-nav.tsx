@@ -1,3 +1,9 @@
+/**
+ * Mobile navigation drawer (visible below md breakpoint).
+ * Opens as a Portal overlay below the sticky header. Uses Accordion
+ * for the Releases sub-list. Locks body scroll while open on mobile
+ * (guarded by useMediaQuery so it doesn't affect desktop resize).
+ */
 "use client";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import {
@@ -9,18 +15,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Portal } from "@radix-ui/react-portal";
-import { ArrowRightIcon, UsersRound } from "lucide-react";
+import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
-import { navLinks, resourcesLinks } from "@/constants/nav-links";
-import { LinkItem } from "@/components/layout/sheard";
+import { navLinks } from "@/constants/nav-links";
+import { LinkItem } from "@/components/layout/shared";
 import { SocialIcon } from "@/components/shared/social-links";
 import type { SocialMediaLink } from "@/components/shared/social-links";
-import {
-  mapReleasesToNavItems,
-  type ReleaseNavItem,
-} from "@/lib/releases-nav";
+import { mapReleasesToNavItems, type ReleaseNavItem } from "@/lib/releases-nav";
 import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";
 
 const NAV_RELEASES_LIMIT = 9;
@@ -37,7 +40,7 @@ function MobileReleaseLinkRow({
   return (
     <Link
       className={cn(
-        "group flex h-14 w-full items-center gap-x-3 border-b hover:bg-accent dark:hover:bg-accent/50",
+        "group hover:bg-accent dark:hover:bg-accent/50 flex h-14 w-full items-center gap-x-3 border-b",
         className
       )}
       href={item.href}
@@ -52,14 +55,16 @@ function MobileReleaseLinkRow({
           height={32}
         />
       ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-xs">
+        <span className="bg-muted text-muted-foreground flex size-8 shrink-0 items-center justify-center rounded text-xs">
           —
         </span>
       )}
       <div className="flex min-w-0 flex-col items-start justify-center">
-        <span className="font-medium text-sm truncate w-full">{item.title}</span>
+        <span className="w-full truncate text-sm font-medium">
+          {item.title}
+        </span>
         {item.subText ? (
-          <span className="line-clamp-1 text-[10px] text-muted-foreground">
+          <span className="text-muted-foreground line-clamp-1 text-[10px]">
             {item.subText}
           </span>
         ) : null}
@@ -67,20 +72,6 @@ function MobileReleaseLinkRow({
     </Link>
   );
 }
-
-const resourcesSection = {
-  id: "resources",
-  name: "Resources",
-  list: [
-    ...resourcesLinks,
-    {
-      label: "Customer Stories",
-      href: "#",
-      icon: UsersRound,
-      description: "Browse our success stories",
-    },
-  ],
-} as const;
 
 type MobileNavProps = {
   streamingLinks?: SocialMediaLink[];
@@ -91,7 +82,10 @@ export function MobileNav({
   streamingLinks = [],
   releases = [],
 }: MobileNavProps) {
-  const releaseItems = mapReleasesToNavItems(releases).slice(0, NAV_RELEASES_LIMIT);
+  const releaseItems = mapReleasesToNavItems(releases).slice(
+    0,
+    NAV_RELEASES_LIMIT
+  );
   const [open, setOpen] = React.useState(false);
   const { isMobile } = useMediaQuery();
 
@@ -122,14 +116,14 @@ export function MobileNav({
         <div className="relative size-4">
           <span
             className={cn(
-              "absolute left-0 block h-0.5 w-4 bg-foreground transition-all duration-200",
+              "bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-200",
               open ? "top-[0.4rem] rotate-45" : "top-1"
             )}
           />
           <span
             className={cn(
-              "absolute left-0 block h-0.5 w-4 bg-foreground transition-all duration-200",
-              open ? "-rotate-45 top-[0.4rem]" : "top-2.5"
+              "bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-200",
+              open ? "top-[0.4rem] -rotate-45" : "top-2.5"
             )}
           />
         </div>
@@ -144,8 +138,8 @@ export function MobileNav({
         >
           <div
             className={cn(
-              "flex-1 min-h-0 overflow-y-auto overflow-x-hidden border-b bg-background pb-4 overscroll-contain",
-              "data-[slot=open]:slide-in-from-top-10 ease-out data-[slot=open]:animate-in"
+              "bg-background min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain border-b pb-4",
+              "data-[slot=open]:slide-in-from-top-10 data-[slot=open]:animate-in ease-out"
             )}
             data-slot={open ? "open" : "closed"}
           >
@@ -164,11 +158,11 @@ export function MobileNav({
                     />
                   ))}
                   <Link
-                    className="group flex h-14 w-full items-center gap-x-3 border-b px-8 hover:bg-accent dark:hover:bg-accent/50"
+                    className="group hover:bg-accent dark:hover:bg-accent/50 flex h-14 w-full items-center gap-x-3 border-b px-8"
                     href="/releases"
                     onClick={() => setOpen(false)}
                   >
-                    <span className="font-medium text-sm text-primary">
+                    <span className="text-primary text-sm font-medium">
                       View more
                     </span>
                     <ArrowRightIcon className="size-4" />
@@ -202,10 +196,10 @@ export function MobileNav({
             ))}
             {streamingLinks.length > 0 && (
               <div className="mt-5 px-6">
-                <p className="text-muted-foreground text-sm uppercase tracking-widest mb-3">
+                <p className="text-muted-foreground mb-3 text-sm tracking-widest uppercase">
                   Listen Now
                 </p>
-                <div className="flex gap-3 flex-wrap">
+                <div className="flex flex-wrap gap-3">
                   {streamingLinks.map((link) => (
                     <SocialIcon
                       key={link.platform}

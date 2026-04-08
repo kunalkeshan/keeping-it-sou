@@ -13,6 +13,8 @@ pnpm dev             # Start Next.js development server
 pnpm build           # Production build
 pnpm start           # Start production server
 pnpm lint            # Run ESLint
+pnpm format          # Run Prettier on all TypeScript and JSON files
+pnpm typecheck       # TypeScript type check (no emit)
 pnpm generate:types  # Regenerate Sanity schema + TypeGen output
 ```
 
@@ -130,6 +132,10 @@ Operational workflow and guardrails for coding agents are documented in `AGENTS.
 Use both files together:
 - `CLAUDE.md` = architecture/conventions/source of truth
 - `AGENTS.md` = execution playbook/checklists/safety rules
+
+## Contributing
+
+Contribution guidelines, coding standards checklist, and the PR process are documented in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## Documentation Hygiene
 

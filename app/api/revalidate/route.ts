@@ -1,9 +1,18 @@
+/**
+ * POST /api/revalidate — Sanity webhook handler for on-demand ISR.
+ *
+ * When a document is published in Sanity, the webhook posts here with the
+ * document _type and optional slug. This handler:
+ *  1. Verifies the HMAC signature using SANITY_WEBHOOK_SECRET
+ *  2. Calls revalidateTag() with "max" scope to bust all matching cached
+ *     responses across the deployment, not just the current server instance
+ *
+ * Supported document types: releases, legal, siteConfig
+ * Unsupported types are silently ignored (no-op revalidation is safe).
+ */
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
-import {
-  isValidSignature,
-  SIGNATURE_HEADER_NAME,
-} from "@sanity/webhook";
+import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import {
   createCollectionTag,
   createDocumentTag,

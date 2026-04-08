@@ -25,12 +25,12 @@ export const structure: StructureResolver = (S) =>
               S.listItem()
                 .title("Release Types")
                 .child(
-                  S.documentTypeList("releaseType").title("All Release Types"),
+                  S.documentTypeList("releaseType").title("All Release Types")
                 ),
               S.listItem()
                 .title("Releases")
                 .child(S.documentTypeList("releases").title("All Releases")),
-            ]),
+            ])
         ),
       S.divider(),
       // Other document types
@@ -44,6 +44,6 @@ export const structure: StructureResolver = (S) =>
             "artist",
             "releaseType",
             "releases",
-          ].includes(item.getId()!),
+          ].includes(item.getId()!)
       ),
     ]);

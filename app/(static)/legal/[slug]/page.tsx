@@ -1,3 +1,8 @@
+/**
+ * /legal/[slug] — individual legal document page.
+ * Generates static params at build time from all legal docs with slugs.
+ * Renders Portable Text content with heading level shift (h1→h2) via portableTextComponents.
+ */
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
@@ -21,9 +26,7 @@ export async function generateStaticParams() {
   );
 }
 
-export async function generateMetadata({
-  params,
-}: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const legalDocument = await getLegalDocumentBySlug(slug);
 
@@ -58,18 +61,16 @@ export default async function LegalDocumentPage({ params }: Props) {
 
   return (
     <main className="container py-20">
-      <article className="max-w-4xl mx-auto">
+      <article className="mx-auto max-w-4xl">
         <header className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">
-            {legalDocument.title}
-          </h1>
+          <h1 className="mb-4 text-4xl font-bold">{legalDocument.title}</h1>
           {legalDocument.description && (
-            <p className="text-lg text-muted-foreground mb-4">
+            <p className="text-muted-foreground mb-4 text-lg">
               {legalDocument.description}
             </p>
           )}
           {formattedDate && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
               <CalendarDays className="size-4" />
               <span>Last updated: {formattedDate}</span>
             </div>
@@ -77,7 +78,7 @@ export default async function LegalDocumentPage({ params }: Props) {
         </header>
 
         {legalDocument.content && (
-          <div className="prose prose-lg max-w-none dark:prose-invert">
+          <div className="prose prose-lg dark:prose-invert max-w-none">
             <PortableText
               value={legalDocument.content}
               components={portableTextComponents}

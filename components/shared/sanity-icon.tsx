@@ -47,17 +47,17 @@ function isValidColor(color: string): boolean {
   if (/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/.test(color)) {
     return true;
   }
-  
+
   // Check for rgb/rgba color with basic validation
   if (/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+/.test(color)) {
     return true;
   }
-  
+
   // Check for hsl/hsla color
   if (/^hsla?\(\s*\d+\s*,\s*\d+%/.test(color)) {
     return true;
   }
-  
+
   // Check for named colors (basic validation - CSS supports many more)
   const namedColors = [
     "currentColor",
@@ -85,7 +85,7 @@ function isValidColor(color: string): boolean {
   if (namedColors.includes(color.toLowerCase())) {
     return true;
   }
-  
+
   // For client-side, try to validate using DOM (only if available)
   if (typeof document !== "undefined") {
     try {
@@ -96,7 +96,7 @@ function isValidColor(color: string): boolean {
       return false;
     }
   }
-  
+
   // If we can't validate (server-side), be conservative and reject
   // Only allow known safe formats
   return false;
@@ -104,7 +104,7 @@ function isValidColor(color: string): boolean {
 
 /**
  * Reusable component for rendering icons from Sanity Icon Manager
- * 
+ *
  * Features:
  * - Supports inline SVG rendering when available (sanitized with DOMPurify)
  * - Applies transforms (flip, rotate) from metadata
@@ -112,25 +112,25 @@ function isValidColor(color: string): boolean {
  * - Falls back to lucide-react HelpCircle icon when icon is missing/invalid
  * - Fully typed with TypeScript
  * - Accessible: supports aria-label for meaningful icons
- * 
+ *
  * Note: The rotate value in metadata is stored as quarters (0-3), where:
  * - 0 = 0 degrees
  * - 1 = 90 degrees
  * - 2 = 180 degrees
  * - 3 = 270 degrees
  * This component converts it to degrees for Iconify (multiplies by 90).
- * 
+ *
  * @example
  * ```tsx
  * import { SanityIcon } from '@/components/shared/sanity-icon'
- * 
+ *
  * // Decorative icon (hidden from screen readers)
  * <SanityIcon icon={item.icon} className="w-6 h-6" />
- * 
+ *
  * // Meaningful icon (accessible to screen readers)
- * <SanityIcon 
- *   icon={item.icon} 
- *   className="w-6 h-6" 
+ * <SanityIcon
+ *   icon={item.icon}
+ *   className="w-6 h-6"
  *   aria-label="Item type: Example"
  * />
  * ```
@@ -187,7 +187,7 @@ export function SanityIcon({
     const sanitizedSvg = DOMPurify.sanitize(metadata.inlineSvg, {
       USE_PROFILES: { svg: true, svgFilters: true },
     });
-    
+
     return (
       <span
         className={cn("inline-flex items-center justify-center", className)}

@@ -1,3 +1,7 @@
+/**
+ * robots.txt generator — allows all public routes, disallows the Sanity
+ * Studio (/cms/) and API routes (/api/) from being indexed.
+ */
 import type { MetadataRoute } from "next";
 import { SITE_CONFIG } from "@/config/site";
 

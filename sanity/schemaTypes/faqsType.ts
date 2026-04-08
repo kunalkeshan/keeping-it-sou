@@ -1,3 +1,8 @@
+/**
+ * faqs Sanity document schema — singleton document for the FAQ section.
+ * Each faqItems entry has a question (10–200 chars) and an answer (min 10 chars).
+ * Not currently rendered on any public page; available for future use.
+ */
 import { defineType } from "sanity";
 
 export const faqsType = defineType({

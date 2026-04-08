@@ -1,3 +1,8 @@
+/**
+ * About section — a full-width pixelated dot-matrix portrait of Sou
+ * with an artist quote overlaid. Uses ResizeObserver to keep the canvas
+ * dimensions in sync with the container width as the viewport changes.
+ */
 "use client";
 // import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
@@ -33,7 +38,7 @@ export default function About() {
       {/* Image wrapper: full width on small screens, max-width + centered on wider; rounded to match platform */}
       <div
         ref={containerRef}
-        className="relative w-full max-w-6xl mx-auto overflow-hidden rounded-lg"
+        className="relative mx-auto w-full max-w-6xl overflow-hidden rounded-lg"
       >
         <PixelatedCanvas
           src="/assets/about.jpg"
@@ -58,7 +63,7 @@ export default function About() {
         />
         {/* Dark gradient overlay for text readability (stronger at top) */}
         <div
-          className="absolute inset-0 z-1 pointer-events-none"
+          className="pointer-events-none absolute inset-0 z-1"
           aria-hidden
           style={{
             background:
@@ -67,9 +72,9 @@ export default function About() {
         />
 
         {/* Content: top-aligned, centered, over the image; pointer-events-none so canvas receives hover */}
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-start pt-12 sm:pt-16 lg:pt-24 pb-24 pointer-events-none">
-          <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <blockquote className="text-white text-sm md:text-xl lg:text-2xl font-medium uppercase tracking-wide leading-relaxed">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-start pt-12 pb-24 sm:pt-16 lg:pt-24">
+          <div className="mx-auto w-full max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+            <blockquote className="text-sm leading-relaxed font-medium tracking-wide text-white uppercase md:text-xl lg:text-2xl">
               &ldquo;{QUOTE}&rdquo;
             </blockquote>
             {/* <div className="mt-6 sm:mt-8">

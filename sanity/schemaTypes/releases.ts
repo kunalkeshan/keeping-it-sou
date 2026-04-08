@@ -1,3 +1,13 @@
+/**
+ * releases Sanity document schema — represents a music release (single, EP, album, etc.).
+ *
+ * Key fields:
+ *  streamingLinks  — ordered array; the FIRST entry becomes the primary "Listen Now" CTA
+ *  referencedReleases — used for albums that contain individual single/EP references;
+ *                       hidden unless referencesOtherReleases is checked
+ *  featured        — when true the release sorts first in lists and gets a ⭐ in Studio
+ *  videoUrl        — YouTube URL rendered as an embedded player on the detail page
+ */
 import { ImageIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 
@@ -157,7 +167,7 @@ export const releases = defineType({
               description: "Required if platform is 'Custom'",
               validation: (Rule) =>
                 Rule.custom((value, context) => {
-                  const platform = (context.parent as any)?.platform;
+                  const platform = (context.parent as { platform?: string })?.platform;
                   if (platform === "custom" && !value) {
                     return "Custom label is required when platform is 'Custom'";
                   }
@@ -235,7 +245,9 @@ export const releases = defineType({
       hidden: ({ document }) => !document?.referencesOtherReleases,
       validation: (Rule) =>
         Rule.custom((referencedReleases, context) => {
-          const referencesOtherReleases = (context.document as any)
+          const referencesOtherReleases = (
+            context.document as { referencesOtherReleases?: boolean } | undefined
+          )
             ?.referencesOtherReleases;
           if (
             referencesOtherReleases &&

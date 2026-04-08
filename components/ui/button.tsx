@@ -1,3 +1,8 @@
+/**
+ * shadcn/ui Button component with CVA variant/size system.
+ * Supports asChild (renders as Slot) for polymorphic usage.
+ * Do not add rounded/squircle classes at call sites — Button applies them internally.
+ */
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";

@@ -1,9 +1,12 @@
-"use client"
+/**
+ * shadcn/ui Label — accessible form label built on Radix UI Label primitive.
+ */
+"use client";
 
-import * as React from "react"
-import * as LabelPrimitive from "@radix-ui/react-label"
+import * as React from "react";
+import * as LabelPrimitive from "@radix-ui/react-label";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function Label({
   className,
@@ -18,7 +21,7 @@ function Label({
       )}
       {...props}
     />
-  )
+  );
 }
 
-export { Label }
+export { Label };
