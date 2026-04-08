@@ -1,3 +1,13 @@
+/**
+ * Navigation and resource link constants used by DesktopNav, MobileNav,
+ * and Footer.
+ *
+ * navLinks       — primary nav items currently active in the header
+ * featuresLinks  — placeholder feature links (not yet wired up)
+ * useCasesLinks  — placeholder use-case links (not yet wired up)
+ * resourcesLinks — placeholder resource links (dropdown currently commented out)
+ * getLegalIcon   — maps a legal document title to a Lucide icon for /legal index cards
+ */
 import {
   ArrowRight,
   BrainCircuit,

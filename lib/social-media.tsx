@@ -1,3 +1,12 @@
+/**
+ * Central source of truth for supported social and streaming platform rules.
+ * All platform keys, icon mappings, display labels, and type guards live here.
+ * Components must import from this file — never hardcode platform strings.
+ *
+ * Two platform sets are maintained:
+ *  - SUPPORTED_PLATFORMS: social profiles shown in the header/footer
+ *  - STREAMING_PLATFORMS: music platforms shown as "Listen Now" CTAs
+ */
 import { Icon } from "@iconify/react";
 import type { SiteConfig } from "@/types/cms";
 
@@ -37,12 +46,18 @@ const PLATFORM_ICONS: Record<string, string> = {
   deezer: "simple-icons:deezer",
 };
 
+/**
+ * Returns an Iconify <Icon> element for a platform, or null if unmapped.
+ * Note: hyphenated streaming platform keys (e.g. "apple-music") and their
+ * camelCase equivalents ("applemusic") are both handled in PLATFORM_ICONS.
+ */
 export function getSocialIcon(platform: string, className = "size-4") {
   const icon = PLATFORM_ICONS[platform];
   if (!icon) return null;
   return <Icon icon={icon} className={className} />;
 }
 
+/** Type guard: narrows a nullable string to SupportedSocialPlatform. */
 export function isSupportedPlatform(
   platform: string | null
 ): platform is SupportedSocialPlatform {
@@ -109,6 +124,7 @@ export const STREAMING_PLATFORMS: readonly SupportedSocialPlatform[] = [
   "youtubemusic",
 ] as const;
 
+/** Type guard: true only for music streaming platforms (Spotify, Apple Music, YouTube Music). */
 export function isStreamingPlatform(
   platform: string | null
 ): platform is (typeof STREAMING_PLATFORMS)[number] {

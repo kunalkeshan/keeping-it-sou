@@ -1,3 +1,12 @@
+/**
+ * Dynamic sitemap generator — see docs/sitemap.md for the full entry table.
+ *
+ * URLs are not hand-maintained. Slug entries and lastModified timestamps come
+ * from Sanity via cached fetches tagged with collection tags so the sitemap
+ * gets invalidated when releases or legal docs change.
+ *
+ * The /cms Studio route is intentionally excluded from the sitemap.
+ */
 import type { MetadataRoute } from "next";
 import { SITE_CONFIG } from "@/config/site";
 import { getLegalDocuments } from "@/sanity/queries/legal";
@@ -9,6 +18,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getReleasesForSitemap(),
   ]);
 
+  // Derive the most recent _updatedAt across each collection for the parent
+  // routes (/ and /releases use maxReleaseDate; /legal uses maxLegalDate).
   const maxReleaseDate =
     releaseDocs.length > 0
       ? new Date(

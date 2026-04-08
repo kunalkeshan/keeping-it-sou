@@ -1,3 +1,8 @@
+/**
+ * legal Sanity document schema — legal documents (Privacy Policy, Terms of Service, etc.).
+ * The description field is used as the SEO meta description and the card preview text
+ * on the /legal index page. The content field uses blockContent (Portable Text).
+ */
 import { DocumentTextIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 

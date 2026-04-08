@@ -1,3 +1,7 @@
+/**
+ * shadcn/ui Accordion — thin wrapper around Radix UI Accordion with project styling.
+ * Used by MobileNav for the collapsible Releases sub-list.
+ */
 "use client";
 
 import * as React from "react";

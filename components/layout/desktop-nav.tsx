@@ -1,3 +1,10 @@
+/**
+ * Desktop navigation bar (hidden on mobile via Tailwind `hidden md:flex`).
+ * Uses Radix NavigationMenu with a custom full-width mega-dropdown viewport
+ * positioned below the header. The Releases dropdown shows up to 9 releases
+ * and a "Listen Now" Spotify card. The Resources dropdown is currently
+ * commented out and can be restored when needed.
+ */
 "use client";
 import { Logo } from "@/components/shared/logo";
 import {

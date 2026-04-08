@@ -1,3 +1,9 @@
+/**
+ * Animated light rays background effect used in the Hero section.
+ * Rays are generated randomly on mount (useEffect) to avoid SSR/hydration
+ * mismatch — the server renders nothing, the client fills in the rays.
+ * CSS custom properties on the container control colour, blur, and length.
+ */
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";

@@ -1,3 +1,13 @@
+/**
+ * releases Sanity document schema — represents a music release (single, EP, album, etc.).
+ *
+ * Key fields:
+ *  streamingLinks  — ordered array; the FIRST entry becomes the primary "Listen Now" CTA
+ *  referencedReleases — used for albums that contain individual single/EP references;
+ *                       hidden unless referencesOtherReleases is checked
+ *  featured        — when true the release sorts first in lists and gets a ⭐ in Studio
+ *  videoUrl        — YouTube URL rendered as an embedded player on the detail page
+ */
 import { ImageIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 

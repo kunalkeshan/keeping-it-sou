@@ -1,3 +1,8 @@
+/**
+ * "Available On" row of streaming platform buttons for a release detail page.
+ * Links with no URL are filtered out before render. For "custom" platform
+ * entries the customLabel field is used as the display text.
+ */
 import { getSocialIcon, getStreamingPlatformLabel } from "@/lib/social-media";
 
 interface StreamingLink {

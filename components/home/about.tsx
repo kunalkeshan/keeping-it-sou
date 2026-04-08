@@ -1,3 +1,8 @@
+/**
+ * About section — a full-width pixelated dot-matrix portrait of Sou
+ * with an artist quote overlaid. Uses ResizeObserver to keep the canvas
+ * dimensions in sync with the container width as the viewport changes.
+ */
 "use client";
 // import Link from "next/link";
 import { useRef, useState, useEffect } from "react";

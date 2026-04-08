@@ -1,3 +1,11 @@
+/**
+ * Sanity image URL builder helpers.
+ *
+ * urlFor      — low-level builder; chain Sanity image URL transformation methods
+ * urlForSquare — convenience wrapper for square thumbnails used in nav/footer grids
+ *
+ * Always call .url() at the end of a urlFor chain before passing to <Image src>.
+ */
 import { createImageUrlBuilder } from "@sanity/image-url";
 import { dataset, projectId } from "../env";
 

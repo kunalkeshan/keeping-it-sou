@@ -1,3 +1,10 @@
+/**
+ * Reusable square release card used in the home page grid, releases index,
+ * and the "Also In This Release" section on release detail pages.
+ * The overlay + title visibility behaviour is controlled by the showTitle prop:
+ *  - showTitle=true (default): overlay + title always visible
+ *  - showTitle=false: overlay + title only on hover, no animation
+ */
 import Link from "next/link";
 import Image from "next/image";
 import { Play } from "lucide-react";

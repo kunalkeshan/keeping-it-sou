@@ -1,3 +1,8 @@
+/**
+ * Site-wide sticky header containing the logo, desktop/mobile navigation,
+ * and streaming "Listen Now" icon links. Receives streaming links and the
+ * releases list as props (populated in the (static) layout server component).
+ */
 import { Logo } from "@/components/shared/logo";
 import { SocialIcon } from "@/components/shared/social-links";
 import type { SocialMediaLink } from "@/components/shared/social-links";

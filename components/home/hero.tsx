@@ -1,3 +1,9 @@
+/**
+ * Hero section — the top-of-page block on the home page.
+ * Layers a floating artist image behind the title text, then renders
+ * streaming CTA buttons and social icon links below.
+ * streamingLinks and socialLinks are pre-split by the parent page.
+ */
 import {
   getSocialIcon,
   getPlatformLabel,

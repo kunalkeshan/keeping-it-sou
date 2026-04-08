@@ -1,3 +1,8 @@
+/**
+ * shadcn/ui Form primitives — React Hook Form integration with accessible
+ * field wrappers (FormField, FormItem, FormLabel, FormMessage).
+ * Provides context-driven error state propagation from the form controller.
+ */
 "use client";
 
 import * as React from "react";

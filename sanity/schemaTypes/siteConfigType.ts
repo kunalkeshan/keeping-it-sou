@@ -1,3 +1,15 @@
+/**
+ * siteConfig Sanity document schema — singleton document for global site settings.
+ *
+ * Groups:
+ *  basic   — title, description, OG/Twitter images
+ *  contact — phone numbers, emails, address, timing
+ *  social  — social media links (platform + URL + label)
+ *  content — footer legal link references
+ *
+ * The socialMedia array drives the Header streaming CTAs, Footer social icons,
+ * and Hero streaming/social rows. Only platforms with URLs are displayed.
+ */
 import { defineType } from "sanity";
 
 export const siteConfigType = defineType({

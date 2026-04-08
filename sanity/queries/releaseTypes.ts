@@ -1,3 +1,8 @@
+/**
+ * GROQ queries for releaseType documents.
+ * Not yet connected to a public page — available for future use (e.g., filtering
+ * releases by type: Singles, EPs, Albums).
+ */
 import { defineQuery } from "next-sanity";
 
 export const ALL_RELEASE_TYPES_QUERY = defineQuery(`

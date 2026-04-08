@@ -1,3 +1,9 @@
+/**
+ * releaseType Sanity document schema — reusable category for releases.
+ * Examples: Single, EP, Album, Mixtape, Compilation, Live Album, Remix Album.
+ * Referenced by the releases schema via a reference field.
+ * The order field controls display ordering in dropdowns and listing pages.
+ */
 import { FolderIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 

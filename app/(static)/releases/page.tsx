@@ -1,3 +1,7 @@
+/**
+ * /releases — grid index of all releases ordered by featured then date.
+ * Uses mapReleasesToNavItems to normalise Sanity data for the Link/Image grid.
+ */
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";

@@ -1,4 +1,15 @@
 /**
+ * Server-only Sanity fetch wrapper used by all query modules.
+ *
+ * Key behaviour:
+ *  - revalidate: false — disables time-based revalidation; freshness is
+ *    controlled entirely by revalidateTag() calls in the webhook handler
+ *  - Tags passed to each call map to collection/document cache tags so
+ *    Next.js knows exactly which cached responses to bust on publish
+ *
+ * All query modules should use sanityFetch rather than calling the client
+ * directly so the caching strategy stays consistent.
+ *
  * @jest-environment node
  */
 

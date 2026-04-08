@@ -1,3 +1,9 @@
+/**
+ * Shared social link types and the SocialIcon component used across Header,
+ * Footer, and Hero to render icon-only links for social/streaming platforms.
+ * SocialMediaLink is the canonical prop type for passing platform links
+ * through component trees.
+ */
 import {
   getSocialIcon,
   getPlatformLabel,

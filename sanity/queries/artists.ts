@@ -1,3 +1,9 @@
+/**
+ * GROQ queries for artist documents.
+ * ARTIST_BY_SLUG_QUERY includes a reverse reference lookup to fetch all
+ * releases that contain this artist, using a correlated array filter.
+ * Not yet connected to a public page — available for future artist profile pages.
+ */
 import { defineQuery } from "next-sanity";
 
 export const ALL_ARTISTS_QUERY = defineQuery(`

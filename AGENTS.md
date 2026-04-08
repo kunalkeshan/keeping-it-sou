@@ -23,6 +23,8 @@ AI-agent-first workflow with guardrails:
    - Avoid broad refactors unless the task explicitly asks for them.
 3. **Run relevant checks**
    - `pnpm lint` for touched TS/TSX logic.
+   - `pnpm format` to auto-sort Tailwind classes and format code.
+   - `pnpm typecheck` to catch TypeScript errors before committing.
    - `pnpm build` for high-risk route/config/metadata changes.
    - `pnpm generate:types` whenever schema/query changes are made.
 4. **Final consistency pass**
@@ -60,6 +62,11 @@ When adding a new Sanity type:
 - For new static routes, add canonical metadata.
 - Keep global metadata conventions consistent with `app/layout.tsx` and `app/(static)/layout.tsx`.
 - If new pages affect crawl surface, update `app/sitemap.ts` and `app/robots.ts` as needed.
+
+## Project Governance
+
+- Contribution guidelines and coding standards checklist: [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- Security vulnerability reporting: [`SECURITY.md`](./SECURITY.md)
 
 ## Docs Maintenance Contract
 

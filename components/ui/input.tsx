@@ -1,3 +1,6 @@
+/**
+ * shadcn/ui Input — accessible text input with project-token styling.
+ */
 import * as React from "react";
 
 import { cn } from "@/lib/utils";

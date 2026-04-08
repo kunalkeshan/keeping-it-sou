@@ -1,3 +1,9 @@
+/**
+ * Shared layout primitives used by both DesktopNav and MobileNav:
+ *  - LinkItem: a row-style navigation link with optional icon and description
+ *  - GithubIcon: inline SVG for the GitHub logo (used in the Resources panel)
+ *  - VercelIcon: inline SVG for the Vercel logo
+ */
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 

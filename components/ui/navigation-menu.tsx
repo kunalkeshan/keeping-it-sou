@@ -1,3 +1,8 @@
+/**
+ * shadcn/ui NavigationMenu — Radix UI NavigationMenu with project styling.
+ * Used exclusively by DesktopNav. The custom viewport and content positioning
+ * are overridden in desktop-nav.tsx to achieve the full-width mega-menu effect.
+ */
 import * as React from "react";
 import { cva } from "class-variance-authority";
 import { ChevronDownIcon } from "lucide-react";

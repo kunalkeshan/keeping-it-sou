@@ -1,3 +1,8 @@
+/**
+ * /legal/[slug] — individual legal document page.
+ * Generates static params at build time from all legal docs with slugs.
+ * Renders Portable Text content with heading level shift (h1→h2) via portableTextComponents.
+ */
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {

@@ -1,3 +1,10 @@
+/**
+ * Site-wide footer with four sections: brand/social, latest releases,
+ * more links, and contact info. Data comes from Sanity siteConfig and the
+ * releases list. Streaming and social links are both shown in the brand
+ * section (combined into allSocialLinks). Legal links in the bottom bar
+ * are driven by siteConfig.footerLegalLinks, not hardcoded.
+ */
 import { Logo } from "@/components/shared/logo";
 import { SocialIcon } from "@/components/shared/social-links";
 import type {

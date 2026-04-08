@@ -1,3 +1,10 @@
+/**
+ * Interactive pixelated dot-matrix canvas renderer.
+ * Samples an image at regular cell intervals and draws coloured dots.
+ * Supports optional mouse/touch distortion (repel, attract, swirl modes),
+ * per-dot jitter animation, dropout in low-contrast regions, and tinting.
+ * Used by the About section to render Sou's portrait as an animated dot grid.
+ */
 "use client";
 import React from "react";
 

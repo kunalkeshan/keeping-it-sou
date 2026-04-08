@@ -1,3 +1,8 @@
+/**
+ * LatestReleases section — displays up to 4 releases in a responsive grid
+ * (sliced from the full list by the home page). Releases without a slug are
+ * filtered out before rendering to guarantee valid Link hrefs.
+ */
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";

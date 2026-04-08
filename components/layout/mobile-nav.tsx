@@ -1,3 +1,9 @@
+/**
+ * Mobile navigation drawer (visible below md breakpoint).
+ * Opens as a Portal overlay below the sticky header. Uses Accordion
+ * for the Releases sub-list. Locks body scroll while open on mobile
+ * (guarded by useMediaQuery so it doesn't affect desktop resize).
+ */
 "use client";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import {

@@ -1,3 +1,8 @@
+/**
+ * Themed Toaster wrapper for the Sonner toast library.
+ * Syncs the toast theme with next-themes and applies project CSS variable
+ * tokens (popover bg/fg, border, radius) for consistent styling.
+ */
 "use client";
 
 import {

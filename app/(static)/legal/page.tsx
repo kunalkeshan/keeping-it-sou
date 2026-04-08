@@ -1,3 +1,7 @@
+/**
+ * /legal — index of all legal documents (Privacy Policy, Terms of Service, etc.).
+ * Renders a card grid with icons resolved by getLegalIcon() based on the doc title.
+ */
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getLegalDocuments } from "@/sanity/queries/legal";

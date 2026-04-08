@@ -1,3 +1,12 @@
+/**
+ * Route-group layout for all public (static) pages.
+ * Responsibilities:
+ *  - Generates dynamic OG/Twitter metadata from Sanity siteConfig
+ *  - Wraps every page with the shared <Header> and <Footer>
+ *  - Mounts analytics (Google Analytics + Microsoft Clarity)
+ * Uses Promise.all to fetch siteConfig and releases in parallel so both
+ * Header and Footer get the data they need in a single round-trip.
+ */
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { urlFor } from "@/sanity/lib/image";
@@ -77,6 +86,7 @@ export default async function StaticLayout({
   ]);
 
   const socialMedia = siteConfig?.socialMedia ?? [];
+  // Extract only streaming platforms (Spotify, Apple Music, YouTube Music) for the header CTA.
   const streamingLinks: SocialMediaLink[] = socialMedia
     .filter(
       (

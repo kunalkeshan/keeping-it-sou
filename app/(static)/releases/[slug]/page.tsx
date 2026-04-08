@@ -1,3 +1,9 @@
+/**
+ * /releases/[slug] — individual release detail page.
+ * Sections rendered (when data is present): cover art + info panel, streaming
+ * links, official YouTube video embed, credits, and referenced releases grid.
+ * The first streaming link becomes the primary "Listen Now" CTA button.
+ */
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
