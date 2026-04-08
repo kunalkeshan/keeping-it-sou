@@ -108,7 +108,6 @@ export default async function ReleasePage({ params }: Props) {
               className="size-full object-cover"
               width={800}
               height={800}
-              unoptimized
             />
           ) : (
             <div className="size-full flex items-center justify-center text-muted-foreground text-sm">

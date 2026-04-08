@@ -45,7 +45,6 @@ export default async function ReleasesPage() {
                         className="size-full object-cover"
                         width={400}
                         height={400}
-                        unoptimized
                       />
                     ) : (
                       <div className="size-full flex items-center justify-center text-muted-foreground text-sm">

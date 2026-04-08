@@ -163,7 +163,6 @@ function ReleaseLinkRow({ item }: { item: ReleaseNavItem }) {
           className="size-8 shrink-0 rounded object-cover"
           width={32}
           height={32}
-          unoptimized
         />
       ) : (
         <span className="flex size-8 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-xs">
