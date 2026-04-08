@@ -13,6 +13,7 @@ import { NavigationMenu as NavigationMenuPrimitive } from "radix-ui";
 import { ArrowRightIcon, type LucideIcon } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { navLinks, resourcesLinks } from "@/constants/nav-links";
 import { SocialIcon, type SocialMediaLink } from "@/components/shared/social-links";
 import { GithubIcon, LinkItem } from "@/components/layout/sheard";
@@ -156,12 +157,13 @@ function ReleaseLinkRow({ item }: { item: ReleaseNavItem }) {
       href={item.href}
     >
       {item.imageUrl ? (
-        <img
+        <Image
           src={item.imageUrl}
           alt=""
           className="size-8 shrink-0 rounded object-cover"
           width={32}
           height={32}
+          unoptimized
         />
       ) : (
         <span className="flex size-8 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-xs">
