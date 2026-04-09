@@ -36,6 +36,6 @@ After changing GROQ strings, run `npm run generate:types` so [`types/cms.d.ts`](
 
 ## How to verify
 
-1. Set `SITE_URL` (and on Vercel, `VERCEL_PROJECT_PRODUCTION_URL` is used to derive the public URL in [`config/site.ts`](../config/site.ts)).
+1. Set `NEXT_PUBLIC_SITE_URL` (and on Vercel, `VERCEL_PROJECT_PRODUCTION_URL` is used to derive the public URL in [`config/site.ts`](../config/site.ts)).
 2. Run `npm run dev` and open `http://localhost:3000/sitemap.xml` (or your preview/production origin + `/sitemap.xml`).
 3. Confirm `<loc>` entries for `/`, `/legal`, `/releases`, each legal slug, and each release slug, and confirm there is no Studio URL.

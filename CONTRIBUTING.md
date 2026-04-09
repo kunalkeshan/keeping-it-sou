@@ -36,7 +36,7 @@ Thanks for your interest in this project. This is a personal portfolio website f
 git clone https://github.com/kunalkeshan/keeping-it-sou.git
 cd keeping-it-sou
 pnpm install
-cp .env.example .env.local   # fill in values — NEXT_PUBLIC_SANITY_PROJECT_ID, NEXT_PUBLIC_SANITY_DATASET, SITE_URL, and SANITY_WEBHOOK_SECRET are required
+cp .env.example .env.local   # fill in values — NEXT_PUBLIC_SANITY_PROJECT_ID, NEXT_PUBLIC_SANITY_DATASET, NEXT_PUBLIC_SITE_URL, and SANITY_WEBHOOK_SECRET are required
 pnpm dev
 ```
 

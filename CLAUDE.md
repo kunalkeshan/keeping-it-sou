@@ -117,7 +117,7 @@ Run `pnpm generate:types` after every Sanity schema or GROQ query change.
 From `.env.example`:
 - `NEXT_PUBLIC_SANITY_PROJECT_ID`
 - `NEXT_PUBLIC_SANITY_DATASET`
-- `SITE_URL`
+- `NEXT_PUBLIC_SITE_URL`
 - `SANITY_WEBHOOK_SECRET`
 
 Optional:
