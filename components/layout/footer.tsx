@@ -13,6 +13,7 @@ import type {
 } from "@/types/cms";
 import { ArrowRightIcon, Mail, Phone, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { APP_VERSION } from "@/config/version";
 import {
   isStreamingPlatform,
@@ -53,6 +54,7 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
     currentYear > startYear ? `${startYear}-${currentYear}` : `${startYear}`;
 
   const legalLinks = siteConfig?.footerLegalLinks ?? [];
+  const validLegalLinks = legalLinks.filter((link) => link.slug?.current);
 
   const socialMedia = siteConfig?.socialMedia ?? [];
   const streamingLinks = socialMedia
@@ -95,9 +97,9 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
       style={{ viewTransitionName: "footer" }}
     >
       <div className="container">
-        <div className="grid grid-cols-12 gap-x-5 gap-y-8 py-14">
+        <div className="grid grid-cols-12 gap-x-5 gap-y-8 py-14 lg:grid-cols-5">
           {/* Brand Section */}
-          <div className="bg-primary/10 relative col-span-full flex flex-col items-center justify-center gap-6 rounded-2xl p-6 lg:col-span-3">
+          <div className="bg-primary/10 relative col-span-full flex flex-col items-center justify-center gap-6 rounded-2xl p-6 lg:col-span-1">
             <Logo
               textPosition="below"
               className="flex justify-center lg:justify-start"
@@ -126,7 +128,7 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
           </div>
 
           {/* Releases Section */}
-          <div className="col-span-6 md:col-span-4 lg:col-span-3">
+          <div className="col-span-6 md:col-span-4 lg:col-span-1">
             <h3 className="mb-4 text-lg font-semibold">Releases</h3>
             <ul className="space-y-3">
               {releaseItems.map((item) => (
@@ -147,7 +149,7 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
           </div>
 
           {/* Resources Section commented out for now; restore when needed
-          <div className="col-span-6 md:col-span-4 lg:col-span-3">
+          <div className="col-span-6 md:col-span-4 lg:col-span-1">
             <h3 className="font-semibold text-lg mb-4">Resources</h3>
             <ul className="space-y-3">
               {resourcesLinks.map((link) => (
@@ -166,7 +168,7 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
           */}
 
           {/* More Section */}
-          <div className="col-span-6 md:col-span-4 lg:col-span-3">
+          <div className="col-span-6 md:col-span-4 lg:col-span-1">
             <h3 className="mb-4 text-lg font-semibold">More</h3>
             <ul className="space-y-3">
               <li>
@@ -180,8 +182,33 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
             </ul>
           </div>
 
+          {/* Legal Section */}
+          <div className="col-span-6 md:col-span-1">
+            <h3 className="mb-4 text-lg font-semibold">Legal</h3>
+            <ul className="space-y-3">
+              {validLegalLinks.length > 0 ? (
+                validLegalLinks.map((link) => (
+                  <li key={link._id}>
+                    <Link
+                      href={`/legal/${link.slug?.current}`}
+                      className="hover:text-primary text-sm transition-colors"
+                    >
+                      {link.title ?? "Legal"}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li>
+                  <span className="text-muted-foreground text-sm">
+                    Coming soon
+                  </span>
+                </li>
+              )}
+            </ul>
+          </div>
+
           {/* Contact Section */}
-          <div className="col-span-full md:col-span-4 lg:col-span-3">
+          <div className="col-span-full md:col-span-8 lg:col-span-1">
             <h3 className="mb-4 text-lg font-semibold">Contact Us</h3>
             <ul className="space-y-3">
               {siteConfig?.phoneNumbers &&
@@ -251,26 +278,8 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
 
         {/* Footer Bottom */}
         <div className="border-t py-6">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="flex flex-wrap justify-center gap-4 md:justify-start">
-              {legalLinks.length > 0 ? (
-                legalLinks
-                  .filter((link) => link.slug?.current)
-                  .map((link) => (
-                    <Link
-                      key={link._id}
-                      href={`/legal/${link.slug?.current}`}
-                      className="hover:text-primary text-sm transition-colors"
-                    >
-                      {link.title ?? "Legal"}
-                    </Link>
-                  ))
-              ) : (
-                <span className="text-sm">No legal documents</span>
-              )}
-            </div>
-
-            <p className="text-center text-sm md:text-right">
+          <div className="text-muted-foreground flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
+            <p className="text-center md:text-left">
               &copy; {copyrightYear} {siteConfig?.title ?? "Keeping it Sou"}.
               All rights reserved. <span aria-hidden="true">•</span>{" "}
               <Link
@@ -282,6 +291,26 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
               >
                 v{APP_VERSION}
               </Link>
+            </p>
+
+            <p className="inline-flex items-center gap-1">
+              <span>Built by</span>
+              <a
+                aria-label="Built by Kunal"
+                className="text-foreground/80 hover:text-foreground inline-flex items-center gap-1 hover:underline"
+                href="https://kunalkeshan.dev"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <Image
+                  alt="Kunal"
+                  className="size-4 rounded-full"
+                  height={16}
+                  src="https://github.com/kunalkeshan.png"
+                  width={16}
+                />
+                Kunal
+              </a>
             </p>
           </div>
         </div>
