@@ -167,7 +167,8 @@ export const releases = defineType({
               description: "Required if platform is 'Custom'",
               validation: (Rule) =>
                 Rule.custom((value, context) => {
-                  const platform = (context.parent as { platform?: string })?.platform;
+                  const platform = (context.parent as { platform?: string })
+                    ?.platform;
                   if (platform === "custom" && !value) {
                     return "Custom label is required when platform is 'Custom'";
                   }
@@ -246,9 +247,10 @@ export const releases = defineType({
       validation: (Rule) =>
         Rule.custom((referencedReleases, context) => {
           const referencesOtherReleases = (
-            context.document as { referencesOtherReleases?: boolean } | undefined
-          )
-            ?.referencesOtherReleases;
+            context.document as
+              | { referencesOtherReleases?: boolean }
+              | undefined
+          )?.referencesOtherReleases;
           if (
             referencesOtherReleases &&
             (!referencedReleases || referencedReleases.length === 0)
