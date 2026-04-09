@@ -3,7 +3,7 @@
  *
  * Priority order for the site URL:
  *  1. VERCEL_PROJECT_PRODUCTION_URL (set automatically by Vercel on production)
- *  2. SITE_URL env var (required for local dev and non-Vercel deploys)
+ *  2. NEXT_PUBLIC_SITE_URL env var (required for local dev and non-Vercel deploys)
  *
  * All metadata, sitemap, and OG URLs must reference SITE_CONFIG.URL rather
  * than hardcoding the origin anywhere in the codebase.
@@ -14,7 +14,7 @@ export const SITE_CONFIG = {
   URL: assertValue(
     process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : process.env.SITE_URL,
-    "Missing environment variable: SITE_URL"
+      : process.env.NEXT_PUBLIC_SITE_URL,
+    "Missing environment variable: NEXT_PUBLIC_SITE_URL"
   ),
 };
