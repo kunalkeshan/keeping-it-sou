@@ -206,6 +206,7 @@ export function MobileNav({
                       href={link.url}
                       platform={link.platform}
                       label={link.label}
+                      placement="mobile_nav"
                     />
                   ))}
                 </div>

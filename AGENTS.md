@@ -29,6 +29,8 @@ AI-agent-first workflow with guardrails:
    - `pnpm generate:types` whenever schema/query changes are made.
 4. **Final consistency pass**
    - Ensure docs/config/types stay in sync with code changes.
+   - If new/changed UI renders an outbound streaming/social/video link, or new release-related interactive media (embeds, players), confirm it calls `trackLinkClick`/`trackVideoPlayClick` from `lib/analytics.ts` with an explicit `placement` — see `CLAUDE.md`'s Analytics & Click Tracking section.
+   - If new/changed UI adds a new public-facing page, confirm it renders appropriate JSON-LD structured data via `components/shared/json-ld.tsx` and `lib/structured-data.ts` — see `CLAUDE.md`'s Structured Data (JSON-LD) section.
 
 ## Hard Guardrails
 
@@ -36,6 +38,8 @@ AI-agent-first workflow with guardrails:
 - Do not invent Sanity data shapes by hand when TypeGen types exist.
 - Do not silently change architecture conventions; document them.
 - Do not leave stale docs when commands/paths/workflows changed.
+- Do not ship a new outbound streaming/social/video link, or new release-related interactive media (embeds, players), without wiring it through `lib/analytics.ts` (`trackLinkClick`/`trackVideoPlayClick`) and an explicit `placement`.
+- Do not ship a new public-facing page without appropriate JSON-LD structured data (`components/shared/json-ld.tsx` + a `build*JsonLd` function in `lib/structured-data.ts`), matching the pattern documented in `CLAUDE.md`.
 
 ## Sanity-Specific Rules
 

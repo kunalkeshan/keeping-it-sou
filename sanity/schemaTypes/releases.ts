@@ -7,6 +7,8 @@
  *                       hidden unless referencesOtherReleases is checked
  *  featured        — when true the release sorts first in lists and gets a ⭐ in Studio
  *  videoUrl        — YouTube URL rendered as an embedded player on the detail page
+ *  genre, duration — optional; feed the JSON-LD structured data built in
+ *                    lib/structured-data.ts (see CLAUDE.md's Structured Data section)
  */
 import { ImageIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
@@ -124,6 +126,31 @@ export const releases = defineType({
       type: "date",
       group: "details",
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "genre",
+      title: "Genre",
+      type: "array",
+      group: "details",
+      of: [{ type: "string" }],
+      options: {
+        layout: "tags",
+      },
+      description:
+        'Genre tags for this release (e.g. "Hip-Hop", "Trap"), matching how streaming platforms tag genre. Optional — populates the genre property in this release\'s JSON-LD structured data for search engines. Leave empty to omit genre from structured data.',
+    }),
+    defineField({
+      name: "duration",
+      title: "Duration",
+      type: "string",
+      group: "details",
+      description:
+        "Track length in mm:ss format (e.g. 3:24). Sanity cannot inspect the audio file, so this must be entered manually. Used to populate the duration property in this release's JSON-LD structured data for search engines (Single releases only) — leave blank to omit duration from structured data.",
+      validation: (Rule) =>
+        Rule.regex(/^\d{1,2}:\d{2}$/, {
+          name: "mm:ss",
+          invert: false,
+        }).warning("Expected mm:ss format, e.g. 3:24"),
     }),
     defineField({
       name: "streamingLinks",

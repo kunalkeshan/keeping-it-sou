@@ -12,6 +12,8 @@ import {
 import { PortableText } from "@portabletext/react";
 import { portableTextComponents } from "@/lib/portabletext-components";
 import { CalendarDays } from "lucide-react";
+import { JsonLd } from "@/components/shared/json-ld";
+import { buildWebPageJsonLd } from "@/lib/structured-data";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -58,34 +60,42 @@ export default async function LegalDocumentPage({ params }: Props) {
         day: "numeric",
       })
     : null;
+  const legalJsonLd = buildWebPageJsonLd({
+    name: legalDocument.title,
+    description: legalDocument.description,
+    path: `/legal/${slug}`,
+  });
 
   return (
-    <main className="container py-20">
-      <article className="mx-auto max-w-4xl">
-        <header className="mb-12">
-          <h1 className="mb-4 text-4xl font-bold">{legalDocument.title}</h1>
-          {legalDocument.description && (
-            <p className="text-muted-foreground mb-4 text-lg">
-              {legalDocument.description}
-            </p>
-          )}
-          {formattedDate && (
-            <div className="text-muted-foreground flex items-center gap-2 text-sm">
-              <CalendarDays className="size-4" />
-              <span>Last updated: {formattedDate}</span>
+    <>
+      <JsonLd data={legalJsonLd} />
+      <main className="container py-20">
+        <article className="mx-auto max-w-4xl">
+          <header className="mb-12">
+            <h1 className="mb-4 text-4xl font-bold">{legalDocument.title}</h1>
+            {legalDocument.description && (
+              <p className="text-muted-foreground mb-4 text-lg">
+                {legalDocument.description}
+              </p>
+            )}
+            {formattedDate && (
+              <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                <CalendarDays className="size-4" />
+                <span>Last updated: {formattedDate}</span>
+              </div>
+            )}
+          </header>
+
+          {legalDocument.content && (
+            <div className="prose prose-lg dark:prose-invert max-w-none">
+              <PortableText
+                value={legalDocument.content}
+                components={portableTextComponents}
+              />
             </div>
           )}
-        </header>
-
-        {legalDocument.content && (
-          <div className="prose prose-lg dark:prose-invert max-w-none">
-            <PortableText
-              value={legalDocument.content}
-              components={portableTextComponents}
-            />
-          </div>
-        )}
-      </article>
-    </main>
+        </article>
+      </main>
+    </>
   );
 }

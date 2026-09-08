@@ -41,6 +41,7 @@ export function Header({ streamingLinks = [], releases = [] }: HeaderProps) {
                   href={link.url}
                   platform={link.platform}
                   label={link.label}
+                  placement="header"
                 />
               ))}
             </div>

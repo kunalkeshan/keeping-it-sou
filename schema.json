@@ -275,6 +275,23 @@
         },
         "optional": true
       },
+      "genre": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "string"
+          }
+        },
+        "optional": true
+      },
+      "duration": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "streamingLinks": {
         "type": "objectAttribute",
         "value": {

@@ -4,11 +4,14 @@
  * streaming CTA buttons and social icon links below.
  * streamingLinks and socialLinks are pre-split by the parent page.
  */
+"use client";
+
 import {
   getSocialIcon,
   getPlatformLabel,
   type SupportedSocialPlatform,
 } from "@/lib/social-media";
+import { trackLinkClick } from "@/lib/analytics";
 import { LightRays } from "@/components/ui/light-rays";
 import Image from "next/image";
 
@@ -129,6 +132,14 @@ function StreamingButton({ platform, href, label }: StreamingButtonProps) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() =>
+        trackLinkClick({
+          platform,
+          url: href,
+          placement: "hero",
+          position: "secondary",
+        })
+      }
       className="bg-primary text-primary-foreground inline-flex items-center gap-2 rounded-sm px-5 py-3 text-sm font-medium tracking-wide uppercase transition-opacity hover:opacity-90"
     >
       {getSocialIcon(platform, "size-5")}
@@ -152,6 +163,14 @@ function SocialIcon({ href, platform, label }: SocialIconProps) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={ariaLabel}
+      onClick={() =>
+        trackLinkClick({
+          platform,
+          url: href,
+          placement: "hero",
+          position: "secondary",
+        })
+      }
       className="bg-card border-border text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-accent flex h-10 w-10 items-center justify-center rounded-sm border transition-all duration-300"
     >
       {getSocialIcon(platform)}

@@ -10,13 +10,16 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { Play } from "lucide-react";
 import { PortableText } from "@portabletext/react";
-import { YouTubeEmbed } from "@next/third-parties/google";
 import { getReleaseBySlug } from "@/sanity/queries/releases";
 import { urlFor, urlForSquare } from "@/sanity/lib/image";
 import { portableTextComponents } from "@/lib/portabletext-components";
 import { extractYouTubeId } from "@/lib/youtube";
 import StreamingLinks from "@/components/releases/streaming-links";
+import VideoEmbed from "@/components/releases/video-embed";
 import ReleaseCard from "@/components/releases/release-card";
+import { LinkClickTracker } from "@/components/releases/link-click-tracker";
+import { JsonLd } from "@/components/shared/json-ld";
+import { buildReleaseJsonLd } from "@/lib/structured-data";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -96,144 +99,166 @@ export default async function ReleasePage({ params }: Props) {
   const referencedReleases = (release.referencedReleases ?? []).filter(
     (r) => r.slug?.current
   );
+  const releaseJsonLd = buildReleaseJsonLd(release);
 
   return (
-    <main className="container py-16 md:py-20">
-      {/* Back link */}
-      <Link
-        href="/releases"
-        className="text-muted-foreground hover:text-primary mb-12 inline-block text-xs tracking-[0.2em] uppercase transition-colors"
-      >
-        ← Back to Releases
-      </Link>
+    <>
+      <JsonLd data={releaseJsonLd} />
+      <main className="container py-16 md:py-20">
+        {/* Back link */}
+        <Link
+          href="/releases"
+          className="text-muted-foreground hover:text-primary mb-12 inline-block text-xs tracking-[0.2em] uppercase transition-colors"
+        >
+          ← Back to Releases
+        </Link>
 
-      {/* ── HERO ── */}
-      <section className="mb-20 grid gap-12 md:mb-28 md:grid-cols-2 md:gap-16">
-        {/* Cover Art */}
-        <div className="border-border bg-muted aspect-square w-full overflow-hidden rounded-sm border">
-          {coverUrl ? (
-            <Image
-              src={coverUrl}
-              alt={release.coverImage?.alt ?? title}
-              className="size-full object-cover"
-              width={800}
-              height={800}
+        {/* ── HERO ── */}
+        <section className="mb-20 grid gap-12 md:mb-28 md:grid-cols-2 md:gap-16">
+          {/* Cover Art */}
+          <div className="border-border bg-muted aspect-square w-full overflow-hidden rounded-sm border">
+            {coverUrl ? (
+              <Image
+                src={coverUrl}
+                alt={release.coverImage?.alt ?? title}
+                className="size-full object-cover"
+                width={800}
+                height={800}
+              />
+            ) : (
+              <div className="text-muted-foreground flex size-full items-center justify-center text-sm">
+                —
+              </div>
+            )}
+          </div>
+
+          {/* Info Panel */}
+          <div className="flex flex-col justify-center gap-6">
+            {/* Type • Year */}
+            {(releaseTypeName || releaseYear) && (
+              <p className="text-muted-foreground text-xs tracking-[0.2em] uppercase">
+                {releaseTypeName}
+                {releaseTypeName && releaseYear ? " • " : ""}
+                {releaseYear}
+              </p>
+            )}
+
+            {/* Title */}
+            <h1 className="text-4xl leading-tight font-bold md:text-5xl lg:text-6xl">
+              {title}
+            </h1>
+
+            {/* Artists */}
+            {artistNames && (
+              <p className="text-muted-foreground text-base">{artistNames}</p>
+            )}
+
+            {/* Description */}
+            {release.description && release.description.length > 0 && (
+              <div>
+                <PortableText
+                  value={release.description}
+                  components={portableTextComponents}
+                />
+              </div>
+            )}
+
+            {/* Listen Now CTA */}
+            {primaryLink?.url && (
+              <LinkClickTracker
+                platform={primaryLink.platform ?? "custom"}
+                url={primaryLink.url}
+                placement="release_detail_primary_cta"
+                position="primary"
+                releaseSlug={release.slug?.current ?? undefined}
+                releaseTitle={release.title ?? undefined}
+                releaseType={releaseTypeName || undefined}
+              >
+                <a
+                  href={primaryLink.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-primary hover:bg-primary/80 inline-flex w-fit items-center gap-2 rounded-sm px-6 py-3 text-sm font-medium tracking-[0.1em] text-white uppercase transition-colors"
+                >
+                  <Play className="size-4 fill-current" />
+                  Listen Now
+                </a>
+              </LinkClickTracker>
+            )}
+          </div>
+        </section>
+
+        {/* ── AVAILABLE ON ── */}
+        {streamingLinks.length > 0 && (
+          <section className="mb-16 md:mb-20">
+            <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
+              Available On
+            </h2>
+            <StreamingLinks
+              links={streamingLinks}
+              releaseSlug={release.slug?.current ?? undefined}
+              releaseTitle={release.title ?? undefined}
+              releaseType={releaseTypeName || undefined}
             />
-          ) : (
-            <div className="text-muted-foreground flex size-full items-center justify-center text-sm">
-              —
-            </div>
-          )}
-        </div>
+          </section>
+        )}
 
-        {/* Info Panel */}
-        <div className="flex flex-col justify-center gap-6">
-          {/* Type • Year */}
-          {(releaseTypeName || releaseYear) && (
-            <p className="text-muted-foreground text-xs tracking-[0.2em] uppercase">
-              {releaseTypeName}
-              {releaseTypeName && releaseYear ? " • " : ""}
-              {releaseYear}
-            </p>
-          )}
+        {/* ── OFFICIAL VIDEO ── */}
+        {release.videoUrl && videoId && (
+          <section className="mb-16 md:mb-20">
+            <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
+              Official Video
+            </h2>
+            <VideoEmbed
+              videoId={videoId}
+              releaseSlug={release.slug?.current ?? undefined}
+              releaseTitle={release.title ?? undefined}
+              releaseType={releaseTypeName || undefined}
+            />
+          </section>
+        )}
 
-          {/* Title */}
-          <h1 className="text-4xl leading-tight font-bold md:text-5xl lg:text-6xl">
-            {title}
-          </h1>
-
-          {/* Artists */}
-          {artistNames && (
-            <p className="text-muted-foreground text-base">{artistNames}</p>
-          )}
-
-          {/* Description */}
-          {release.description && release.description.length > 0 && (
+        {/* ── CREDITS ── */}
+        {release.credits && release.credits.length > 0 && (
+          <section className="mb-16 md:mb-20">
+            <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
+              Credits
+            </h2>
             <div>
               <PortableText
-                value={release.description}
+                value={release.credits}
                 components={portableTextComponents}
               />
             </div>
-          )}
+          </section>
+        )}
 
-          {/* Listen Now CTA */}
-          {primaryLink?.url && (
-            <a
-              href={primaryLink.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-primary hover:bg-primary/80 inline-flex w-fit items-center gap-2 rounded-sm px-6 py-3 text-sm font-medium tracking-[0.1em] text-white uppercase transition-colors"
-            >
-              <Play className="size-4 fill-current" />
-              Listen Now
-            </a>
-          )}
-        </div>
-      </section>
-
-      {/* ── AVAILABLE ON ── */}
-      {streamingLinks.length > 0 && (
-        <section className="mb-16 md:mb-20">
-          <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
-            Available On
-          </h2>
-          <StreamingLinks links={streamingLinks} />
-        </section>
-      )}
-
-      {/* ── OFFICIAL VIDEO ── */}
-      {release.videoUrl && videoId && (
-        <section className="mb-16 md:mb-20">
-          <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
-            Official Video
-          </h2>
-          <div className="border-border overflow-hidden rounded-sm border">
-            <YouTubeEmbed videoid={videoId} style="max-width:100%" />
-          </div>
-        </section>
-      )}
-
-      {/* ── CREDITS ── */}
-      {release.credits && release.credits.length > 0 && (
-        <section className="mb-16 md:mb-20">
-          <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
-            Credits
-          </h2>
-          <div>
-            <PortableText
-              value={release.credits}
-              components={portableTextComponents}
-            />
-          </div>
-        </section>
-      )}
-
-      {/* ── REFERENCED RELEASES ── */}
-      {release.referencesOtherReleases && referencedReleases.length > 0 && (
-        <section>
-          <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
-            Also In This Release
-          </h2>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {referencedReleases.map((r) => {
-              const imgUrl = r.coverImage
-                ? urlForSquare(r.coverImage, 400)
-                : null;
-              return (
-                <li key={r._id}>
-                  <ReleaseCard
-                    title={r.title ?? "Untitled"}
-                    href={`/releases/${r.slug?.current ?? ""}`}
-                    imageUrl={imgUrl}
-                    alt={r.coverImage?.alt ?? r.title ?? ""}
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
-    </main>
+        {/* ── REFERENCED RELEASES ── */}
+        {release.referencesOtherReleases && referencedReleases.length > 0 && (
+          <section>
+            <h2 className="text-muted-foreground mb-6 text-xs tracking-[0.2em] uppercase">
+              Also In This Release
+            </h2>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {referencedReleases.map((r) => {
+                const imgUrl = r.coverImage
+                  ? urlForSquare(r.coverImage, 400)
+                  : null;
+                return (
+                  <li key={r._id}>
+                    <ReleaseCard
+                      title={r.title ?? "Untitled"}
+                      href={`/releases/${r.slug?.current ?? ""}`}
+                      imageUrl={imgUrl}
+                      alt={r.coverImage?.alt ?? r.title ?? ""}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+      </main>
+    </>
   );
 }
