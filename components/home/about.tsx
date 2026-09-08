@@ -9,7 +9,7 @@ import { useRef, useState, useEffect } from "react";
 import { PixelatedCanvas } from "@/components/ui/pixelated-canvas";
 
 const QUOTE =
-  "I'm Sou - Hip-Hop Artist and Producer. Dark Beats, Real Stories, and Raw Energy. No Gimmicks — Just Truth in Every Bar.";
+  "I'm Sou - hip hop artist from India. True stories, raw energy and real emotions. No gimmicks. I don't stop at 99, I give it my Sou";
 
 const ASPECT_RATIO = 800 / 1200;
 

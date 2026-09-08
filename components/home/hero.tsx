@@ -24,7 +24,7 @@ interface HeroProps {
   title?: string;
 }
 
-const PLACEHOLDER_TITLE = "Keeping it Sou";
+const PLACEHOLDER_TITLE = "Sou";
 
 export default function Hero({
   streamingLinks,
