@@ -8,7 +8,7 @@
 import { Logo } from "@/components/shared/logo";
 import { SocialIcon } from "@/components/shared/social-links";
 import type {
-  RELEASES_LIST_QUERY_RESULT,
+  HOME_RELEASES_QUERY_RESULT,
   SITE_CONFIG_QUERY_RESULT,
 } from "@/types/cms";
 import { ArrowRightIcon, Mail, Phone, MapPin, Clock } from "lucide-react";
@@ -40,7 +40,7 @@ function FooterReleaseLink({ item }: { item: ReleaseNavItem }) {
 
 type FooterProps = {
   siteConfig: SITE_CONFIG_QUERY_RESULT;
-  releases?: RELEASES_LIST_QUERY_RESULT;
+  releases?: HOME_RELEASES_QUERY_RESULT;
 };
 
 export default function Footer({ siteConfig, releases = [] }: FooterProps) {

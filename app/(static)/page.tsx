@@ -8,7 +8,7 @@ import Hero from "@/components/home/hero";
 import LatestReleases from "@/components/home/latest-releases";
 import About from "@/components/home/about";
 import { getSiteConfig } from "@/sanity/queries/site-config";
-import { getReleasesList } from "@/sanity/queries/releases";
+import { getHomeReleases } from "@/sanity/queries/releases";
 import {
   isStreamingPlatform,
   isSupportedPlatform,
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default async function Home() {
   const [siteConfig, releases] = await Promise.all([
     getSiteConfig(),
-    getReleasesList(),
+    getHomeReleases(),
   ]);
 
   const latestReleases = (releases ?? []).slice(0, 4);

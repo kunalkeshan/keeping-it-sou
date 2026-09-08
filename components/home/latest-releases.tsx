@@ -5,12 +5,12 @@
  */
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import type { RELEASES_LIST_QUERY_RESULT } from "@/types/cms";
+import type { HOME_RELEASES_QUERY_RESULT } from "@/types/cms";
 import { urlForSquare } from "@/sanity/lib/image";
 import ReleaseCard from "@/components/releases/release-card";
 
 interface LatestReleasesProps {
-  releases: RELEASES_LIST_QUERY_RESULT;
+  releases: HOME_RELEASES_QUERY_RESULT;
 }
 
 export default function LatestReleases({ releases }: LatestReleasesProps) {

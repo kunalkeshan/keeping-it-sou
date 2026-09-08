@@ -16,6 +16,29 @@ export const RELEASES_LIST_QUERY = defineQuery(`
   }
 `);
 
+/**
+ * Top-level releases only, for the home page. Excludes any release that is
+ * listed in another release's referencedReleases (e.g. individual tracks
+ * that already appear nested under their parent EP/Album). Sort matches
+ * RELEASES_LIST_QUERY: featured first, then releaseDate desc.
+ */
+export const HOME_RELEASES_QUERY = defineQuery(`
+  *[_type == "releases"
+    && !(_id in *[_type == "releases" && referencesOtherReleases == true].referencedReleases[]._ref)
+  ] | order(featured desc, releaseDate desc) {
+    _id,
+    title,
+    slug,
+    releaseType-> {
+      name
+    },
+    coverImage {
+      asset->,
+      alt
+    }
+  }
+`);
+
 /** Minimal fields for sitemap URLs and lastModified; order matches the releases index. */
 export const SITEMAP_RELEASES_QUERY = defineQuery(`
   *[_type == "releases"] | order(featured desc, releaseDate desc) {

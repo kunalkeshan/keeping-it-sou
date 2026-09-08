@@ -11,7 +11,7 @@ import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { urlFor } from "@/sanity/lib/image";
 import { getSiteConfig } from "@/sanity/queries/site-config";
-import { getReleasesList } from "@/sanity/queries/releases";
+import { getReleasesList, getHomeReleases } from "@/sanity/queries/releases";
 import MicrosoftClarity from "@/components/analytics/clarity";
 import { Header } from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -80,9 +80,10 @@ export default async function StaticLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [siteConfig, releasesList] = await Promise.all([
+  const [siteConfig, releasesList, homeReleases] = await Promise.all([
     getSiteConfig(),
     getReleasesList(),
+    getHomeReleases(),
   ]);
 
   const socialMedia = siteConfig?.socialMedia ?? [];
@@ -106,7 +107,7 @@ export default async function StaticLayout({
     <>
       <Header streamingLinks={streamingLinks} releases={releasesList} />
       {children}
-      <Footer siteConfig={siteConfig} releases={releasesList} />
+      <Footer siteConfig={siteConfig} releases={homeReleases} />
       <GoogleAnalytics gaId="G-CBPBRCTFZV" />
       <MicrosoftClarity />
     </>

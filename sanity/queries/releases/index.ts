@@ -6,6 +6,7 @@ import {
 } from "@/sanity/lib/cache-tags";
 import {
   RELEASES_LIST_QUERY,
+  HOME_RELEASES_QUERY,
   SITEMAP_RELEASES_QUERY,
   ALL_RELEASES_QUERY,
   RELEASE_BY_SLUG_QUERY,
@@ -13,6 +14,7 @@ import {
 } from "./queries";
 import type {
   RELEASES_LIST_QUERY_RESULT,
+  HOME_RELEASES_QUERY_RESULT,
   SITEMAP_RELEASES_QUERY_RESULT,
   ALL_RELEASES_QUERY_RESULT,
   RELEASE_BY_SLUG_QUERY_RESULT,
@@ -26,6 +28,16 @@ export const getReleasesList = cache(
   async (): Promise<RELEASES_LIST_QUERY_RESULT> => {
     return sanityFetch<RELEASES_LIST_QUERY_RESULT>({
       query: RELEASES_LIST_QUERY,
+      tags: [releasesCollectionTag],
+    });
+  }
+);
+
+/** Top-level releases only (excludes releases referenced as children of another release). Home page only. */
+export const getHomeReleases = cache(
+  async (): Promise<HOME_RELEASES_QUERY_RESULT> => {
+    return sanityFetch<HOME_RELEASES_QUERY_RESULT>({
+      query: HOME_RELEASES_QUERY,
       tags: [releasesCollectionTag],
     });
   }
