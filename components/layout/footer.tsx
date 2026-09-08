@@ -101,11 +101,12 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
           {/* Brand Section */}
           <div className="bg-primary/10 relative col-span-full flex flex-col items-center justify-center gap-6 rounded-2xl p-6 lg:col-span-1">
             <Logo
+              logoSrc="/assets/aura.jpeg"
               textPosition="below"
               className="flex justify-center lg:justify-start"
               imageClassName="lg:h-32 w-auto"
               width={200}
-              height={50}
+              height={200}
               alt={siteConfig?.title ?? "Keeping it Sou"}
             />
             <p className="text-center text-sm">
