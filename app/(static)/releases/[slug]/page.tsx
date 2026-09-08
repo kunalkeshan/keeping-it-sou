@@ -116,7 +116,7 @@ export default async function ReleasePage({ params }: Props) {
         {/* ── HERO ── */}
         <section className="mb-20 grid gap-12 md:mb-28 md:grid-cols-2 md:gap-16">
           {/* Cover Art */}
-          <div className="border-border bg-muted aspect-square w-full overflow-hidden rounded-sm border">
+          <div className="border-border bg-muted aspect-square w-full overflow-hidden rounded-sm border md:sticky md:top-14 md:self-start">
             {coverUrl ? (
               <Image
                 src={coverUrl}
