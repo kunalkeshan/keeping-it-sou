@@ -62,6 +62,28 @@ pnpm generate:types  # Regenerate Sanity schema + TypeGen output
 - Keep canonical URLs explicit on individual routes (see `app/(static)/page.tsx`).
 - Sitemap/robots are generated from `app/sitemap.ts` and `app/robots.ts`; if routes or content models change, update these.
 
+## Analytics & Click Tracking
+
+Google Analytics 4 (`@next/third-parties`) and Microsoft Clarity (`@microsoft/clarity`) are mounted in `app/(static)/layout.tsx`. Both auto-track page views; custom click events go through one shared module — never call `sendGAEvent` or `clarity` directly from a component.
+
+- `lib/analytics.ts` exports `trackLinkClick(...)` (streaming/social link clicks) and `trackVideoPlayClick(...)` (release video embed plays). Each call fires to both GA4 and Clarity.
+- **Every outbound streaming/social/video link must be wired for click tracking** with an explicit `placement` (`LinkPlacement` in `lib/analytics.ts`) identifying which UI surface rendered it (`hero`, `header`, `footer`, `mobile_nav`, `desktop_nav`, `release_detail_primary_cta`, `release_detail_list`). Add a new `LinkPlacement` value when introducing a new surface.
+- Normalize platform strings via `getTrackingPlatformId()` (`lib/social-media.tsx`) before sending them as event params — `releases.streamingLinks`, `artist.socialLinks`, and `siteConfig.socialMedia` use inconsistent platform key casing (e.g. `apple-music` vs `applemusic`), and this function is the single place that reconciles them for analytics.
+- Components that render tracked links must be Client Components (`"use client"`) — if a link lives inside a Server Component (e.g. an async page), extract a small client leaf component to hold the `onClick`, following the pattern in `components/releases/link-click-tracker.tsx` and `components/releases/video-embed.tsx`.
+- **When adding any new component that renders an outbound streaming/social/video link, or new release-related interactive media (embeds, players), wire it for click tracking before shipping.** See `AGENTS.md`'s Execution Workflow and Hard Guardrails for the enforcement checklist.
+
+## Structured Data (JSON-LD)
+
+Every public-facing page renders schema.org JSON-LD via a shared Server Component — never `next/script` for this (Next's own docs warn against it for JSON-LD: it's structured data, not executable JS, and has known issues serializing dynamic JSON-LD into the RSC flight payload).
+
+- `components/shared/json-ld.tsx` exports `JsonLd<T extends Thing>({ data }: { data: WithContext<T> })`, a generic Server Component rendering a native `<script type="application/ld+json">` with `dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}` — this exact escaping guards against Sanity free-text fields (titles, descriptions) containing `<`.
+- `lib/structured-data.ts` centralizes all schema.org object construction as pure `build*JsonLd(...)` functions, each consuming data already fetched for that page's normal rendering — never issue a new Sanity fetch solely for JSON-LD.
+- Types come from `schema-dts` (Google's official TypeScript types for schema.org), a devDependency — compile-time only, no runtime cost.
+- JSON-LD objects are built inside the page component itself (not `generateMetadata`, which is metadata-only and cannot emit arbitrary markup).
+- Every `build*JsonLd` function must omit a schema.org property entirely when its Sanity source is null/empty — never emit `null` or `""` for a property key.
+- Type mapping: release `releaseType.name === "Single"` → `MusicRecording`; EP/Album/Mixtape/anything else → `MusicAlbum`. Artist entities (release `byArtist`, homepage entity) use `MusicGroup`, not `Person`.
+- **When adding any new public-facing page, ship it with appropriate JSON-LD structured data before shipping**, following this pattern. See `AGENTS.md`'s Execution Workflow and Hard Guardrails for the enforcement checklist.
+
 ## Link Usage
 
 Use Next.js `<Link prefetch={false}>` for internal links unless prefetch is intentionally needed and justified.

@@ -14,6 +14,11 @@ import {
   isSupportedPlatform,
   type SupportedSocialPlatform,
 } from "@/lib/social-media";
+import { JsonLd } from "@/components/shared/json-ld";
+import {
+  buildHomeMusicGroupJsonLd,
+  buildHomeWebSiteJsonLd,
+} from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -65,11 +70,18 @@ export default async function Home() {
       label: item.label,
     }));
 
+  const musicGroupJsonLd = buildHomeMusicGroupJsonLd(siteConfig);
+  const webSiteJsonLd = buildHomeWebSiteJsonLd(siteConfig);
+
   return (
-    <main>
-      <Hero streamingLinks={streamingLinks} socialLinks={socialLinks} />
-      <LatestReleases releases={latestReleases} />
-      <About />
-    </main>
+    <>
+      <JsonLd data={musicGroupJsonLd} />
+      <JsonLd data={webSiteJsonLd} />
+      <main>
+        <Hero streamingLinks={streamingLinks} socialLinks={socialLinks} />
+        <LatestReleases releases={latestReleases} />
+        <About />
+      </main>
+    </>
   );
 }

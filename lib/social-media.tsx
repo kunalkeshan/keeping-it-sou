@@ -117,6 +117,27 @@ export function getStreamingPlatformLabel(platform: string): string {
   }
 }
 
+/**
+ * Normalizes the inconsistent platform keys used across releases.streamingLinks
+ * (hyphenated, e.g. "apple-music") and siteConfig.socialMedia/artist.socialLinks
+ * (camelCase, e.g. "applemusic") to one canonical snake_case id for analytics
+ * event params. Use this — never send raw platform strings to tracking.
+ */
+export function getTrackingPlatformId(platform: string): string {
+  switch (platform) {
+    case "apple-music":
+    case "applemusic":
+      return "apple_music";
+    case "youtube-music":
+    case "youtubemusic":
+      return "youtube_music";
+    case "amazon-music":
+      return "amazon_music";
+    default:
+      return platform;
+  }
+}
+
 // Streaming platforms that should appear in the "Listen Now" section
 export const STREAMING_PLATFORMS: readonly SupportedSocialPlatform[] = [
   "spotify",

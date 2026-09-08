@@ -122,6 +122,7 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
                     href={link.url}
                     platform={link.platform}
                     label={link.label}
+                    placement="footer"
                   />
                 ))}
               </div>

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { getSocialIcon } from "@/lib/social-media";
+import { trackLinkClick } from "@/lib/analytics";
 import { NavigationMenu as NavigationMenuPrimitive } from "radix-ui";
 import { ArrowRightIcon } from "lucide-react";
 import { useState } from "react";
@@ -216,6 +217,14 @@ function ListenNowSpotifyCard({
             href={spotifyLink.url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() =>
+              trackLinkClick({
+                platform: "spotify",
+                url: spotifyLink.url,
+                placement: "desktop_nav",
+                position: "secondary",
+              })
+            }
           >
             <div className="flex items-center justify-between">
               <div className="bg-secondary rounded-md px-2 py-1">
@@ -248,6 +257,7 @@ function ListenNowSpotifyCard({
               href={link.url}
               platform={link.platform}
               label={link.label}
+              placement="desktop_nav"
             />
           ))}
         </div>
