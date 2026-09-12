@@ -72,12 +72,14 @@ export type Releases = {
     platform?:
       | "spotify"
       | "apple-music"
+      | "youtube"
       | "youtube-music"
       | "soundcloud"
       | "bandcamp"
       | "tidal"
       | "amazon-music"
       | "deezer"
+      | "instagram"
       | "custom";
     url?: string;
     customLabel?: string;
@@ -645,10 +647,12 @@ export type ARTIST_BY_SLUG_QUERY_RESULT = {
         | "bandcamp"
         | "custom"
         | "deezer"
+        | "instagram"
         | "soundcloud"
         | "spotify"
         | "tidal"
         | "youtube-music"
+        | "youtube"
         | null;
       url: string | null;
       customLabel: string | null;
@@ -729,7 +733,7 @@ export type RELEASE_TYPE_BY_SLUG_QUERY_RESULT = {
 
 // Source: sanity/queries/releases/queries.ts
 // Variable: RELEASES_LIST_QUERY
-// Query: *[_type == "releases"] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    releaseType-> {      name    },    coverImage {      asset->,      alt    }  }
+// Query: *[_type == "releases" && releaseDate <= string(now())] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    releaseType-> {      name    },    coverImage {      asset->,      alt    }  }
 export type RELEASES_LIST_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
@@ -766,7 +770,7 @@ export type RELEASES_LIST_QUERY_RESULT = Array<{
 
 // Source: sanity/queries/releases/queries.ts
 // Variable: HOME_RELEASES_QUERY
-// Query: *[_type == "releases"    && !(_id in *[_type == "releases" && referencesOtherReleases == true].referencedReleases[]._ref)  ] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    releaseType-> {      name    },    coverImage {      asset->,      alt    }  }
+// Query: *[_type == "releases"    && releaseDate <= string(now())    && !(_id in *[_type == "releases" && referencesOtherReleases == true].referencedReleases[]._ref)  ] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    releaseType-> {      name    },    coverImage {      asset->,      alt    }  }
 export type HOME_RELEASES_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
@@ -799,6 +803,62 @@ export type HOME_RELEASES_QUERY_RESULT = Array<{
     } | null;
     alt: string | null;
   } | null;
+}>;
+
+// Source: sanity/queries/releases/queries.ts
+// Variable: UPCOMING_RELEASES_QUERY
+// Query: *[_type == "releases"    && releaseDate > string(now())    && !(_id in *[_type == "releases" && referencesOtherReleases == true].referencedReleases[]._ref)  ] | order(releaseDate asc) {    _id,    title,    slug,    releaseType-> {      name    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      _key,      platform,      url,      customLabel    }  }
+export type UPCOMING_RELEASES_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  releaseType: {
+    name: string | null;
+  } | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  releaseDate: string | null;
+  streamingLinks: Array<{
+    _key: string;
+    platform:
+      | "amazon-music"
+      | "apple-music"
+      | "bandcamp"
+      | "custom"
+      | "deezer"
+      | "instagram"
+      | "soundcloud"
+      | "spotify"
+      | "tidal"
+      | "youtube-music"
+      | "youtube"
+      | null;
+    url: string | null;
+    customLabel: string | null;
+  }> | null;
 }>;
 
 // Source: sanity/queries/releases/queries.ts
@@ -886,10 +946,12 @@ export type ALL_RELEASES_QUERY_RESULT = Array<{
       | "bandcamp"
       | "custom"
       | "deezer"
+      | "instagram"
       | "soundcloud"
       | "spotify"
       | "tidal"
       | "youtube-music"
+      | "youtube"
       | null;
     url: string | null;
     customLabel: string | null;
@@ -1036,10 +1098,12 @@ export type RELEASE_BY_SLUG_QUERY_RESULT = {
       | "bandcamp"
       | "custom"
       | "deezer"
+      | "instagram"
       | "soundcloud"
       | "spotify"
       | "tidal"
       | "youtube-music"
+      | "youtube"
       | null;
     url: string | null;
     customLabel: string | null;
@@ -1095,10 +1159,12 @@ export type RELEASE_BY_SLUG_QUERY_RESULT = {
         | "bandcamp"
         | "custom"
         | "deezer"
+        | "instagram"
         | "soundcloud"
         | "spotify"
         | "tidal"
         | "youtube-music"
+        | "youtube"
         | null;
       url: string | null;
       customLabel: string | null;
@@ -1184,10 +1250,12 @@ export type FEATURED_RELEASES_QUERY_RESULT = Array<{
       | "bandcamp"
       | "custom"
       | "deezer"
+      | "instagram"
       | "soundcloud"
       | "spotify"
       | "tidal"
       | "youtube-music"
+      | "youtube"
       | null;
     url: string | null;
     customLabel: string | null;
@@ -1271,10 +1339,12 @@ export type RELEASES_BY_TYPE_QUERY_RESULT = Array<{
       | "bandcamp"
       | "custom"
       | "deezer"
+      | "instagram"
       | "soundcloud"
       | "spotify"
       | "tidal"
       | "youtube-music"
+      | "youtube"
       | null;
     url: string | null;
     customLabel: string | null;
@@ -1358,10 +1428,12 @@ export type RELEASES_BY_ARTIST_QUERY_RESULT = Array<{
       | "bandcamp"
       | "custom"
       | "deezer"
+      | "instagram"
       | "soundcloud"
       | "spotify"
       | "tidal"
       | "youtube-music"
+      | "youtube"
       | null;
     url: string | null;
     customLabel: string | null;
@@ -1487,8 +1559,9 @@ declare module "@sanity/client" {
     '\n  *[_type == "legal" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    content,\n    _createdAt,\n    _updatedAt\n  }\n': LEGAL_DOCUMENT_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "releaseType"] | order(order asc, name asc) {\n    _id,\n    name,\n    slug,\n    description,\n    order,\n    _createdAt,\n    _updatedAt\n  }\n': ALL_RELEASE_TYPES_QUERY_RESULT;
     '\n  *[_type == "releaseType" && slug.current == $slug][0] {\n    _id,\n    name,\n    slug,\n    description,\n    order,\n    _createdAt,\n    _updatedAt\n  }\n': RELEASE_TYPE_BY_SLUG_QUERY_RESULT;
-    '\n  *[_type == "releases"] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    releaseType-> {\n      name\n    },\n    coverImage {\n      asset->,\n      alt\n    }\n  }\n': RELEASES_LIST_QUERY_RESULT;
-    '\n  *[_type == "releases"\n    && !(_id in *[_type == "releases" && referencesOtherReleases == true].referencedReleases[]._ref)\n  ] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    releaseType-> {\n      name\n    },\n    coverImage {\n      asset->,\n      alt\n    }\n  }\n': HOME_RELEASES_QUERY_RESULT;
+    '\n  *[_type == "releases" && releaseDate <= string(now())] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    releaseType-> {\n      name\n    },\n    coverImage {\n      asset->,\n      alt\n    }\n  }\n': RELEASES_LIST_QUERY_RESULT;
+    '\n  *[_type == "releases"\n    && releaseDate <= string(now())\n    && !(_id in *[_type == "releases" && referencesOtherReleases == true].referencedReleases[]._ref)\n  ] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    releaseType-> {\n      name\n    },\n    coverImage {\n      asset->,\n      alt\n    }\n  }\n': HOME_RELEASES_QUERY_RESULT;
+    '\n  *[_type == "releases"\n    && releaseDate > string(now())\n    && !(_id in *[_type == "releases" && referencesOtherReleases == true].referencedReleases[]._ref)\n  ] | order(releaseDate asc) {\n    _id,\n    title,\n    slug,\n    releaseType-> {\n      name\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      _key,\n      platform,\n      url,\n      customLabel\n    }\n  }\n': UPCOMING_RELEASES_QUERY_RESULT;
     '\n  *[_type == "releases"] | order(featured desc, releaseDate desc) {\n    _id,\n    slug,\n    _updatedAt\n  }\n': SITEMAP_RELEASES_QUERY_RESULT;
     '\n  *[_type == "releases"] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    credits,\n    featured,\n    referencesOtherReleases,\n    referencedReleases[]-> {\n      _id,\n      title,\n      slug,\n      coverImage {\n        asset->,\n        alt\n      },\n      releaseDate,\n      releaseType-> {\n        name,\n        slug\n      }\n    },\n    _createdAt,\n    _updatedAt\n  }\n': ALL_RELEASES_QUERY_RESULT;
     '\n  *[_type == "releases" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    shortDescription,\n    releaseType-> {\n      _id,\n      name,\n      slug,\n      description\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      bio,\n      profileImage {\n        asset->,\n        alt\n      },\n      socialLinks[] {\n        platform,\n        url,\n        label\n      },\n      website\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    genre,\n    duration,\n    streamingLinks[] {\n      _key,\n      platform,\n      url,\n      customLabel\n    },\n    videoUrl,\n    credits,\n    featured,\n    referencesOtherReleases,\n    referencedReleases[]-> {\n      _id,\n      title,\n      slug,\n      description,\n      coverImage {\n        asset->,\n        alt\n      },\n      releaseDate,\n      releaseType-> {\n        name,\n        slug\n      },\n      artists[]-> {\n        _id,\n        name,\n        slug\n      },\n      streamingLinks[] {\n        platform,\n        url,\n        customLabel\n      }\n    },\n    _createdAt,\n    _updatedAt\n  }\n': RELEASE_BY_SLUG_QUERY_RESULT;

@@ -169,12 +169,14 @@ export const releases = defineType({
                 list: [
                   { title: "Spotify", value: "spotify" },
                   { title: "Apple Music", value: "apple-music" },
+                  { title: "YouTube", value: "youtube" },
                   { title: "YouTube Music", value: "youtube-music" },
                   { title: "SoundCloud", value: "soundcloud" },
                   { title: "Bandcamp", value: "bandcamp" },
                   { title: "Tidal", value: "tidal" },
                   { title: "Amazon Music", value: "amazon-music" },
                   { title: "Deezer", value: "deezer" },
+                  { title: "Instagram", value: "instagram" },
                   { title: "Custom", value: "custom" },
                 ],
                 layout: "dropdown",
@@ -223,7 +225,7 @@ export const releases = defineType({
         },
       ],
       description:
-        "Add streaming platform links for this release. The FIRST link in this list becomes the primary 'Listen Now' button on the release page.",
+        "Add streaming platform links for this release. The FIRST link in this list becomes the primary 'Listen Now' button on the release page. For upcoming/unreleased music, add an Instagram link here to point fans to a teaser post.",
     }),
     defineField({
       name: "videoUrl",
