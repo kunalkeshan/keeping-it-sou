@@ -99,6 +99,8 @@ export function getStreamingPlatformLabel(platform: string): string {
     case "apple-music":
     case "applemusic":
       return "Apple Music";
+    case "youtube":
+      return "YouTube";
     case "youtube-music":
     case "youtubemusic":
       return "YouTube Music";
@@ -112,6 +114,8 @@ export function getStreamingPlatformLabel(platform: string): string {
       return "Amazon Music";
     case "deezer":
       return "Deezer";
+    case "instagram":
+      return "Instagram";
     default:
       return platform;
   }

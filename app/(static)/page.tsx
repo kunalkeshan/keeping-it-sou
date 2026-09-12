@@ -5,10 +5,15 @@
  */
 import type { Metadata } from "next";
 import Hero from "@/components/home/hero";
+import ComingSoon from "@/components/home/coming-soon";
 import LatestReleases from "@/components/home/latest-releases";
 import About from "@/components/home/about";
 import { getSiteConfig } from "@/sanity/queries/site-config";
-import { getHomeReleases } from "@/sanity/queries/releases";
+import {
+  getHomeReleases,
+  getUpcomingReleases,
+} from "@/sanity/queries/releases";
+import { urlForSquare } from "@/sanity/lib/image";
 import {
   isStreamingPlatform,
   isSupportedPlatform,
@@ -24,13 +29,40 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+// Re-evaluates the upcoming-vs-released date comparison hourly, since that
+// state is purely date-derived (no Sanity content change to trigger the
+// on-demand revalidation webhook when a release date simply arrives).
+export const revalidate = 3600;
+
 export default async function Home() {
-  const [siteConfig, releases] = await Promise.all([
+  const [siteConfig, releases, upcomingReleases] = await Promise.all([
     getSiteConfig(),
     getHomeReleases(),
+    getUpcomingReleases(),
   ]);
 
   const latestReleases = (releases ?? []).slice(0, 4);
+
+  const featuredUpcoming = upcomingReleases?.[0] ?? null;
+  const heroUpcomingRelease = featuredUpcoming
+    ? {
+        title: featuredUpcoming.title ?? "Untitled",
+        releaseDate: featuredUpcoming.releaseDate ?? "",
+        coverImageUrl: featuredUpcoming.coverImage
+          ? urlForSquare(featuredUpcoming.coverImage, 96)
+          : null,
+        coverImageAlt:
+          featuredUpcoming.coverImage?.alt ??
+          featuredUpcoming.title ??
+          undefined,
+        link: featuredUpcoming.streamingLinks?.[0]?.url
+          ? {
+              platform: featuredUpcoming.streamingLinks[0].platform ?? "custom",
+              url: featuredUpcoming.streamingLinks[0].url,
+            }
+          : null,
+      }
+    : null;
 
   // Filter and transform social media links
   const socialMedia = siteConfig?.socialMedia ?? [];
@@ -78,7 +110,12 @@ export default async function Home() {
       <JsonLd data={musicGroupJsonLd} />
       <JsonLd data={webSiteJsonLd} />
       <main>
-        <Hero streamingLinks={streamingLinks} socialLinks={socialLinks} />
+        <Hero
+          streamingLinks={streamingLinks}
+          socialLinks={socialLinks}
+          upcomingRelease={heroUpcomingRelease}
+        />
+        <ComingSoon releases={upcomingReleases ?? []} />
         <LatestReleases releases={latestReleases} />
         <About />
       </main>

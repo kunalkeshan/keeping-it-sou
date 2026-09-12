@@ -17,7 +17,9 @@ export type LinkPlacement =
   | "desktop_nav"
   | "footer"
   | "release_detail_primary_cta"
-  | "release_detail_list";
+  | "release_detail_list"
+  | "hero_upcoming_release"
+  | "upcoming_release_section";
 
 export type LinkPosition = "primary" | "secondary";
 
