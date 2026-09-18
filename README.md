@@ -1,4 +1,4 @@
-# keeping-it-sou
+# Keeping it Sou
 
 Official site for Sou — showcasing releases, music, and upcoming drops.
 
