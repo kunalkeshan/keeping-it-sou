@@ -3,12 +3,21 @@
  *
  * Groups:
  *  basic   — title, description, OG/Twitter images
+ *  hero    — Hero section defaults + the featured-release override toggle
  *  contact — phone numbers, emails, address, timing
  *  social  — social media links (platform + URL + label)
  *  content — footer legal link references
  *
  * The socialMedia array drives the Header streaming CTAs, Footer social icons,
  * and Hero streaming/social rows. Only platforms with URLs are displayed.
+ *
+ * useFeaturedReleaseOverride: when true (default) and a release has
+ * featured == true, that release's streaming links take priority — per
+ * platform, falling back to socialMedia for any platform the release
+ * doesn't provide — across Hero, Header, nav, and Footer. When false, or
+ * when no release is featured, the socialMedia fields are used as-is.
+ * See lib/social-media.tsx's mergeStreamingAndSocialLinks() for the merge
+ * logic.
  */
 import { defineType } from "sanity";
 
@@ -21,6 +30,10 @@ export const siteConfigType = defineType({
       name: "basic",
       title: "Basic Information",
       default: true,
+    },
+    {
+      name: "hero",
+      title: "Hero Section",
     },
     {
       name: "contact",
@@ -85,6 +98,46 @@ export const siteConfigType = defineType({
       description:
         "Recommended minimum: 1200 x 600px (1.91:1). Use JPG/PNG under 5MB. Keep key content centered with ~60px padding to avoid cropping in Twitter previews.",
       validation: (Rule) => Rule.required(),
+    },
+    {
+      name: "useFeaturedReleaseOverride",
+      title: "Use Featured Release Override",
+      type: "boolean",
+      group: "hero",
+      initialValue: true,
+      description:
+        "When ON (default), the most recent release with 'Featured' checked overrides the streaming links below — per platform, falling back to the defaults here for anything the release doesn't provide. When OFF, or when no release is featured, the Hero/nav/footer always use the defaults set on this page.",
+    },
+    {
+      name: "heroTitle",
+      title: "Hero Title",
+      type: "string",
+      group: "hero",
+      description: 'Main headline shown in the Hero section (e.g. "Sou").',
+    },
+    {
+      name: "heroSubtitle",
+      title: "Hero Subtitle",
+      type: "string",
+      group: "hero",
+      description:
+        'Small label shown above the Hero title (e.g. "Hip-Hop Artist").',
+    },
+    {
+      name: "heroImage",
+      title: "Hero Image",
+      type: "image",
+      group: "hero",
+      options: { hotspot: true },
+      fields: [
+        {
+          name: "alt",
+          title: "Alt text",
+          type: "string",
+          description: "Short description for accessibility and SEO",
+        },
+      ],
+      description: "Floating artist image displayed behind the Hero title.",
     },
     {
       name: "phoneNumbers",

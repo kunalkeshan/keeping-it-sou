@@ -2,7 +2,11 @@
  * Hero section — the top-of-page block on the home page.
  * Layers a floating artist image behind the title text, then renders
  * streaming CTA buttons and social icon links below.
- * streamingLinks and socialLinks are pre-split by the parent page.
+ * streamingLinks and socialLinks are pre-split by the parent page, already
+ * merged with the featured release's links when the override is active
+ * (see lib/social-media.tsx's mergeStreamingAndSocialLinks). Hero's own
+ * title/subtitle/image always come from siteConfig — they never swap to
+ * featured-release content.
  * An optional upcomingRelease prop renders a "Coming Soon" teaser banner
  * for the soonest upcoming release (releaseDate in the future); omitted
  * entirely when there's nothing upcoming.
@@ -37,10 +41,15 @@ interface HeroProps {
   streamingLinks: SocialMediaLink[];
   socialLinks: SocialMediaLink[];
   title?: string;
+  subtitle?: string;
+  heroImageUrl?: string | null;
+  heroImageAlt?: string;
   upcomingRelease?: UpcomingReleaseTeaser | null;
 }
 
 const PLACEHOLDER_TITLE = "Sou";
+const PLACEHOLDER_SUBTITLE = "Hip-Hop Artist";
+const PLACEHOLDER_IMAGE_URL = "/assets/sou-float.png";
 
 function formatReleaseDate(dateString: string): string {
   const date = new Date(dateString);
@@ -112,6 +121,9 @@ export default function Hero({
   streamingLinks,
   socialLinks,
   title = PLACEHOLDER_TITLE,
+  subtitle = PLACEHOLDER_SUBTITLE,
+  heroImageUrl = PLACEHOLDER_IMAGE_URL,
+  heroImageAlt = "",
   upcomingRelease,
 }: HeroProps) {
   return (
@@ -133,8 +145,8 @@ export default function Hero({
           >
             <div className="animate-float relative h-[220px] w-full max-w-[240px] lg:h-[300px] lg:max-w-[300px]">
               <Image
-                src="/assets/sou-float.png"
-                alt=""
+                src={heroImageUrl || PLACEHOLDER_IMAGE_URL}
+                alt={heroImageAlt}
                 width={137}
                 height={283}
                 className="absolute inset-0 h-full w-full object-contain object-center opacity-90"
@@ -150,7 +162,7 @@ export default function Hero({
             style={{ isolation: "isolate" }}
           >
             <p className="text-foreground mb-4 text-sm tracking-widest uppercase drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
-              Hip-Hop Artist
+              {subtitle}
             </p>
             {/* Solid headline so it's always readable; image stays behind */}
             <h1 className="text-foreground font-sans text-4xl font-bold tracking-tight uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] md:text-5xl lg:text-6xl xl:text-7xl">

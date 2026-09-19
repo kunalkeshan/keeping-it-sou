@@ -263,6 +263,17 @@ export type SiteConfig = {
     alt?: string;
     _type: "image";
   };
+  useFeaturedReleaseOverride?: boolean;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
   phoneNumbers?: Array<{
     number?: string;
     label?: string;
@@ -1264,6 +1275,59 @@ export type FEATURED_RELEASES_QUERY_RESULT = Array<{
 }>;
 
 // Source: sanity/queries/releases/queries.ts
+// Variable: LATEST_FEATURED_RELEASE_QUERY
+// Query: *[_type == "releases" && featured == true] | order(releaseDate desc)[0] {    _id,    title,    slug,    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      _key,      platform,      url,      customLabel    }  }
+export type LATEST_FEATURED_RELEASE_QUERY_RESULT = {
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  releaseDate: string | null;
+  streamingLinks: Array<{
+    _key: string;
+    platform:
+      | "amazon-music"
+      | "apple-music"
+      | "bandcamp"
+      | "custom"
+      | "deezer"
+      | "instagram"
+      | "soundcloud"
+      | "spotify"
+      | "tidal"
+      | "youtube-music"
+      | "youtube"
+      | null;
+    url: string | null;
+    customLabel: string | null;
+  }> | null;
+} | null;
+
+// Source: sanity/queries/releases/queries.ts
 // Variable: RELEASES_BY_TYPE_QUERY
 // Query: *[_type == "releases" && releaseType._ref == $releaseTypeId] | order(featured desc, releaseDate desc) {    _id,    title,    slug,    description,    releaseType-> {      _id,      name,      slug    },    artists[]-> {      _id,      name,      slug,      profileImage {        asset->,        alt      }    },    coverImage {      asset->,      alt    },    releaseDate,    streamingLinks[] {      platform,      url,      customLabel    },    featured  }
 export type RELEASES_BY_TYPE_QUERY_RESULT = Array<{
@@ -1443,7 +1507,7 @@ export type RELEASES_BY_ARTIST_QUERY_RESULT = Array<{
 
 // Source: sanity/queries/site-config/queries.ts
 // Variable: SITE_CONFIG_QUERY
-// Query: *[_type == "siteConfig"][0] {    _id,    title,    description,    ogImage {      asset->,      alt    },    twitterImage {      asset->,      alt    },    phoneNumbers[] {      number,      label    },    emails[] {      email,      label    },    address {      street,      city,      state,      postalCode,      country    },    sitetiming,    socialMedia[] {      platform,      url,      label    },    footerLegalLinks[]-> {      _id,      title,      slug,      description    }  }
+// Query: *[_type == "siteConfig"][0] {    _id,    title,    description,    ogImage {      asset->,      alt    },    twitterImage {      asset->,      alt    },    useFeaturedReleaseOverride,    heroTitle,    heroSubtitle,    heroImage {      asset->,      alt    },    phoneNumbers[] {      number,      label    },    emails[] {      email,      label    },    address {      street,      city,      state,      postalCode,      country    },    sitetiming,    socialMedia[] {      platform,      url,      label    },    footerLegalLinks[]-> {      _id,      title,      slug,      description    }  }
 export type SITE_CONFIG_QUERY_RESULT = {
   _id: string;
   title: string | null;
@@ -1474,6 +1538,34 @@ export type SITE_CONFIG_QUERY_RESULT = {
     alt: string | null;
   } | null;
   twitterImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  } | null;
+  useFeaturedReleaseOverride: boolean | null;
+  heroTitle: string | null;
+  heroSubtitle: string | null;
+  heroImage: {
     asset: {
       _id: string;
       _type: "sanity.imageAsset";
@@ -1566,9 +1658,10 @@ declare module "@sanity/client" {
     '\n  *[_type == "releases"] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    credits,\n    featured,\n    referencesOtherReleases,\n    referencedReleases[]-> {\n      _id,\n      title,\n      slug,\n      coverImage {\n        asset->,\n        alt\n      },\n      releaseDate,\n      releaseType-> {\n        name,\n        slug\n      }\n    },\n    _createdAt,\n    _updatedAt\n  }\n': ALL_RELEASES_QUERY_RESULT;
     '\n  *[_type == "releases" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    shortDescription,\n    releaseType-> {\n      _id,\n      name,\n      slug,\n      description\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      bio,\n      profileImage {\n        asset->,\n        alt\n      },\n      socialLinks[] {\n        platform,\n        url,\n        label\n      },\n      website\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    genre,\n    duration,\n    streamingLinks[] {\n      _key,\n      platform,\n      url,\n      customLabel\n    },\n    videoUrl,\n    credits,\n    featured,\n    referencesOtherReleases,\n    referencedReleases[]-> {\n      _id,\n      title,\n      slug,\n      description,\n      coverImage {\n        asset->,\n        alt\n      },\n      releaseDate,\n      releaseType-> {\n        name,\n        slug\n      },\n      artists[]-> {\n        _id,\n        name,\n        slug\n      },\n      streamingLinks[] {\n        platform,\n        url,\n        customLabel\n      }\n    },\n    _createdAt,\n    _updatedAt\n  }\n': RELEASE_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "releases" && featured == true] | order(releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    featured\n  }\n': FEATURED_RELEASES_QUERY_RESULT;
+    '\n  *[_type == "releases" && featured == true] | order(releaseDate desc)[0] {\n    _id,\n    title,\n    slug,\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      _key,\n      platform,\n      url,\n      customLabel\n    }\n  }\n': LATEST_FEATURED_RELEASE_QUERY_RESULT;
     '\n  *[_type == "releases" && releaseType._ref == $releaseTypeId] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    featured\n  }\n': RELEASES_BY_TYPE_QUERY_RESULT;
     '\n  *[_type == "releases" && $artistId in artists[]._ref] | order(featured desc, releaseDate desc) {\n    _id,\n    title,\n    slug,\n    description,\n    releaseType-> {\n      _id,\n      name,\n      slug\n    },\n    artists[]-> {\n      _id,\n      name,\n      slug,\n      profileImage {\n        asset->,\n        alt\n      }\n    },\n    coverImage {\n      asset->,\n      alt\n    },\n    releaseDate,\n    streamingLinks[] {\n      platform,\n      url,\n      customLabel\n    },\n    featured\n  }\n': RELEASES_BY_ARTIST_QUERY_RESULT;
-    '\n  *[_type == "siteConfig"][0] {\n    _id,\n    title,\n    description,\n    ogImage {\n      asset->,\n      alt\n    },\n    twitterImage {\n      asset->,\n      alt\n    },\n    phoneNumbers[] {\n      number,\n      label\n    },\n    emails[] {\n      email,\n      label\n    },\n    address {\n      street,\n      city,\n      state,\n      postalCode,\n      country\n    },\n    sitetiming,\n    socialMedia[] {\n      platform,\n      url,\n      label\n    },\n    footerLegalLinks[]-> {\n      _id,\n      title,\n      slug,\n      description\n    }\n  }\n': SITE_CONFIG_QUERY_RESULT;
+    '\n  *[_type == "siteConfig"][0] {\n    _id,\n    title,\n    description,\n    ogImage {\n      asset->,\n      alt\n    },\n    twitterImage {\n      asset->,\n      alt\n    },\n    useFeaturedReleaseOverride,\n    heroTitle,\n    heroSubtitle,\n    heroImage {\n      asset->,\n      alt\n    },\n    phoneNumbers[] {\n      number,\n      label\n    },\n    emails[] {\n      email,\n      label\n    },\n    address {\n      street,\n      city,\n      state,\n      postalCode,\n      country\n    },\n    sitetiming,\n    socialMedia[] {\n      platform,\n      url,\n      label\n    },\n    footerLegalLinks[]-> {\n      _id,\n      title,\n      slug,\n      description\n    }\n  }\n': SITE_CONFIG_QUERY_RESULT;
     '\n  *[_type == "siteConfig"][0].footerLegalLinks[]-> {\n    _id,\n    title,\n    slug,\n    description,\n    _updatedAt\n  }\n': FOOTER_LEGAL_LINKS_QUERY_RESULT;
   }
 }

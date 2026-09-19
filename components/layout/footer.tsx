@@ -4,11 +4,16 @@
  * releases list. Streaming and social links are both shown in the brand
  * section (combined into allSocialLinks). Legal links in the bottom bar
  * are driven by siteConfig.footerLegalLinks, not hardcoded.
+ * When siteConfig.useFeaturedReleaseOverride is on, the optional
+ * featuredReleaseLinks prop is merged in per-platform (release wins per
+ * platform when present) via lib/social-media.tsx's
+ * mergeStreamingAndSocialLinks — see app/(static)/layout.tsx for the fetch.
  */
 import { Logo } from "@/components/shared/logo";
 import { SocialIcon } from "@/components/shared/social-links";
 import type {
   HOME_RELEASES_QUERY_RESULT,
+  LATEST_FEATURED_RELEASE_QUERY_RESULT,
   SITE_CONFIG_QUERY_RESULT,
 } from "@/types/cms";
 import { ArrowRightIcon, Mail, Phone, MapPin, Clock } from "lucide-react";
@@ -18,7 +23,7 @@ import { APP_VERSION } from "@/config/version";
 import {
   isStreamingPlatform,
   isSupportedPlatform,
-  type SupportedSocialPlatform,
+  mergeStreamingAndSocialLinks,
 } from "@/lib/social-media";
 import { mapReleasesToNavItems, type ReleaseNavItem } from "@/lib/releases-nav";
 
@@ -41,9 +46,14 @@ function FooterReleaseLink({ item }: { item: ReleaseNavItem }) {
 type FooterProps = {
   siteConfig: SITE_CONFIG_QUERY_RESULT;
   releases?: HOME_RELEASES_QUERY_RESULT;
+  featuredRelease?: LATEST_FEATURED_RELEASE_QUERY_RESULT | null;
 };
 
-export default function Footer({ siteConfig, releases = [] }: FooterProps) {
+export default function Footer({
+  siteConfig,
+  releases = [],
+  featuredRelease = null,
+}: FooterProps) {
   const releaseItems = mapReleasesToNavItems(releases).slice(
     0,
     FOOTER_RELEASES_LIMIT
@@ -57,37 +67,19 @@ export default function Footer({ siteConfig, releases = [] }: FooterProps) {
   const validLegalLinks = legalLinks.filter((link) => link.slug?.current);
 
   const socialMedia = siteConfig?.socialMedia ?? [];
-  const streamingLinks = socialMedia
-    .filter(
-      (
-        item
-      ): item is typeof item & {
-        platform: SupportedSocialPlatform;
-        url: string;
-      } => isStreamingPlatform(item.platform ?? null) && !!item.url
-    )
-    .map((item) => ({
-      platform: item.platform,
-      url: item.url,
-      label: item.label,
-    }));
-  const socialLinks = socialMedia
-    .filter(
-      (
-        item
-      ): item is typeof item & {
-        platform: SupportedSocialPlatform;
-        url: string;
-      } =>
-        isSupportedPlatform(item.platform ?? null) &&
-        !isStreamingPlatform(item.platform ?? null) &&
-        !!item.url
-    )
-    .map((item) => ({
-      platform: item.platform,
-      url: item.url,
-      label: item.label,
-    }));
+  const useFeaturedOverride = siteConfig?.useFeaturedReleaseOverride ?? true;
+  const mergedLinks = mergeStreamingAndSocialLinks(
+    socialMedia,
+    featuredRelease?.streamingLinks,
+    useFeaturedOverride
+  );
+  const streamingLinks = mergedLinks.filter((link) =>
+    isStreamingPlatform(link.platform)
+  );
+  const socialLinks = mergedLinks.filter(
+    (link) =>
+      isSupportedPlatform(link.platform) && !isStreamingPlatform(link.platform)
+  );
   const allSocialLinks = [...streamingLinks, ...socialLinks];
 
   return (

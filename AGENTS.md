@@ -47,6 +47,7 @@ AI-agent-first workflow with guardrails:
 - Keep singleton behavior consistent with `sanity/structure.ts` (`siteConfig`, `faqs`).
 - Tag Sanity fetches with cache tags (`collection:*`, and document tags for slug pages).
 - Maintain webhook-based revalidation in `app/api/revalidate/route.ts` when adding new document types.
+- When a component/page combines data from more than one collection (e.g. Hero/Header/Footer merging `siteConfig` with the latest featured `releases` document — see `CLAUDE.md`'s Featured-release override section), fetch and tag **both** collections there, so a change to either correctly revalidates it.
 
 When adding a new Sanity type:
 1. Add schema under `sanity/schemaTypes/`.

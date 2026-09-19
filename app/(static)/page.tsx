@@ -12,12 +12,13 @@ import { getSiteConfig } from "@/sanity/queries/site-config";
 import {
   getHomeReleases,
   getUpcomingReleases,
+  getLatestFeaturedRelease,
 } from "@/sanity/queries/releases";
-import { urlForSquare } from "@/sanity/lib/image";
+import { urlFor, urlForSquare } from "@/sanity/lib/image";
 import {
   isStreamingPlatform,
   isSupportedPlatform,
-  type SupportedSocialPlatform,
+  mergeStreamingAndSocialLinks,
 } from "@/lib/social-media";
 import { JsonLd } from "@/components/shared/json-ld";
 import {
@@ -35,11 +36,13 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function Home() {
-  const [siteConfig, releases, upcomingReleases] = await Promise.all([
-    getSiteConfig(),
-    getHomeReleases(),
-    getUpcomingReleases(),
-  ]);
+  const [siteConfig, releases, upcomingReleases, featuredRelease] =
+    await Promise.all([
+      getSiteConfig(),
+      getHomeReleases(),
+      getUpcomingReleases(),
+      getLatestFeaturedRelease(),
+    ]);
 
   const latestReleases = (releases ?? []).slice(0, 4);
 
@@ -64,43 +67,30 @@ export default async function Home() {
       }
     : null;
 
-  // Filter and transform social media links
   const socialMedia = siteConfig?.socialMedia ?? [];
+  const useFeaturedOverride = siteConfig?.useFeaturedReleaseOverride ?? true;
+  const featuredStreamingLinks = featuredRelease?.streamingLinks ?? [];
 
-  // Streaming platforms (Spotify, Apple Music, YouTube Music)
-  const streamingLinks = socialMedia
-    .filter(
-      (
-        item
-      ): item is typeof item & {
-        platform: SupportedSocialPlatform;
-        url: string;
-      } => isStreamingPlatform(item.platform ?? null) && !!item.url
-    )
-    .map((item) => ({
-      platform: item.platform,
-      url: item.url,
-      label: item.label,
-    }));
+  // Merge siteConfig links with the featured release's links, per platform
+  // (release wins per-platform when the override is active), then split
+  // into streaming vs. other social platforms for Hero props.
+  const mergedLinks = mergeStreamingAndSocialLinks(
+    socialMedia,
+    featuredStreamingLinks,
+    useFeaturedOverride
+  );
 
-  // Other social media platforms (preserving original order)
-  const socialLinks = socialMedia
-    .filter(
-      (
-        item
-      ): item is typeof item & {
-        platform: SupportedSocialPlatform;
-        url: string;
-      } =>
-        isSupportedPlatform(item.platform ?? null) &&
-        !isStreamingPlatform(item.platform ?? null) &&
-        !!item.url
-    )
-    .map((item) => ({
-      platform: item.platform,
-      url: item.url,
-      label: item.label,
-    }));
+  const streamingLinks = mergedLinks.filter((link) =>
+    isStreamingPlatform(link.platform)
+  );
+  const socialLinks = mergedLinks.filter(
+    (link) =>
+      isSupportedPlatform(link.platform) && !isStreamingPlatform(link.platform)
+  );
+
+  const heroImageUrl = siteConfig?.heroImage
+    ? urlFor(siteConfig.heroImage).width(300).url()
+    : null;
 
   const musicGroupJsonLd = buildHomeMusicGroupJsonLd(siteConfig);
   const webSiteJsonLd = buildHomeWebSiteJsonLd(siteConfig);
@@ -113,6 +103,10 @@ export default async function Home() {
         <Hero
           streamingLinks={streamingLinks}
           socialLinks={socialLinks}
+          title={siteConfig?.heroTitle ?? undefined}
+          subtitle={siteConfig?.heroSubtitle ?? undefined}
+          heroImageUrl={heroImageUrl}
+          heroImageAlt={siteConfig?.heroImage?.alt ?? undefined}
           upcomingRelease={heroUpcomingRelease}
         />
         <ComingSoon releases={upcomingReleases ?? []} />

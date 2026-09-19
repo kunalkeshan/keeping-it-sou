@@ -158,3 +158,77 @@ export function isStreamingPlatform(
     (STREAMING_PLATFORMS as readonly string[]).includes(platform)
   );
 }
+
+/**
+ * Normalizes a releases.streamingLinks platform key (hyphenated, e.g.
+ * "apple-music") to its siteConfig.socialMedia equivalent (camelCase, e.g.
+ * "applemusic"). Only platforms that exist in SUPPORTED_PLATFORMS have an
+ * equivalent — anything else (soundcloud, bandcamp, tidal, amazon-music,
+ * deezer, custom) has no siteConfig counterpart and returns null.
+ */
+function toSupportedPlatform(platform: string): SupportedSocialPlatform | null {
+  switch (platform) {
+    case "apple-music":
+      return "applemusic";
+    case "youtube-music":
+      return "youtubemusic";
+    default:
+      return isSupportedPlatform(platform) ? platform : null;
+  }
+}
+
+interface MergeableLink {
+  platform: string | null;
+  url: string | null;
+  label?: string | null;
+}
+
+/**
+ * Merges siteConfig.socialMedia links with a featured release's
+ * streamingLinks, per platform — never all-or-nothing. For each platform
+ * present in either source, the featured release's link wins when present;
+ * otherwise the siteConfig link is used. Platforms unique to either source
+ * are preserved as-is (e.g. Instagram only in siteConfig, or a streaming
+ * platform only on the release).
+ *
+ * Returns the siteConfig-derived links unchanged when `useFeaturedOverride`
+ * is false or `featuredReleaseLinks` is empty/undefined — the OFF/no-featured
+ * fallback path.
+ */
+export function mergeStreamingAndSocialLinks(
+  siteConfigLinks: MergeableLink[],
+  featuredReleaseLinks: MergeableLink[] | null | undefined,
+  useFeaturedOverride: boolean
+): { platform: SupportedSocialPlatform; url: string; label?: string | null }[] {
+  const base = siteConfigLinks
+    .filter(
+      (link): link is MergeableLink & { platform: string; url: string } =>
+        isSupportedPlatform(link.platform ?? null) && !!link.url
+    )
+    .map((link) => ({
+      platform: link.platform as SupportedSocialPlatform,
+      url: link.url,
+      label: link.label,
+    }));
+
+  if (!useFeaturedOverride || !featuredReleaseLinks?.length) {
+    return base;
+  }
+
+  const merged = new Map<
+    SupportedSocialPlatform,
+    { platform: SupportedSocialPlatform; url: string; label?: string | null }
+  >();
+  for (const link of base) {
+    merged.set(link.platform, link);
+  }
+
+  for (const link of featuredReleaseLinks) {
+    if (!link.platform || !link.url) continue;
+    const platform = toSupportedPlatform(link.platform);
+    if (!platform) continue;
+    merged.set(platform, { platform, url: link.url, label: link.label });
+  }
+
+  return Array.from(merged.values());
+}
