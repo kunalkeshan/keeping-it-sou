@@ -134,6 +134,21 @@ Run `pnpm generate:types` after every Sanity schema or GROQ query change.
 - generate TypeScript types to `types/cms.d.ts`
 - scan source files with `./**/*.{ts,tsx,js,jsx}`
 
+### Featured-release override (Hero / Header / Nav / Footer)
+
+`siteConfig` has a `hero` field group (Studio group `hero`) with:
+- `useFeaturedReleaseOverride` (boolean, default `true`)
+- `heroTitle`, `heroSubtitle`, `heroImage` — Hero's headline, small label, and floating image; these **always** come from `siteConfig` and never change based on the featured release
+- `heroCta` was considered but removed — Hero has no standalone CTA button beyond the existing "Coming Soon" upcoming-release teaser and the streaming-links row
+
+`releases` reuses its existing `featured` boolean (no uniqueness constraint) — "the" featured release is resolved as the most recent `releaseDate` among `featured == true` releases, via `LATEST_FEATURED_RELEASE_QUERY` / `getLatestFeaturedRelease()` (`sanity/queries/releases/`).
+
+When `useFeaturedReleaseOverride` is on and a featured release exists, its `streamingLinks` are merged **per platform** into `siteConfig.socialMedia`'s links — the release's link wins for any platform it provides; `siteConfig`'s link is kept for platforms the release doesn't have. When the toggle is off, or no release is featured, `siteConfig.socialMedia` is used unchanged. This merge is centralized in `mergeStreamingAndSocialLinks()` (`lib/social-media.tsx`) and called from both `app/(static)/page.tsx` (Hero streaming/social rows) and `app/(static)/layout.tsx` (Header + Footer, which both fetch `getLatestFeaturedRelease()` alongside `getSiteConfig()`).
+
+`siteConfig.socialMedia` uses camelCase platform keys (`applemusic`, `youtubemusic`); `releases.streamingLinks` uses hyphenated keys (`apple-music`, `youtube-music`). `mergeStreamingAndSocialLinks()` normalizes release keys to their camelCase equivalent before merging — don't compare these keys directly.
+
+Because Hero/Header/Footer now depend on both `siteConfig` and `releases` together, any page/layout consuming this merge must fetch and tag both collections (`getSiteConfig()` + `getLatestFeaturedRelease()`) so publishing or toggling `featured` on a release correctly revalidates them.
+
 ### Required environment variables
 
 From `.env.example`:

@@ -261,6 +261,31 @@ export const FEATURED_RELEASES_QUERY = defineQuery(`
   }
 `);
 
+/**
+ * The single most recent featured release (featured == true, latest
+ * releaseDate). Powers the Hero/Header/nav/Footer featured-release override
+ * (see siteConfig.useFeaturedReleaseOverride). Returns null when no release
+ * is featured.
+ */
+export const LATEST_FEATURED_RELEASE_QUERY = defineQuery(`
+  *[_type == "releases" && featured == true] | order(releaseDate desc)[0] {
+    _id,
+    title,
+    slug,
+    coverImage {
+      asset->,
+      alt
+    },
+    releaseDate,
+    streamingLinks[] {
+      _key,
+      platform,
+      url,
+      customLabel
+    }
+  }
+`);
+
 export const RELEASES_BY_TYPE_QUERY = defineQuery(`
   *[_type == "releases" && releaseType._ref == $releaseTypeId] | order(featured desc, releaseDate desc) {
     _id,

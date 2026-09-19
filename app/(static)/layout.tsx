@@ -6,18 +6,26 @@
  *  - Mounts analytics (Google Analytics + Microsoft Clarity)
  * Uses Promise.all to fetch siteConfig and releases in parallel so both
  * Header and Footer get the data they need in a single round-trip.
+ * Streaming links passed to Header/Footer are merged with the latest
+ * featured release's links per-platform when siteConfig.useFeaturedReleaseOverride
+ * is on (see lib/social-media.tsx's mergeStreamingAndSocialLinks) — the same
+ * merge used on the home page, so Hero/Header/nav/Footer stay consistent.
  */
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { urlFor } from "@/sanity/lib/image";
 import { getSiteConfig } from "@/sanity/queries/site-config";
-import { getReleasesList, getHomeReleases } from "@/sanity/queries/releases";
+import {
+  getReleasesList,
+  getHomeReleases,
+  getLatestFeaturedRelease,
+} from "@/sanity/queries/releases";
 import MicrosoftClarity from "@/components/analytics/clarity";
 import { Header } from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import {
   isStreamingPlatform,
-  type SupportedSocialPlatform,
+  mergeStreamingAndSocialLinks,
 } from "@/lib/social-media";
 import type { SocialMediaLink } from "@/components/shared/social-links";
 
@@ -80,34 +88,38 @@ export default async function StaticLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [siteConfig, releasesList, homeReleases] = await Promise.all([
-    getSiteConfig(),
-    getReleasesList(),
-    getHomeReleases(),
-  ]);
+  const [siteConfig, releasesList, homeReleases, featuredRelease] =
+    await Promise.all([
+      getSiteConfig(),
+      getReleasesList(),
+      getHomeReleases(),
+      getLatestFeaturedRelease(),
+    ]);
 
   const socialMedia = siteConfig?.socialMedia ?? [];
-  // Extract only streaming platforms (Spotify, Apple Music, YouTube Music) for the header CTA.
-  const streamingLinks: SocialMediaLink[] = socialMedia
-    .filter(
-      (
-        item
-      ): item is typeof item & {
-        platform: SupportedSocialPlatform;
-        url: string;
-      } => isStreamingPlatform(item.platform ?? null) && !!item.url
-    )
-    .map((item) => ({
-      platform: item.platform,
-      url: item.url,
-      label: item.label,
-    }));
+  const useFeaturedOverride = siteConfig?.useFeaturedReleaseOverride ?? true;
+
+  // Merge siteConfig links with the featured release's links, per platform,
+  // then extract only streaming platforms (Spotify, Apple Music, YouTube
+  // Music) for the header CTA.
+  const mergedLinks = mergeStreamingAndSocialLinks(
+    socialMedia,
+    featuredRelease?.streamingLinks,
+    useFeaturedOverride
+  );
+  const streamingLinks: SocialMediaLink[] = mergedLinks.filter((link) =>
+    isStreamingPlatform(link.platform)
+  );
 
   return (
     <>
       <Header streamingLinks={streamingLinks} releases={releasesList} />
       {children}
-      <Footer siteConfig={siteConfig} releases={homeReleases} />
+      <Footer
+        siteConfig={siteConfig}
+        releases={homeReleases}
+        featuredRelease={featuredRelease}
+      />
       <GoogleAnalytics gaId="G-CBPBRCTFZV" />
       <MicrosoftClarity />
     </>

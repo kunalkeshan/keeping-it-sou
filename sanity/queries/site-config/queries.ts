@@ -13,6 +13,13 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       asset->,
       alt
     },
+    useFeaturedReleaseOverride,
+    heroTitle,
+    heroSubtitle,
+    heroImage {
+      asset->,
+      alt
+    },
     phoneNumbers[] {
       number,
       label

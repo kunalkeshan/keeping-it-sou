@@ -12,6 +12,7 @@ import {
   RELEASE_BY_SLUG_QUERY,
   FEATURED_RELEASES_QUERY,
   UPCOMING_RELEASES_QUERY,
+  LATEST_FEATURED_RELEASE_QUERY,
 } from "./queries";
 import type {
   RELEASES_LIST_QUERY_RESULT,
@@ -21,6 +22,7 @@ import type {
   RELEASE_BY_SLUG_QUERY_RESULT,
   FEATURED_RELEASES_QUERY_RESULT,
   UPCOMING_RELEASES_QUERY_RESULT,
+  LATEST_FEATURED_RELEASE_QUERY_RESULT,
 } from "@/types/cms";
 
 const releasesCollectionTag = createCollectionTag("releases");
@@ -80,6 +82,16 @@ export const getUpcomingReleases = cache(
   async (): Promise<UPCOMING_RELEASES_QUERY_RESULT> => {
     return sanityFetch<UPCOMING_RELEASES_QUERY_RESULT>({
       query: UPCOMING_RELEASES_QUERY,
+      tags: [releasesCollectionTag],
+    });
+  }
+);
+
+/** The single most recent featured release, or null if none is featured. */
+export const getLatestFeaturedRelease = cache(
+  async (): Promise<LATEST_FEATURED_RELEASE_QUERY_RESULT> => {
+    return sanityFetch<LATEST_FEATURED_RELEASE_QUERY_RESULT>({
+      query: LATEST_FEATURED_RELEASE_QUERY,
       tags: [releasesCollectionTag],
     });
   }
