@@ -14,7 +14,7 @@ import { getReleasesForSitemap } from "@/sanity/queries/releases";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [legalDocs, releaseDocs] = await Promise.all([
-    getLegalDocuments(),
+    getLegalDocuments({ build: true }),
     getReleasesForSitemap(),
   ]);
 

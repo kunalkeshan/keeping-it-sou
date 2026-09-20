@@ -24,7 +24,7 @@ pnpm generate:types  # Regenerate Sanity schema + TypeGen output
 - **React 19**
 - **TypeScript** (`strict: true`, path alias `@/*` -> project root)
 - **Tailwind CSS v4**
-- **Sanity CMS** (embedded Studio + GROQ + TypeGen)
+- **Sanity CMS** (embedded Studio + GROQ + TypeGen + Presentation Tool / Visual Editing)
 
 ## Architecture
 
@@ -94,21 +94,28 @@ Sanity is integrated for content management. Infrastructure lives in `sanity/`, 
 
 ### Core files
 
-- `sanity.config.ts` - Studio config (`basePath: "/cms"`)
+- `sanity.config.ts` - Studio config (`basePath: "/cms"`), including the `presentationTool()` plugin
 - `sanity/structure.ts` - Studio sidebar structure and singleton pinning
+- `sanity/presentation/resolve.ts` - Presentation Tool document location resolvers (`mainDocuments` + `locations`)
 - `sanity/schemaTypes/` - schema definitions and exports
-- `sanity/lib/client.ts` - Sanity client
-- `sanity/lib/sanity-fetch.ts` - server fetch helper using cache tags
+- `sanity/lib/client.ts` - Sanity client, configured with `stega.studioUrl` for click-to-edit
+- `sanity/lib/live.ts` - `defineLive()` — exports `sanityFetch` (draft/live-aware fetch) and `<SanityLive>`
 - `sanity/lib/cache-tags.ts` - typed collection/document tag helpers
 - `sanity/lib/image.ts` - Sanity image URL builder
 - `sanity/queries/` - query modules and cached fetch functions
+- `app/api/draft-mode/enable/route.ts` / `disable/route.ts` - draft mode toggle routes used by the Presentation Tool
 
 ### Query/fetch pattern
 
 - Place GROQ query strings in domain-local query files (for example `sanity/queries/releases/queries.ts`).
-- Place fetch wrappers in adjacent `index.ts` files using `sanityFetch<T>()`.
+- Place fetch wrappers in adjacent `index.ts` files using `sanityFetch()` from `@/sanity/lib/live` (destructure `{ data }` — it does not return the value directly).
 - Always import generated query result types from `@/types/cms`.
 - Use `cache(...)` around server fetch functions so duplicate calls in a request are deduplicated.
+- Call sites that run outside a request scope (`generateStaticParams`, `app/sitemap.ts`) must not let `sanityFetch` auto-resolve its perspective — that read calls `draftMode()`/`cookies()`, which throws at build time. Query wrappers used in both contexts accept a `{ build: true }` option that pins `perspective: "published"` and `stega: false` (see `sanity/queries/legal/index.ts`'s `getLegalDocuments`/`getLegalDocumentBySlug`). `generateMetadata` runs in a request scope and only needs `{ stega: false }` (no `perspective` override) so `<title>`/`<meta>` stay free of stega's invisible characters while still reflecting draft content.
+- **stega is all-or-nothing per query, not per-field.** A query returning any field compared with strict string-literal equality elsewhere (for example `platform` in `streamingLinks`/`socialMedia`/`socialLinks`, checked against `SupportedSocialPlatform` in `lib/social-media.tsx`) must either disable stega entirely for that query, or that field must be split into a separate stega-disabled query and merged with the stega-enabled rest. This isn't a style preference — with stega on, `next-sanity`'s `StegaBranded<T>` type wrapper makes every string a `StegaString<T>`, which is a TypeScript error when assigned to a literal union type, and the type-level branding has no configurable per-field exemption (only keys starting with `_` and `slug.current` are exempt). When adding a new query with both freeform text and an enum-like field, decide up front which pattern applies before wiring it into a page:
+  - **Single flat field**: `getSiteConfig()` (`sanity/queries/site-config/index.ts`) merges `SITE_CONFIG_QUERY` (stega on — hero/title/description) with a separate `SITE_CONFIG_SOCIAL_MEDIA_QUERY` (stega off — `socialMedia[].platform`), joined trivially since both target the same singleton document.
+  - **Multiple/nested fields on one document**: `getReleaseBySlug()` (`sanity/queries/releases/index.ts`) is the fuller pattern — `RELEASE_BY_SLUG_QUERY` (stega on) is joined with three separate stega-off queries for its own `streamingLinks`, each `artists[].socialLinks` (merged by artist `_id`), and each `referencedReleases[].streamingLinks` (merged by release `_id`). All four run in `Promise.all(...)`, and the merged, fully-typed shape is exported as `ReleaseBySlugWithLinks` (same convention: `SiteConfigWithSocialMedia`, `UpcomingReleaseWithStreamingLinks`, `LatestFeaturedReleaseWithStreamingLinks`) — import the merged type from the query module, not the raw `*_QUERY_RESULT` from `@/types/cms`, in any component/util that consumes the merged shape.
+  - A query with zero current UI consumers (for example `getAllReleases`, `getFeaturedReleases`) can stay fully `stega: false` rather than splitting — split only when something actually renders that query's freeform text and needs click-to-edit on it.
 
 ### Cache and revalidation
 
@@ -119,6 +126,18 @@ Sanity is integrated for content management. Infrastructure lives in `sanity/`, 
   - `releases` collection and per-slug document
   - `legal` collection and per-slug document
   - `siteConfig` collection
+
+### Presentation Tool / Visual Editing (draft preview)
+
+Editors preview unpublished drafts and click-to-edit directly from the live site, inside the embedded Studio at `/cms` → the "Presentation" tab (added by `presentationTool()` in `sanity.config.ts`).
+
+- **`sanity/lib/live.ts`** is the fetch layer for this: `defineLive()` returns `sanityFetch` (perspective/draft-aware, replaces the old plain `sanity-fetch.ts`) and `<SanityLive>` (subscribes to the Live Content API for real-time updates while previewing).
+- **`app/api/draft-mode/enable/route.ts`** — the Presentation Tool calls this (via `previewUrl.previewMode.enable` in `sanity.config.ts`) to activate Next.js Draft Mode when an editor opens the preview; uses `next-sanity/draft-mode`'s `defineEnableDraftMode`, which verifies a Sanity-issued preview secret before enabling.
+- **`app/api/draft-mode/disable/route.ts`** — not called automatically; it's the target of the floating "Disable Draft Mode" button (`components/shared/disable-draft-mode.tsx`), shown only outside the Presentation iframe (`useIsPresentationTool()` from `next-sanity/hooks`).
+- **`<SanityLive />` and `<VisualEditing />` are mounted only in `app/(static)/layout.tsx`, never in the root `app/layout.tsx`.** The root layout wraps `/cms` too, and Sanity's own docs warn that mounting these on the Studio's own route causes the Studio iframe to reload unexpectedly. `<VisualEditing />` and the disable button render only when `(await draftMode()).isEnabled`; `<SanityLive />` renders unconditionally.
+- **`sanity/presentation/resolve.ts`** maps document types to frontend routes for click-to-edit navigation and the "used on" sidebar list: `releases` → `/releases/:slug`, `legal` → `/legal/:slug`, `siteConfig` → `/` (it drives the homepage hero — see the Featured-release override section below), and `artist`/`faqs`/`releaseType` get a `message`-only location (no dedicated route to link to yet). Add a real `location` entry here whenever a new document type gains its own rendering route.
+- **This coexists with, and does not replace, the webhook + tag revalidation described below.** `<SanityLive>`'s own revalidation is eventually-consistent by default; the webhook's `revalidateTag(tag, "max")` remains the deterministic, instant invalidation path for production traffic. Don't remove `cache-tags.ts` tagging when touching a query — both mechanisms read the same tags.
+- Requires `SANITY_API_READ_TOKEN` (Viewer role, server-only) — see Required environment variables below. `next-sanity` must be `^13.1.5`+ (this also requires `sanity ^5.29.0 || ^6.0.0` and `@sanity/client ^7.26.2 || ^8.0.0` as peers — bump all three together, not just `next-sanity`, or query result types silently collapse to `unknown`/mismatch).
 
 ### TypeGen workflow (mandatory)
 
@@ -156,6 +175,7 @@ From `.env.example`:
 - `NEXT_PUBLIC_SANITY_DATASET`
 - `NEXT_PUBLIC_SITE_URL`
 - `SANITY_WEBHOOK_SECRET`
+- `SANITY_API_READ_TOKEN` — Viewer-role Sanity API token, server-only (never `NEXT_PUBLIC_`). Required for the Presentation Tool / draft mode preview (`sanity/lib/live.ts`, `app/api/draft-mode/enable/route.ts`). Create it at manage.sanity.io → project → API → Tokens.
 
 Optional:
 - `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`

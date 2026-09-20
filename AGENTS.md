@@ -48,13 +48,16 @@ AI-agent-first workflow with guardrails:
 - Tag Sanity fetches with cache tags (`collection:*`, and document tags for slug pages).
 - Maintain webhook-based revalidation in `app/api/revalidate/route.ts` when adding new document types.
 - When a component/page combines data from more than one collection (e.g. Hero/Header/Footer merging `siteConfig` with the latest featured `releases` document — see `CLAUDE.md`'s Featured-release override section), fetch and tag **both** collections there, so a change to either correctly revalidates it.
+- Never mount `<SanityLive />` or `<VisualEditing />` (from `sanity/lib/live.ts` / `next-sanity/visual-editing`) in the root `app/layout.tsx` — it wraps the embedded `/cms` Studio route too, and doing so causes the Studio iframe to reload unexpectedly. They belong only in `app/(static)/layout.tsx`.
+- A query wrapper called from `generateStaticParams` or another build-time-only context (no request scope) must pass `{ build: true }` (see `getLegalDocuments`/`getLegalDocumentBySlug` in `sanity/queries/legal/index.ts`) — letting `sanityFetch` auto-resolve its perspective there calls `draftMode()`/`cookies()`, which throws outside a request scope and fails the build.
 
 When adding a new Sanity type:
 1. Add schema under `sanity/schemaTypes/`.
 2. Add/adjust query module under `sanity/queries/`.
-3. Add fetch wrapper with typed `sanityFetch<T>()`.
+3. Add fetch wrapper using `sanityFetch()` from `@/sanity/lib/live` (destructure `{ data }`) — decide up front whether the query needs stega enabled (click-to-edit) or contains a field compared by string-literal equality elsewhere (e.g. a `platform`/enum field); if both, split into a stega-on and a stega-off query and merge (see CLAUDE.md's Query/fetch pattern section — `getSiteConfig()` for a single flat field, `getReleaseBySlug()` for multiple/nested fields on one document). Export the merged type from the query module (e.g. `ReleaseBySlugWithLinks`) and import that in consumers, not the raw `*_QUERY_RESULT` from `@/types/cms`.
 4. Add cache tag strategy and revalidation route handling as needed.
-5. Run `pnpm generate:types`.
+5. If the new type renders on its own route, add a `location`/`mainDocuments` entry to `sanity/presentation/resolve.ts` so editors can preview and click-to-edit it from the Presentation Tool. If it has no dedicated route yet, give it a `message`-only location instead of leaving it unresolved.
+6. Run `pnpm generate:types`.
 
 ## Type Safety Rules
 

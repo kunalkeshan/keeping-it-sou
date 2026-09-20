@@ -20,7 +20,7 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const legalDocuments = await getLegalDocuments();
+  const legalDocuments = await getLegalDocuments({ build: true });
   return (
     legalDocuments
       ?.filter((doc) => doc.slug?.current)
@@ -30,7 +30,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const legalDocument = await getLegalDocumentBySlug(slug);
+  const legalDocument = await getLegalDocumentBySlug(slug, { stega: false });
 
   if (!legalDocument) {
     return {

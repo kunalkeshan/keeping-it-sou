@@ -64,6 +64,10 @@ export const HOME_RELEASES_QUERY = defineQuery(`
  * referenced releases (same rule as HOME_RELEASES_QUERY). Powers the home
  * page Hero teaser (soonest = first item) and the "Coming Soon" section.
  * "Upcoming" is derived purely from releaseDate — no separate status field.
+ *
+ * streamingLinks (which contains the stega-unsafe `platform` field) is
+ * fetched separately by UPCOMING_RELEASES_STREAMING_LINKS_QUERY and merged
+ * by _id in getUpcomingReleases() — see CLAUDE.md's Query/fetch pattern.
  */
 export const UPCOMING_RELEASES_QUERY = defineQuery(`
   *[_type == "releases"
@@ -80,7 +84,17 @@ export const UPCOMING_RELEASES_QUERY = defineQuery(`
       asset->,
       alt
     },
-    releaseDate,
+    releaseDate
+  }
+`);
+
+/** streamingLinks for UPCOMING_RELEASES_QUERY, fetched with stega disabled. */
+export const UPCOMING_RELEASES_STREAMING_LINKS_QUERY = defineQuery(`
+  *[_type == "releases"
+    && releaseDate > string(now())
+    && !(_id in *[_type == "releases" && referencesOtherReleases == true].referencedReleases[]._ref)
+  ] | order(releaseDate asc) {
+    _id,
     streamingLinks[] {
       _key,
       platform,
@@ -151,6 +165,17 @@ export const ALL_RELEASES_QUERY = defineQuery(`
   }
 `);
 
+/**
+ * All fields except the three `platform`-bearing arrays (this release's
+ * streamingLinks, each artist's socialLinks, each referencedReleases'
+ * streamingLinks) — kept out so this query can run with stega enabled
+ * (click-to-edit) without also branding `platform` as a StegaString, which
+ * conflicts with the literal union it's compared against in
+ * lib/social-media.tsx. Those three are fetched separately (stega disabled)
+ * by RELEASE_BY_SLUG_STREAMING_LINKS_QUERY, RELEASE_BY_SLUG_ARTIST_SOCIAL_LINKS_QUERY,
+ * and RELEASE_BY_SLUG_REFERENCED_RELEASES_STREAMING_LINKS_QUERY, and merged
+ * by _id/_key in getReleaseBySlug() — see CLAUDE.md's Query/fetch pattern.
+ */
 export const RELEASE_BY_SLUG_QUERY = defineQuery(`
   *[_type == "releases" && slug.current == $slug][0] {
     _id,
@@ -173,11 +198,6 @@ export const RELEASE_BY_SLUG_QUERY = defineQuery(`
         asset->,
         alt
       },
-      socialLinks[] {
-        platform,
-        url,
-        label
-      },
       website
     },
     coverImage {
@@ -187,12 +207,6 @@ export const RELEASE_BY_SLUG_QUERY = defineQuery(`
     releaseDate,
     genre,
     duration,
-    streamingLinks[] {
-      _key,
-      platform,
-      url,
-      customLabel
-    },
     videoUrl,
     credits,
     featured,
@@ -215,15 +229,53 @@ export const RELEASE_BY_SLUG_QUERY = defineQuery(`
         _id,
         name,
         slug
-      },
-      streamingLinks[] {
-        platform,
-        url,
-        customLabel
       }
     },
     _createdAt,
     _updatedAt
+  }
+`);
+
+/** This release's streamingLinks, stega disabled — see RELEASE_BY_SLUG_QUERY. */
+export const RELEASE_BY_SLUG_STREAMING_LINKS_QUERY = defineQuery(`
+  *[_type == "releases" && slug.current == $slug][0] {
+    streamingLinks[] {
+      _key,
+      platform,
+      url,
+      customLabel
+    }
+  }
+`);
+
+/**
+ * Each artist's socialLinks, stega disabled, keyed by artist _id — see
+ * RELEASE_BY_SLUG_QUERY.
+ */
+export const RELEASE_BY_SLUG_ARTIST_SOCIAL_LINKS_QUERY = defineQuery(`
+  *[_type == "releases" && slug.current == $slug][0].artists[]-> {
+    _id,
+    socialLinks[] {
+      platform,
+      url,
+      label
+    }
+  }
+`);
+
+/**
+ * Each referenced release's streamingLinks, stega disabled, keyed by
+ * referenced release _id — see RELEASE_BY_SLUG_QUERY.
+ */
+export const RELEASE_BY_SLUG_REFERENCED_RELEASES_STREAMING_LINKS_QUERY =
+  defineQuery(`
+  *[_type == "releases" && slug.current == $slug][0].referencedReleases[]-> {
+    _id,
+    streamingLinks[] {
+      platform,
+      url,
+      customLabel
+    }
   }
 `);
 
@@ -266,6 +318,10 @@ export const FEATURED_RELEASES_QUERY = defineQuery(`
  * releaseDate). Powers the Hero/Header/nav/Footer featured-release override
  * (see siteConfig.useFeaturedReleaseOverride). Returns null when no release
  * is featured.
+ *
+ * streamingLinks (stega-unsafe `platform` field) is fetched separately by
+ * LATEST_FEATURED_RELEASE_STREAMING_LINKS_QUERY and merged in
+ * getLatestFeaturedRelease() — see CLAUDE.md's Query/fetch pattern.
  */
 export const LATEST_FEATURED_RELEASE_QUERY = defineQuery(`
   *[_type == "releases" && featured == true] | order(releaseDate desc)[0] {
@@ -276,7 +332,13 @@ export const LATEST_FEATURED_RELEASE_QUERY = defineQuery(`
       asset->,
       alt
     },
-    releaseDate,
+    releaseDate
+  }
+`);
+
+/** streamingLinks for LATEST_FEATURED_RELEASE_QUERY, stega disabled. */
+export const LATEST_FEATURED_RELEASE_STREAMING_LINKS_QUERY = defineQuery(`
+  *[_type == "releases" && featured == true] | order(releaseDate desc)[0] {
     streamingLinks[] {
       _key,
       platform,
