@@ -12,8 +12,11 @@
  * merge used on the home page, so Hero/Header/nav/Footer stay consistent.
  */
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { VisualEditing } from "next-sanity/visual-editing";
 import { urlFor } from "@/sanity/lib/image";
+import { SanityLive } from "@/sanity/lib/live";
 import { getSiteConfig } from "@/sanity/queries/site-config";
 import {
   getReleasesList,
@@ -23,6 +26,7 @@ import {
 import MicrosoftClarity from "@/components/analytics/clarity";
 import { Header } from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import { DisableDraftMode } from "@/components/shared/disable-draft-mode";
 import {
   isStreamingPlatform,
   mergeStreamingAndSocialLinks,
@@ -122,6 +126,13 @@ export default async function StaticLayout({
       />
       <GoogleAnalytics gaId="G-CBPBRCTFZV" />
       <MicrosoftClarity />
+      <SanityLive />
+      {(await draftMode()).isEnabled && (
+        <>
+          <VisualEditing />
+          <DisableDraftMode />
+        </>
+      )}
     </>
   );
 }

@@ -13,4 +13,7 @@ export const client = createClient({
   dataset,
   apiVersion,
   useCdn: false, // tag-based revalidation requires fresh data; CDN may serve stale after revalidateTag()
+  stega: {
+    studioUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/cms`,
+  },
 });

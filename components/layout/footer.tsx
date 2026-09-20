@@ -11,11 +11,9 @@
  */
 import { Logo } from "@/components/shared/logo";
 import { SocialIcon } from "@/components/shared/social-links";
-import type {
-  HOME_RELEASES_QUERY_RESULT,
-  LATEST_FEATURED_RELEASE_QUERY_RESULT,
-  SITE_CONFIG_QUERY_RESULT,
-} from "@/types/cms";
+import type { HOME_RELEASES_QUERY_RESULT } from "@/types/cms";
+import type { SiteConfigWithSocialMedia } from "@/sanity/queries/site-config";
+import type { LatestFeaturedReleaseWithStreamingLinks } from "@/sanity/queries/releases";
 import { ArrowRightIcon, Mail, Phone, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -44,9 +42,9 @@ function FooterReleaseLink({ item }: { item: ReleaseNavItem }) {
 }
 
 type FooterProps = {
-  siteConfig: SITE_CONFIG_QUERY_RESULT;
+  siteConfig: SiteConfigWithSocialMedia | null;
   releases?: HOME_RELEASES_QUERY_RESULT;
-  featuredRelease?: LATEST_FEATURED_RELEASE_QUERY_RESULT | null;
+  featuredRelease?: LatestFeaturedReleaseWithStreamingLinks | null;
 };
 
 export default function Footer({

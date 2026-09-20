@@ -7,14 +7,14 @@
  * first streaming/Instagram entry — full multi-link rendering (StreamingLinks)
  * is reserved for the release detail page.
  */
-import type { UPCOMING_RELEASES_QUERY_RESULT } from "@/types/cms";
 import { urlForSquare } from "@/sanity/lib/image";
 import ReleaseCard from "@/components/releases/release-card";
 import { LinkClickTracker } from "@/components/releases/link-click-tracker";
 import { getSocialIcon, getStreamingPlatformLabel } from "@/lib/social-media";
+import type { UpcomingReleaseWithStreamingLinks } from "@/sanity/queries/releases";
 
 interface ComingSoonProps {
-  releases: UPCOMING_RELEASES_QUERY_RESULT;
+  releases: UpcomingReleaseWithStreamingLinks[];
 }
 
 function formatReleaseDate(dateString: string): string {

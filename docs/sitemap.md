@@ -1,6 +1,6 @@
 # Sitemap generation
 
-The site exposes a single sitemap at `/sitemap.xml`, implemented by Next.js [`app/sitemap.ts`](../app/sitemap.ts). Entries are **not** hand-maintained: URLs and `lastModified` values come from Sanity via [`sanityFetch`](../sanity/lib/sanity-fetch.ts).
+The site exposes a single sitemap at `/sitemap.xml`, implemented by Next.js [`app/sitemap.ts`](../app/sitemap.ts). Entries are **not** hand-maintained: URLs and `lastModified` values come from Sanity via [`sanityFetch`](../sanity/lib/live.ts). Since `app/sitemap.ts` runs at build time with no request scope, `getLegalDocuments({ build: true })` is used there to pin `perspective: "published"` and `stega: false` — see [`sanity/queries/legal/index.ts`](../sanity/queries/legal/index.ts).
 
 ## URLs included
 
@@ -25,7 +25,7 @@ Documents without a slug are omitted from the sitemap.
 - `collection:legal` — all legal documents
 - `collection:releases` — all releases
 
-[`sanity-fetch`](../sanity/lib/sanity-fetch.ts) uses `revalidate: false` and relies on **on-demand revalidation** (for example via a Sanity webhook calling `revalidateTag` for the affected collection). Configure your deployment so that when legal or release documents change in Sanity, the corresponding tag is revalidated; until then, cached sitemap responses may reflect the previous build or last successful revalidation.
+[`sanityFetch`](../sanity/lib/live.ts) relies on **on-demand revalidation** via the Sanity webhook (`app/api/revalidate/route.ts`) calling `revalidateTag` for the affected collection. Configure your deployment so that when legal or release documents change in Sanity, the corresponding tag is revalidated; until then, cached sitemap responses may reflect the previous build or last successful revalidation.
 
 ## Queries
 

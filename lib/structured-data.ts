@@ -18,12 +18,13 @@ import type {
 import { SITE_CONFIG } from "@/config/site";
 import { urlForSquare } from "@/sanity/lib/image";
 import type {
-  RELEASE_BY_SLUG_QUERY_RESULT,
   RELEASES_LIST_QUERY_RESULT,
   SITE_CONFIG_QUERY_RESULT,
 } from "@/types/cms";
+import type { SiteConfigWithSocialMedia } from "@/sanity/queries/site-config";
+import type { ReleaseBySlugWithLinks } from "@/sanity/queries/releases";
 
-type Release = NonNullable<RELEASE_BY_SLUG_QUERY_RESULT>;
+type Release = ReleaseBySlugWithLinks;
 type ReleaseArtist = NonNullable<Release["artists"]>[number];
 
 function absoluteUrl(path: string): string {
@@ -89,7 +90,7 @@ export function buildReleaseJsonLd(
 }
 
 export function buildHomeMusicGroupJsonLd(
-  siteConfig: SITE_CONFIG_QUERY_RESULT
+  siteConfig: SiteConfigWithSocialMedia | null
 ): WithContext<MusicGroup> {
   const image = urlForSquare(siteConfig?.ogImage, 800);
   const sameAs = (siteConfig?.socialMedia ?? [])
