@@ -41,7 +41,7 @@ export default async function ReleasesPage() {
           ) : (
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((item) => (
-                <li key={item.href}>
+                <li key={item.href} className="min-w-0">
                   <Link
                     href={item.href}
                     className="group bg-card flex flex-col overflow-hidden rounded-lg border transition-all hover:shadow-lg"
